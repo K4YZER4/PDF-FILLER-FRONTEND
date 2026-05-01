@@ -16,9 +16,9 @@ interface ToastProps {
 
 /** Configuración visual para cada tipo de toast */
 const typeConfig: Record<ToastType, { borderClass: string; icon: string }> = {
-  success: { borderClass: "border-l-green-600", icon: "\u2713" },
-  error: { borderClass: "border-l-red-600", icon: "\u2717" },
-  info: { borderClass: "border-l-teal-800", icon: "\u2139" },
+  success: { borderClass: "border-l-success", icon: "\u2713" },
+  error: { borderClass: "border-l-error", icon: "\u2717" },
+  info: { borderClass: "border-l-primary", icon: "\u2139" },
 }
 
 /** Componente Toast con animación de entrada y salida */

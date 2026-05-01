@@ -179,7 +179,7 @@ function IneScreen({ onToast }: { onToast: (msg: string, type: "success" | "erro
   return (
     <div className="space-y-4">
       {/* Tip informativo sobre el proceso de escaneo */}
-      <div className="flex items-start gap-3 bg-teal-50 border border-teal-200 rounded-md p-3 text-xs text-teal-800">
+      <div className="flex items-start gap-3 bg-primary-tint border border-primary-tint rounded-md p-3 text-xs text-primary">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="flex-shrink-0 mt-0.5">
           <circle cx="12" cy="12" r="10" />
           <line x1="12" y1="8" x2="12" y2="12" />
@@ -197,7 +197,7 @@ function IneScreen({ onToast }: { onToast: (msg: string, type: "success" | "erro
           className={`
             relative border-2 border-dashed rounded-lg min-h-[110px] flex flex-col items-center justify-center
             cursor-pointer transition-colors text-center px-4
-            ${ineFile ? "border-green-500 bg-green-50" : "border-stone-200 hover:border-teal-800 hover:bg-teal-50"}
+            ${ineFile ? "border-success bg-success-tint" : "border-stone-200 hover:border-primary hover:bg-primary-tint"}
           `}
           onClick={handleImageClick}
         >

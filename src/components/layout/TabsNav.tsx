@@ -29,16 +29,16 @@ function getBadgeContent(status: TabStatus, number: number): string {
 /** Devuelve las clases CSS del badge según el estado */
 function getBadgeClasses(status: TabStatus, isActive: boolean): string {
   const base = "w-5 h-5 rounded-full flex items-center justify-center text-[11px] font-semibold transition-colors"
-  if (isActive) return `${base} bg-teal-50 text-teal-800 border border-transparent`
-  if (status === "complete") return `${base} bg-green-50 text-green-700 border border-transparent`
-  if (status === "scanning") return `${base} bg-amber-50 text-amber-700 border border-transparent animate-pulse`
+  if (isActive) return `${base} bg-primary-tint text-primary border border-transparent`
+  if (status === "complete") return `${base} bg-success-tint text-success border border-transparent`
+  if (status === "scanning") return `${base} bg-warning-tint text-warning border border-transparent animate-pulse`
   return `${base} bg-stone-50 text-stone-500 border border-stone-200`
 }
 
 /** Devuelve las clases CSS de la pestaña según si está activa */
 function getTabClasses(isActive: boolean): string {
   const base = "flex items-center gap-2 px-5 py-3 text-sm font-medium transition-colors whitespace-nowrap border-b-2"
-  if (isActive) return `${base} text-teal-800 border-teal-800`
+  if (isActive) return `${base} text-primary border-primary`
   return `${base} text-stone-500 border-transparent hover:text-stone-900`
 }
 
