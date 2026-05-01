@@ -3,7 +3,7 @@
 Este documento define de forma general cómo contribuir al proyecto PDF Filler y enlaza a las guías detalladas.
 
 > Antes de contribuir, asegúrate de leer el README del proyecto:
-> [README.md](../README.md)
+> [README.md](./README.md)
 
 ---
 
@@ -22,7 +22,7 @@ Este documento define de forma general cómo contribuir al proyecto PDF Filler y
 
 La estructura completa del repositorio y las responsabilidades de cada carpeta se describen en:
 
-- **[Estructura del proyecto](./architecture/FOLDER_STRUCTURE.md)**
+- **[Estructura del proyecto](./ARCHITECTURE.md)**
 - [Arquitectura de componentes](./architecture/COMPONENTS_ARCHITECTURE.md)
 
 ---
@@ -87,4 +87,4 @@ Antes de crear un issue, revisa la sección de troubleshooting:
 
 ---
 
-[Volver al README principal](../README.md)
+[Volver al README principal](./README.md)

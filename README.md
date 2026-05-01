@@ -56,7 +56,8 @@ Este proyecto sigue un flujo de trabajo y reglas claras para facilitar el trabaj
 - **[Dependencias del proyecto](./docs/DEPENDENCIES.md)** - Gestión de librerías
 
 ### Arquitectura
-- **[Estructura del proyecto](./docs/architecture/FOLDER_STRUCTURE.md)** - Organización de carpetas
+- **[Estructura del proyecto](./docs/ARCHITECTURE.md)** - Organización de carpetas
+- **[Arquitectura de Componentes](./docs/architecture/COMPONENTS_ARCHITECTURE.md)** - Estructura UI
 - **[Estándares de Código](./docs/guides/CODING_STANDARDS.md)** - Reglas de desarrollo
 
 ### Git y Colaboración
