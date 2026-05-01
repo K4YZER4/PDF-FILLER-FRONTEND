@@ -14,10 +14,10 @@ interface BadgeProps {
 
 /** Clases CSS para cada variante de badge */
 const variantClasses: Record<BadgeVariant, string> = {
-  success: "bg-green-50 text-green-700 border-green-200",
-  warning: "bg-amber-50 text-amber-700 border-amber-200",
-  error: "bg-red-50 text-red-700 border-red-200",
-  info: "bg-teal-50 text-teal-800 border-teal-200",
+  success: "bg-success-tint text-success border-success-tint",
+  warning: "bg-warning-tint text-warning border-warning-tint",
+  error: "bg-error-tint text-error border-error-tint",
+  info: "bg-primary-tint text-primary border-primary-tint",
 }
 
 /** Badge con diferentes variantes de color según el estado */

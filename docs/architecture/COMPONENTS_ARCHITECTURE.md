@@ -96,11 +96,13 @@ Definidos en `index.css` con `@theme`:
 
 | Variable | Color | Uso |
 |-----------|-------|-----|
-| `--color-primary` | `#01696f` | Botones primarios, acentos |
-| `--color-primary-hover` | `#0c4e54` | Hover de primario |
-| `--color-error` | `#dc2626` | Errores |
-| `--color-success` | `#16a34a` | Éxito |
-| `--color-warning` | `#d97706` | Advertencias |
+| `--color-primary` | `#5b2d8e` | Botones primarios (morado/púrpura) |
+| `--color-primary-hover` | `#4a1c7d` | Hover de primario |
+| `--color-error` | `#efc12c` | Errores (amarillo) |
+| `--color-error-tint` | `#fff9e6` | Tono claro para errores |
+| `--color-success` | `#16a34a` | Éxito (verde) |
+| `--color-warning` | `#d97706` | Advertencias (naranja) |
+| `--color-white` | `#ffffff` | Blanco |
 
 ---
 

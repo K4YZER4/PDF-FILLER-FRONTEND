@@ -20,7 +20,7 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
 
 /** Clases CSS para cada variante */
 const variantClasses: Record<ButtonVariant, string> = {
-  primary: "bg-teal-800 text-white hover:bg-teal-900 active:bg-teal-950 border border-transparent",
+  primary: "bg-primary text-white hover:bg-primary-hover active:bg-primary-active border border-transparent",
   secondary: "bg-white text-stone-900 hover:bg-stone-50 border border-stone-200",
 }
 
@@ -33,7 +33,7 @@ const sizeClasses: Record<ButtonSize, string> = {
 
 /** Clases base compartidas por todos los botones */
 const baseClasses =
-  "inline-flex items-center justify-center gap-2 font-medium transition-all disabled:opacity-50 disabled:cursor-not-allowed focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-700 focus-visible:ring-offset-2"
+  "inline-flex items-center justify-center gap-2 font-medium transition-all disabled:opacity-50 disabled:cursor-not-allowed focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
 
 /** Ícono de spinner para estado de carga */
 const SpinnerIcon = () => (

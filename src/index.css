@@ -6,15 +6,16 @@
 @import "tailwindcss";
 
 @theme {
-  --color-primary: #01696f;
-  --color-primary-hover: #0c4e54;
-  --color-primary-active: #0f3638;
-  --color-primary-tint: #e6f2f2;
-  --color-error: #dc2626;
-  --color-error-tint: #fef2f2;
-  --color-error-border: #fca5a5;
-  --color-success: #16a34a;
-  --color-success-tint: #f0fdf4;
-  --color-warning: #d97706;
-  --color-warning-tint: #fffbeb;
+  --color-primary: #5b2d8e; /* Color primario (morado/púrpura) */
+  --color-primary-hover: #4a1c7d; /* Color primario al pasar el mouse */
+  --color-primary-active: #3d1768; /* Color primario al hacer clic */
+  --color-primary-tint: #f0ebf2; /* Tono claro del color primario */
+  --color-error: #efc12c; /* Color para errores (amarillo) */
+  --color-error-tint: #fff9e6; /* Tono claro para errores */
+  --color-error-border: #fde68a; /* Borde para errores */
+  --color-success: #16a34a; /* Color para éxito (verde) */
+  --color-success-tint: #f0fdf4; /* Tono claro para éxito */
+  --color-warning: #d97706; /* Color para advertencias (naranja) */
+  --color-warning-tint: #fffbeb; /* Tono claro para advertencias */
+  --color-white: #ffffff; /* Blanco */
 }

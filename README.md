@@ -60,6 +60,12 @@ Este proyecto sigue un flujo de trabajo y reglas claras para facilitar el trabaj
 - **[Arquitectura de Componentes](./docs/architecture/COMPONENTS_ARCHITECTURE.md)** - Estructura UI
 - **[Estándares de Código](./docs/guides/CODING_STANDARDS.md)** - Reglas de desarrollo
 
+### Paleta de Colores
+- **Primary:** `#5b2d8e` (Morado/Púrpura)
+- **Error/Warning:** `#efc12c` (Amarillo)
+- **Success:** `#16a34a` (Verde)
+- **White:** `#ffffff` (Blanco)
+
 ### Git y Colaboración
 - **[GitHub Flow](./docs/workflows/GIT_WORKFLOW.md)** - Flujo de trabajo con Git
 - **[Guía de Pull Requests](./docs/workflows/PULL_REQUESTS.md)** - Cómo crear y revisar PRs
