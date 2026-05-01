@@ -1,0 +1,20 @@
+/**
+ * Archivo: index.css
+ * Propósito: Estilos globales de la aplicación.
+ * Importa Tailwind CSS y define las variables de tema personalizadas.
+ */
+@import "tailwindcss";
+
+@theme {
+  --color-primary: #01696f;
+  --color-primary-hover: #0c4e54;
+  --color-primary-active: #0f3638;
+  --color-primary-tint: #e6f2f2;
+  --color-error: #dc2626;
+  --color-error-tint: #fef2f2;
+  --color-error-border: #fca5a5;
+  --color-success: #16a34a;
+  --color-success-tint: #f0fdf4;
+  --color-warning: #d97706;
+  --color-warning-tint: #fffbeb;
+}
