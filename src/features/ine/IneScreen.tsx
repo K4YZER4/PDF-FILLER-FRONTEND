@@ -223,7 +223,7 @@ function IneScreen({
     <div className="space-y-4">
       {/* Tip informativo sobre el proceso de escaneo */}
       <div className="flex items-start gap-3 bg-primary-tint border border-primary-tint rounded-md p-3 text-xs text-primary">
-        <Info size={16} className="flex-shrink-0 mt-0.5" />
+        <Info size={16} className="shrink-0 mt-0.5" />
         <span>
           <strong>Tip:</strong> Sube el INE y dale a <em>Leer con OCR</em>.
           Mientras escanea en segundo plano, puedes ir al Tab 2 a subir las
@@ -238,7 +238,7 @@ function IneScreen({
       >
         <div
           className={`
-            relative border-2 border-dashed rounded-lg min-h-[110px] flex flex-col items-center justify-center
+            relative border-2 border-dashed rounded-lg min-h[110px] flex flex-col items-center justify-center
             cursor-pointer transition-colors text-center px-4
             ${ineFile ? "border-success bg-success-tint" : "border-stone-200 hover:border-primary hover:bg-primary-tint"}
           `}
@@ -259,7 +259,7 @@ function IneScreen({
               <img
                 src={ineFileUrl}
                 alt="INE"
-                className="w-full max-h-[180px] object-contain rounded-md"
+                className="w-full max-h[180px] object-contain rounded-md"
               />
               <div className="absolute inset-0 bg-black/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
                 <span className="text-white text-xs font-medium">
