@@ -3,17 +3,17 @@
  * Propósito: Área de carga de archivos con soporte para drag-and-drop.
  * Permite subir imágenes mediante clic o arrastrando archivos.
  */
-import { useCallback, useState } from "react"
-import { FileText } from "lucide-react"
+import { useCallback, useState } from "react";
+import { FileText } from "lucide-react";
 
 interface UploadAreaProps {
-  label: string               // Etiqueta que describe qué archivo se espera
-  accept?: string              // Tipos de archivo aceptados (ej: "image/*")
-  onFileSelect: (file: File) => void  // Callback cuando se selecciona un archivo
-  file: File | null           // Archivo actualmente seleccionado
-  fileName: string | null     // Nombre a mostrar del archivo
-  placeholderIcon?: React.ReactNode  // Ícono opcional
-  showFilename?: boolean      // Si mostrar el nombre del archivo
+  label: string; // Etiqueta que describe qué archivo se espera
+  accept?: string; // Tipos de archivo aceptados (ej: "image/*")
+  onFileSelect: (file: File) => void; // Callback cuando se selecciona un archivo
+  file: File | null; // Archivo actualmente seleccionado
+  fileName: string | null; // Nombre a mostrar del archivo
+  placeholderIcon?: React.ReactNode; // Ícono opcional
+  showFilename?: boolean; // Si mostrar el nombre del archivo
 }
 
 function UploadArea({
@@ -25,41 +25,41 @@ function UploadArea({
   placeholderIcon,
   showFilename = true,
 }: UploadAreaProps) {
-  const [isDragging, setIsDragging] = useState(false)
+  const [isDragging, setIsDragging] = useState(false);
 
   /** Maneja el evento de soltar archivo */
   const handleDrop = useCallback(
     (e: React.DragEvent) => {
-      e.preventDefault()
-      setIsDragging(false)
-      const droppedFile = e.dataTransfer.files[0]
+      e.preventDefault();
+      setIsDragging(false);
+      const droppedFile = e.dataTransfer.files[0];
       if (droppedFile) {
-        onFileSelect(droppedFile)
+        onFileSelect(droppedFile);
       }
     },
-    [onFileSelect]
-  )
+    [onFileSelect],
+  );
 
   /** Maneja cuando un archivo se arrastra sobre el área */
   const handleDragOver = useCallback((e: React.DragEvent) => {
-    e.preventDefault()
-    setIsDragging(true)
-  }, [])
+    e.preventDefault();
+    setIsDragging(true);
+  }, []);
 
   /** Maneja cuando el archivo sale del área */
   const handleDragLeave = useCallback(() => {
-    setIsDragging(false)
-  }, [])
+    setIsDragging(false);
+  }, []);
 
   /** Maneja la selección mediante input file */
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const selectedFile = e.target.files?.[0]
+    const selectedFile = e.target.files?.[0];
     if (selectedFile) {
-      onFileSelect(selectedFile)
+      onFileSelect(selectedFile);
     }
-  }
+  };
 
-  const hasFile = file !== null
+  const hasFile = file !== null;
 
   return (
     <div className="flex flex-col gap-2">
@@ -67,9 +67,9 @@ function UploadArea({
         {label}
       </span>
       {/* Área de carga con drag-and-drop */}
-       <div
-         className={`
-           relative border-2 border-dashed rounded-lg min-h-[110px] flex flex-col items-center justify-center
+      <div
+        className={`
+           relative border-2 border-dashed rounded-lg min-h[110px] flex flex-col items-center justify-center
            cursor-pointer transition-colors text-center px-4
            ${hasFile ? "border-success bg-success-tint" : ""}
            ${isDragging ? "border-primary bg-primary-tint" : ""}
@@ -89,7 +89,7 @@ function UploadArea({
         {hasFile ? (
           // Muestra el nombre del archivo si ya se seleccionó uno
           showFilename ? (
-            <span className="text-xs font-semibold text-success truncate max-w-[150px]">
+            <span className="text-xs font-semibold text-success truncate max-w-37.5">
               {fileName || file.name}
             </span>
           ) : null
@@ -104,8 +104,8 @@ function UploadArea({
         )}
       </div>
     </div>
-  )
+  );
 }
 
-export { UploadArea }
-export type { UploadAreaProps }
+export { UploadArea };
+export type { UploadAreaProps };

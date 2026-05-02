@@ -16,7 +16,6 @@ import { useContractStore } from "@/store/useContractStore";
 import { ineSchema } from "./ine.schema";
 import type { INEFormData } from "./ine.schema";
 import type { ScanStatus } from "@/types";
-import { Info, Image, Search } from "lucide-react";
 
 /** Opciones para el campo de sexo */
 const SEXO_OPTIONS = [
@@ -223,7 +222,19 @@ function IneScreen({
     <div className="space-y-4">
       {/* Tip informativo sobre el proceso de escaneo */}
       <div className="flex items-start gap-3 bg-primary-tint border border-primary-tint rounded-md p-3 text-xs text-primary">
-        <Info size={16} className="shrink-0 mt-0.5" />
+        <svg
+          width="16"
+          height="16"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+          className="shrink-0 mt-0.5"
+        >
+          <circle cx="12" cy="12" r="10" />
+          <line x1="12" y1="8" x2="12" y2="12" />
+          <line x1="12" y1="16" x2="12.01" y2="16" />
+        </svg>
         <span>
           <strong>Tip:</strong> Sube el INE y dale a <em>Leer con OCR</em>.
           Mientras escanea en segundo plano, puedes ir al Tab 2 a subir las
@@ -238,7 +249,7 @@ function IneScreen({
       >
         <div
           className={`
-            relative border-2 border-dashed rounded-lg min-h[110px] flex flex-col items-center justify-center
+            relative border-2 border-dashed rounded-lg min-h-27.5 flex flex-col items-center justify-center
             cursor-pointer transition-colors text-center px-4
             ${ineFile ? "border-success bg-success-tint" : "border-stone-200 hover:border-primary hover:bg-primary-tint"}
           `}
@@ -259,7 +270,7 @@ function IneScreen({
               <img
                 src={ineFileUrl}
                 alt="INE"
-                className="w-full max-h[180px] object-contain rounded-md"
+                className="w-full max-h-45 object-contain rounded-md"
               />
               <div className="absolute inset-0 bg-black/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
                 <span className="text-white text-xs font-medium">
@@ -269,7 +280,19 @@ function IneScreen({
             </div>
           ) : (
             <>
-              <Image size={36} className="text-stone-300 mb-2" />
+              <svg
+                className="text-stone-300 mb-2"
+                width="36"
+                height="36"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1.5"
+              >
+                <rect x="3" y="4" width="18" height="16" rx="2" />
+                <circle cx="8.5" cy="9.5" r="1.5" />
+                <polyline points="21 15 16 10 5 21" />
+              </svg>
               <p className="text-xs font-medium text-stone-500">
                 Arrastra la foto del INE aquí
               </p>
@@ -287,7 +310,17 @@ function IneScreen({
             loading={isScanning}
             onClick={handleScanINE}
           >
-            <Search size={14} />
+            <svg
+              width="14"
+              height="14"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+            >
+              <circle cx="11" cy="11" r="8" />
+              <line x1="21" y1="21" x2="16.65" y2="16.65" />
+            </svg>
             Leer INE
           </Button>
         </div>
