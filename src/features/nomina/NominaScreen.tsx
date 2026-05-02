@@ -13,6 +13,7 @@ import { ScanStatusBadge, AutofillBadge } from "@/components/feedback"
 import { scanNomina, scanEstadoCuenta } from "@/services"
 import { useContractStore } from "@/store/useContractStore"
 import { nominaSchema, cuentaSchema, BANCO_OPTIONS } from "./nomina.schema"
+import { Upload, Info } from "lucide-react"
 
 /** Convierte las opciones de banco para el componente Select */
 const BANCO_SELECT_OPTIONS = BANCO_OPTIONS.map((b) => ({ label: b, value: b }))
@@ -164,11 +165,7 @@ function NominaScreen({ onToast }: { onToast: (msg: string, type: "success" | "e
     <div className="space-y-4">
       {/* Tip informativo sobre el proceso de escaneo */}
       <div className="flex items-start gap-3 bg-primary-tint border border-primary-tint rounded-md p-3 text-xs text-primary">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="flex-shrink-0 mt-0.5">
-          <circle cx="12" cy="12" r="10" />
-          <line x1="12" y1="8" x2="12" y2="12" />
-          <line x1="12" y1="16" x2="12.01" y2="16" />
-        </svg>
+        <Info size={16} className="flex-shrink-0 mt-0.5" />
         <span>
           Sube los 3 documentos y presiona <strong>Escanear</strong>. Los campos se rellenan solos — edítalos si es necesario.
         </span>
@@ -199,10 +196,7 @@ function NominaScreen({ onToast }: { onToast: (msg: string, type: "success" | "e
 
         <div className="flex items-center gap-3 flex-wrap">
           <Button variant="primary" disabled={!checkDocsReady} loading={isScanning} onClick={handleScanDocs}>
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <polyline points="5 12 12 5 19 12" />
-              <polyline points="5 19 12 12 19 19" />
-            </svg>
+            <Upload size={14} />
             Escanear Documentos
           </Button>
         </div>

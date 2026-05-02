@@ -3,11 +3,14 @@
  * Propósito: Input especializado para montos monetarios con prefijo "MXN $".
  * Solo acepta números, rango de 1000 a 200000, incrementos de 500.
  */
-import { forwardRef } from "react"
+import { forwardRef } from "react";
 
-interface CurrencyInputProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, "type"> {
-  error?: string
-  autofilled?: boolean
+interface CurrencyInputProps extends Omit<
+  React.InputHTMLAttributes<HTMLInputElement>,
+  "type"
+> {
+  error?: string;
+  autofilled?: boolean;
 }
 
 /** Input con prefijo de moneda mexicana */
@@ -21,10 +24,10 @@ const CurrencyInput = forwardRef<HTMLInputElement, CurrencyInputProps>(
             MXN $
           </span>
           <input
-             id={id}
-             ref={ref}
-             type="number"
-             className={`
+            id={id}
+            ref={ref}
+            type="number"
+            className={`
                flex-1 px-3 py-2 text-base font-semibold bg-transparent
                focus:outline-none placeholder:text-stone-400
                ${error ? "border-error-border" : ""}
@@ -43,11 +46,11 @@ const CurrencyInput = forwardRef<HTMLInputElement, CurrencyInputProps>(
           </span>
         )}
       </div>
-    )
-  }
-)
+    );
+  },
+);
 
-CurrencyInput.displayName = "CurrencyInput"
+CurrencyInput.displayName = "CurrencyInput";
 
-export { CurrencyInput }
-export type { CurrencyInputProps }
+export { CurrencyInput };
+export type { CurrencyInputProps };
