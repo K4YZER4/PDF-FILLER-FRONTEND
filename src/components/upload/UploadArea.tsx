@@ -66,14 +66,14 @@ function UploadArea({
         {label}
       </span>
       {/* Área de carga con drag-and-drop */}
-      <div
-        className={`
-          relative border-2 border-dashed rounded-lg min-h-[110px] flex flex-col items-center justify-center
-          cursor-pointer transition-colors text-center px-4
-          ${hasFile ? "border-green-500 bg-green-50" : ""}
-          ${isDragging ? "border-teal-800 bg-teal-50" : ""}
-          ${!hasFile && !isDragging ? "border-stone-200 hover:border-teal-800 hover:bg-teal-50" : ""}
-        `}
+       <div
+         className={`
+           relative border-2 border-dashed rounded-lg min-h-[110px] flex flex-col items-center justify-center
+           cursor-pointer transition-colors text-center px-4
+           ${hasFile ? "border-success bg-success-tint" : ""}
+           ${isDragging ? "border-primary bg-primary-tint" : ""}
+           ${!hasFile && !isDragging ? "border-stone-200 hover:border-primary hover:bg-primary-tint" : ""}
+         `}
         onDrop={handleDrop}
         onDragOver={handleDragOver}
         onDragLeave={handleDragLeave}
@@ -88,7 +88,7 @@ function UploadArea({
         {hasFile ? (
           // Muestra el nombre del archivo si ya se seleccionó uno
           showFilename ? (
-            <span className="text-xs font-semibold text-green-700 truncate max-w-[150px]">
+            <span className="text-xs font-semibold text-success truncate max-w-[150px]">
               {fileName || file.name}
             </span>
           ) : null

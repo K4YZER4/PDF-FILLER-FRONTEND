@@ -10,7 +10,7 @@ interface AutofillBadgeProps {
 /** Badge que indica "Auto" cuando un campo fue llenado por OCR */
 function AutofillBadge({ className = "" }: AutofillBadgeProps) {
   return (
-    <span className={`text-[10px] font-semibold px-1.5 py-0.5 rounded-full bg-green-50 text-green-700 border border-green-200 ${className}`}>
+    <span className={`text-[10px] font-semibold px-1.5 py-0.5 rounded-full bg-success-tint text-success border border-success-tint ${className}`}>
       Auto \u2713
     </span>
   )

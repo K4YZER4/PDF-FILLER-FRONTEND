@@ -331,7 +331,7 @@ function CreditoScreen({ onToast }: { onToast: (msg: string, type: "success" | "
             <label className="text-xs font-medium text-stone-500 flex items-center gap-1 mb-0.5">
               Monto Neto (Capital) <span className="text-red-600 text-[10px]">*</span>
             </label>
-            <div className="flex items-center border border-stone-200 rounded-md overflow-hidden bg-stone-50 transition-all focus-within:border-teal-800 focus-within:ring-2 focus-within:ring-teal-800/15">
+            <div className="flex items-center border border-stone-200 rounded-md overflow-hidden bg-stone-50 transition-all focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/15">
               <span className="px-3 py-2 bg-white border-r border-stone-200 font-semibold text-sm text-stone-500 whitespace-nowrap">
                 MXN $
               </span>
@@ -360,13 +360,13 @@ function CreditoScreen({ onToast }: { onToast: (msg: string, type: "success" | "
               <button
                 key={q}
                 type="button"
-                className={`
-                  px-3 py-1 rounded-full border text-xs font-medium transition-all cursor-pointer
-                  ${Number(displayedPlazo) === q
-                    ? "bg-teal-800 text-white border-teal-800"
-                    : "bg-stone-50 text-stone-500 border-stone-200 hover:border-teal-800 hover:text-teal-800 hover:bg-teal-50"
-                  }
-                `}
+                  className={`
+                    px-3 py-1 rounded-full border text-xs font-medium transition-all cursor-pointer
+                    ${Number(displayedPlazo) === q
+                      ? "bg-primary text-white border-primary"
+                      : "bg-stone-50 text-stone-500 border-stone-200 hover:border-primary hover:text-primary hover:bg-primary-tint"
+                    }
+                  `}
                 onClick={() => selectPlazo(q)}
               >
                 {q} QNAs
@@ -388,11 +388,11 @@ function CreditoScreen({ onToast }: { onToast: (msg: string, type: "success" | "
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 mt-4">
             <div className="bg-stone-50 border border-stone-200 rounded-md p-3">
               <div className="text-xs text-stone-500 mb-0.5">Monto Pagaré</div>
-              <div className="text-base font-semibold text-teal-800">{formatCurrency(tablaResult.montoPagare)}</div>
+              <div className="text-base font-semibold text-primary">{formatCurrency(tablaResult.montoPagare)}</div>
             </div>
             <div className="bg-stone-50 border border-stone-200 rounded-md p-3">
               <div className="text-xs text-stone-500 mb-0.5">Descuento Quincenal</div>
-              <div className="text-base font-semibold text-teal-800">{formatCurrency(tablaResult.descuentoQuincenal)}</div>
+              <div className="text-base font-semibold text-primary">{formatCurrency(tablaResult.descuentoQuincenal)}</div>
             </div>
             <div className="bg-stone-50 border border-stone-200 rounded-md p-3">
               <div className="text-xs text-stone-500 mb-0.5">CAT Anual</div>

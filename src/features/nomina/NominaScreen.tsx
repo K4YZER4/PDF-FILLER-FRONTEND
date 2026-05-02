@@ -163,7 +163,7 @@ function NominaScreen({ onToast }: { onToast: (msg: string, type: "success" | "e
   return (
     <div className="space-y-4">
       {/* Tip informativo sobre el proceso de escaneo */}
-      <div className="flex items-start gap-3 bg-teal-50 border border-teal-200 rounded-md p-3 text-xs text-teal-800">
+      <div className="flex items-start gap-3 bg-primary-tint border border-primary-tint rounded-md p-3 text-xs text-primary">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="flex-shrink-0 mt-0.5">
           <circle cx="12" cy="12" r="10" />
           <line x1="12" y1="8" x2="12" y2="12" />
@@ -211,7 +211,7 @@ function NominaScreen({ onToast }: { onToast: (msg: string, type: "success" | "e
       {/* Tarjeta para datos laborales (se llenan con OCR de nómina) */}
       <Card title="Datos Laborales" badge={
         <span className={`inline-flex items-center px-2 py-0.5 text-xs font-medium rounded-full ${
-          nominaBadge === "ok" ? "bg-green-50 text-green-700" : "bg-amber-50 text-amber-700"
+          nominaBadge === "ok" ? "bg-success-tint text-success" : "bg-warning-tint text-warning"
         }`}>
           {nominaBadge === "ok" ? "\u2713 Escaneado" : "Pendiente"}
         </span>
@@ -299,7 +299,7 @@ function NominaScreen({ onToast }: { onToast: (msg: string, type: "success" | "e
       {/* Tarjeta para datos bancarios (se llenan con OCR de estado de cuenta) */}
       <Card title="Datos Bancarios" badge={
         <span className={`inline-flex items-center px-2 py-0.5 text-xs font-medium rounded-full ${
-          cuentaBadge === "ok" ? "bg-green-50 text-green-700" : "bg-amber-50 text-amber-700"
+          cuentaBadge === "ok" ? "bg-success-tint text-success" : "bg-warning-tint text-warning"
         }`}>
           {cuentaBadge === "ok" ? "\u2713 Escaneado" : "Pendiente"}
         </span>

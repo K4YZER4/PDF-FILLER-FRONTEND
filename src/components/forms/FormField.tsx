@@ -46,7 +46,7 @@ function FormField({
         {required && <span className="text-red-600 text-[10px]">*</span>}
         {/* Badge que indica si el campo fue autollenado por OCR */}
         {autofilled && (
-          <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded-full bg-green-50 text-green-700 border border-green-200">
+          <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded-full bg-success-tint text-success border border-success-tint">
             Auto
           </span>
         )}

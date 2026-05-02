@@ -20,15 +20,15 @@ const statusConfig: Record<ScanStatus, { classes: string; icon: string }> = {
     icon: "\u2014",
   },
   scanning: {
-    classes: "bg-amber-50 text-amber-700 border border-amber-200",
+    classes: "bg-warning-tint text-warning border border-warning-tint",
     icon: "\u23F3",
   },
   done: {
-    classes: "bg-green-50 text-green-700 border border-green-200",
+    classes: "bg-success-tint text-success border border-success-tint",
     icon: "\u2713",
   },
   error: {
-    classes: "bg-red-50 text-red-700 border border-red-200",
+    classes: "bg-error-tint text-error border border-error-tint",
     icon: "\u2717",
   },
 }
