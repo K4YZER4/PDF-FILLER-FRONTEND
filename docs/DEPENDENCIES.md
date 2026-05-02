@@ -23,6 +23,7 @@ Este documento lista todas las librerías utilizadas en PDF Filler, su propósit
 | **@hookform/resolvers** | ^5.0.1 | Resolvers para react-hook-form | Integración con Zod |
 | **zod** | ^3.24.2 | Validación de esquemas | Tipado y validación robusta |
 | **zod-to-ts** | ^1.3.0 | Conversión Zod a TypeScript | Generación de tipos automática |
+| **lucide-react** | ^0.474.0 | Iconos SVG modernos | Reemplazo de iconos SVG personalizados |
 
 ### Backend (Node.js + Express)
 
