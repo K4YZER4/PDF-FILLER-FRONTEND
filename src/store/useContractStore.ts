@@ -1,152 +1,260 @@
 /**
  * Archivo: store/useContractStore.ts
  * Propósito: Store global de Zustand para manejar todo el estado de la aplicación.
- * Centraliza los datos del formulario, archivos, estados de escaneo y navegación.
+ * Incluye slices para auth, step, documents, formData, history.
+ * Usa immer para mutaciones inmutables.
  */
 import { create } from "zustand"
-import type {
-  INEData,
-  NominaData,
-  EstadoCuentaData,
-  TablaCreditoData,
-  TabStatus,
-  ScanStatus,
-  PlazoQuincenas,
-} from "@/types"
+import { immer } from "zustand/middleware/immer"
+import type { INEData, NominaData, EstadoCuentaData, TablaCreditoData, ScanStatus } from "@/types"
 
-/** Interface que define todo el estado del contrato y funciones para modificarlo */
-interface ContractState {
-  // === TAB 1: INE (Identificación) ===
-  ineFile: File | null              // Archivo de imagen de la INE
-  ineFileUrl: string | null         // URL temporal para previsualización
-  ineData: Partial<INEData>        // Datos extraídos o ingresados de la INE
-  ineScanStatus: ScanStatus        // Estado del escaneo OCR
+/** Roles disponibles en la aplicación */
+type UserRole = "asesor" | "admin"
 
-  // === TAB 2: Nómina y Cuenta Bancaria ===
-  nomina1File: File | null         // Primer archivo de nómina
-  nomina1Name: string | null       // Nombre del primer archivo
-  nomina2File: File | null        // Segundo archivo de nómina
-  nomina2Name: string | null       // Nombre del segundo archivo
-  estadoCuentaFile: File | null   // Archivo del estado de cuenta
-  estadoCuentaName: string | null // Nombre del archivo de estado de cuenta
-  docsScanStatus: ScanStatus      // Estado del escaneo de documentos
-  nominaData: Partial<NominaData> // Datos extraídos de la nómina
-  estadoCuentaData: Partial<EstadoCuentaData> // Datos bancarios
-
-  // === TAB 3: Crédito y Extras ===
-  montoNeto: number | null         // Monto neto del préstamo
-  plazoQuincenas: PlazoQuincenas  // Plazo en quincenas (24, 36, 48, etc.)
-  tablaData: TablaCreditoData | null // Resultado del cálculo crediticio
-
-  // === NAVEGACIÓN Y ESTADO DE PESTAÑAS ===
-  activeTab: string                 // Pestaña activa actualmente
-  tabStatuses: Record<string, TabStatus> // Estado de cada pestaña
-
-  // === SETTERS PARA INE ===
-  setINEFile: (file: File, url: string) => void
-  setINEData: (data: Partial<INEData>) => void
-  setINEScanStatus: (status: ScanStatus) => void
-
-  // === SETTERS PARA DOCUMENTOS ===
-  setNomina1File: (file: File, name: string) => void
-  setNomina2File: (file: File, name: string) => void
-  setEstadoCuentaFile: (file: File, name: string) => void
-  setNominaData: (data: Partial<NominaData>) => void
-  setEstadoCuentaData: (data: Partial<EstadoCuentaData>) => void
-  setDocsScanStatus: (status: ScanStatus) => void
-
-  // === SETTERS PARA CRÉDITO ===
-  setMontoNeto: (monto: number) => void
-  setPlazoQuincenas: (plazo: PlazoQuincenas) => void
-  setTablaData: (data: TablaCreditoData) => void
-
-  // === NAVEGACIÓN ===
-  setActiveTab: (tab: string) => void
-  setTabStatus: (tabId: string, status: TabStatus) => void
-
-  // === RESETEAR TODO ===
-  reset: () => void
+/** Información del usuario autenticado */
+interface AuthState {
+  user: string | null
+  role: UserRole | null
+  isAuthenticated: boolean
 }
 
-/** Plazo predeterminado: 48 quincenas (2 años) */
-const defaultPlazo: PlazoQuincenas = 48
+/** Estado del paso actual en el flujo de 4 pasos */
+interface StepState {
+  current: 1 | 2 | 3 | 4
+}
 
-/** Store principal de la aplicación creado con Zustand */
-const useContractStore = create<ContractState>((set) => ({
-  // === ESTADO INICIAL ===
-  ineFile: null,
-  ineFileUrl: null,
-  ineData: {},
-  ineScanStatus: "idle",
+/** Estado de los documentos subidos y escaneo */
+interface DocumentsState {
+  ineFile: File | null
+  nomina1File: File | null
+  nomina2File: File | null
+  estadoCuentaFile: File | null
+  scanStatus: ScanStatus
+  scanProgress: number // 0-100
+}
 
-  nomina1File: null,
-  nomina1Name: null,
-  nomina2File: null,
-  nomina2Name: null,
-  estadoCuentaFile: null,
-  estadoCuentaName: null,
-  docsScanStatus: "idle",
-  nominaData: {},
-  estadoCuentaData: {},
+/** Datos del formulario organizados por secciones */
+interface FormDataState {
+  ine: Partial<INEData>
+  nomina: Partial<NominaData>
+  banco: Partial<EstadoCuentaData>
+  extras: Record<string, unknown>
+  tabla: TablaCreditoData | null
+}
 
-  montoNeto: null,
-  plazoQuincenas: defaultPlazo,
-  tablaData: null,
+/** Estructura de un contrato en el historial */
+interface Contract {
+  id: string
+  clientName: string
+  date: string
+  monto: number
+  plazo: number
+  asesor: string
+  status: "completado" | "borrador"
+}
 
-  activeTab: "ine",
-  tabStatuses: {
-    ine: "idle",
-    docs: "idle",
-    extras: "idle",
+/** Estado del historial de contratos */
+interface HistoryState {
+  contracts: Contract[]
+}
+
+/** Interface principal que combina todos los slices */
+interface ContractState {
+  auth: AuthState
+  step: StepState
+  documents: DocumentsState
+  formData: FormDataState
+  history: HistoryState
+
+  // === ACCIONES DE AUTENTICACIÓN ===
+  login: (user: string, role: UserRole) => void
+  logout: () => void
+
+  // === ACCIONES DE PASOS ===
+  setStep: (step: 1 | 2 | 3 | 4) => void
+  nextStep: () => void
+  prevStep: () => void
+
+  // === ACCIONES DE DOCUMENTOS ===
+  setDocument: (key: keyof DocumentsState, value: DocumentsState[keyof DocumentsState]) => void
+  setScanStatus: (status: ScanStatus) => void
+  setScanProgress: (progress: number) => void
+  resetDocuments: () => void
+
+  // === ACCIONES DE FORMULARIO ===
+  setFormData: (section: keyof FormDataState, data: FormDataState[keyof FormDataState]) => void
+  resetFormData: () => void
+
+  // === ACCIONES DE HISTORIAL ===
+  addContract: (contract: Contract) => void
+  clearHistory: () => void
+
+  // === RESETEAR TODO ===
+  resetAll: () => void
+}
+
+/** Datos hardcodeados para el historial (mockup) */
+const MOCK_CONTRACTS: Contract[] = [
+  {
+    id: "CTR-001",
+    clientName: "JUAN PEREZ GARCIA",
+    date: "2026-01-15",
+    monto: 25000,
+    plazo: 48,
+    asesor: "MARIA LOPEZ",
+    status: "completado",
   },
+  {
+    id: "CTR-002",
+    clientName: "ANA SOFIA MARTINEZ",
+    date: "2026-02-20",
+    monto: 18000,
+    plazo: 36,
+    asesor: "MARIA LOPEZ",
+    status: "completado",
+  },
+  {
+    id: "CTR-003",
+    clientName: "CARLOS RAMIREZ SOTO",
+    date: "2026-03-10",
+    monto: 30000,
+    plazo: 72,
+    asesor: "JORGE CRUZ",
+    status: "borrador",
+  },
+  {
+    id: "CTR-004",
+    clientName: "LUISA FERNANDA DIAZ",
+    date: "2026-04-05",
+    monto: 12000,
+    plazo: 24,
+    asesor: "JORGE CRUZ",
+    status: "completado",
+  },
+]
 
-  // === ACCIONES PARA INE ===
-  setINEFile: (file, url) => set({ ineFile: file, ineFileUrl: url }),
-  setINEData: (data) => set((state) => ({ ineData: { ...state.ineData, ...data } })),
-  setINEScanStatus: (status) => set({ ineScanStatus: status }),
+/** Estado inicial de documentos */
+const initialDocuments: DocumentsState = {
+  ineFile: null,
+  nomina1File: null,
+  nomina2File: null,
+  estadoCuentaFile: null,
+  scanStatus: "idle",
+  scanProgress: 0,
+}
 
-  // === ACCIONES PARA DOCUMENTOS ===
-  setNomina1File: (file, name) => set({ nomina1File: file, nomina1Name: name }),
-  setNomina2File: (file, name) => set({ nomina2File: file, nomina2Name: name }),
-  setEstadoCuentaFile: (file, name) => set({ estadoCuentaFile: file, estadoCuentaName: name }),
-  setNominaData: (data) => set((state) => ({ nominaData: { ...state.nominaData, ...data } })),
-  setEstadoCuentaData: (data) => set((state) => ({ estadoCuentaData: { ...state.estadoCuentaData, ...data } })),
-  setDocsScanStatus: (status) => set({ docsScanStatus: status }),
+/** Estado inicial de formularios */
+const initialFormData: FormDataState = {
+  ine: {},
+  nomina: {},
+  banco: {},
+  extras: {},
+  tabla: null,
+}
 
-  // === ACCIONES PARA CRÉDITO ===
-  setMontoNeto: (monto) => set({ montoNeto: monto }),
-  setPlazoQuincenas: (plazo) => set({ plazoQuincenas: plazo }),
-  setTablaData: (data) => set({ tablaData: data }),
+/** Store principal con immer para mutaciones */
+const useContractStore = create<ContractState>()(
+  immer((set) => ({
+    // === ESTADO INICIAL ===
+    auth: {
+      user: null,
+      role: null,
+      isAuthenticated: false,
+    },
+    step: { current: 1 },
+    documents: { ...initialDocuments },
+    formData: { ...initialFormData },
+    history: { contracts: [...MOCK_CONTRACTS] },
 
-  // === ACCIONES DE NAVEGACIÓN ===
-  setActiveTab: (tab) => set({ activeTab: tab }),
-  setTabStatus: (tabId, status) =>
-    set((state) => ({
-      tabStatuses: { ...state.tabStatuses, [tabId]: status },
-    })),
+    // === ACCIONES DE AUTENTICACIÓN ===
+    login: (user, role) =>
+      set((state) => {
+        state.auth.user = user
+        state.auth.role = role
+        state.auth.isAuthenticated = true
+      }),
 
-  // === RESETEAR TODO EL FORMULARIO ===
-  reset: () =>
-    set({
-      ineFile: null,
-      ineFileUrl: null,
-      ineData: {},
-      ineScanStatus: "idle",
-      nomina1File: null,
-      nomina1Name: null,
-      nomina2File: null,
-      nomina2Name: null,
-      estadoCuentaFile: null,
-      estadoCuentaName: null,
-      docsScanStatus: "idle",
-      nominaData: {},
-      estadoCuentaData: {},
-      montoNeto: null,
-      plazoQuincenas: defaultPlazo,
-      tablaData: null,
-      activeTab: "ine",
-      tabStatuses: { ine: "idle", docs: "idle", extras: "idle" },
-    }),
-}))
+    logout: () =>
+      set((state) => {
+        state.auth.user = null
+        state.auth.role = null
+        state.auth.isAuthenticated = false
+      }),
+
+    // === ACCIONES DE PASOS ===
+    setStep: (step) =>
+      set((state) => {
+        state.step.current = step
+      }),
+
+    nextStep: () =>
+      set((state) => {
+        if (state.step.current < 4) {
+          state.step.current += 1
+        }
+      }),
+
+    prevStep: () =>
+      set((state) => {
+        if (state.step.current > 1) {
+          state.step.current -= 1
+        }
+      }),
+
+    // === ACCIONES DE DOCUMENTOS ===
+    setDocument: (key, value) =>
+      set((state) => {
+        (state.documents as Record<string, unknown>)[key] = value
+      }),
+
+    setScanStatus: (status) =>
+      set((state) => {
+        state.documents.scanStatus = status
+      }),
+
+    setScanProgress: (progress) =>
+      set((state) => {
+        state.documents.scanProgress = progress
+      }),
+
+    resetDocuments: () =>
+      set((state) => {
+        state.documents = { ...initialDocuments }
+      }),
+
+    // === ACCIONES DE FORMULARIO ===
+    setFormData: (section, data) =>
+      set((state) => {
+        (state.formData as Record<string, unknown>)[section] = data
+      }),
+
+    resetFormData: () =>
+      set((state) => {
+        state.formData = { ...initialFormData }
+      }),
+
+    // === ACCIONES DE HISTORIAL ===
+    addContract: (contract) =>
+      set((state) => {
+        state.history.contracts.unshift(contract)
+      }),
+
+    clearHistory: () =>
+      set((state) => {
+        state.history.contracts = []
+      }),
+
+    // === RESETEAR TODO ===
+    resetAll: () =>
+      set((state) => {
+        state.auth = { user: null, role: null, isAuthenticated: false }
+        state.step = { current: 1 }
+        state.documents = { ...initialDocuments }
+        state.formData = { ...initialFormData }
+        // Mantener historial en mockup
+      }),
+  }))
+)
 
 export { useContractStore }
+export type { UserRole, Contract }
