@@ -3,7 +3,7 @@
 Este documento define de forma general cómo contribuir al proyecto PDF Filler y enlaza a las guías detalladas.
 
 > Antes de contribuir, asegúrate de leer el README del proyecto:
-> [README.md](./README.md)
+> [README.md](../README.md) (raíz del proyecto)
 
 ---
 
@@ -29,7 +29,7 @@ La estructura completa del repositorio y las responsabilidades de cada carpeta s
 
 ## Convenciones de código
 
-Las reglas de estilo, tamaño de archivos, calidad, pruebas, variables de entorno y seguridad están en:
+Las reglas de estilo, tamaño de archivos, calidad, variables de entorno y seguridad están en:
 
 - [Convenciones de código](./guides/CODING_STANDARDS.md)
 
@@ -69,17 +69,15 @@ Antes de crear un issue, revisa la sección de troubleshooting:
 
 ## Comunicación del equipo
 
-- Avisar cuando se trabaje en archivos críticos
-- No modificar archivos ajenos sin avisar
-- Resolver conflictos de merge con cuidado
-- Preguntar antes de hacer cambios grandes
-- Mantener documentación actualizada (JSDoc en español)
+Las reglas de comunicación diaria, ceremonias y roles están en:
+
+- [Team Workflow](./team/TEAM_WORKFLOW.md)
 
 ---
 
 ## Estándares de Documentación
 
-- Todo código debe tener JSDoc en **español**
+- Todo código debe tener documentación en **español**
 - Formato: `/** ... */` para archivos, funciones y componentes
 - Explicar: qué hace, cómo funciona, por qué existe
 - Incluir documentación de props en componentes React
@@ -87,4 +85,4 @@ Antes de crear un issue, revisa la sección de troubleshooting:
 
 ---
 
-[Volver al README principal](./README.md)
+[Volver al README principal](../README.md)

@@ -8,28 +8,21 @@ Este documento define los contratos entre el frontend (PDF-FILLER-FRONTEND) y el
 
 ```
 Desarrollo: http://localhost:3000
-Producción: https://api.pdffiller.com (por definir)
 ```
 
 ---
 
 ## Endpoints de OCR (Escaneo)
 
-### 1. Escanear INE (Identificación Oficial)
+### 1. Escanear INE
 
 **Endpoint:** `POST /scan/ine`
 
 **Descripción:** Procesa una imagen de INE y extrae datos mediante OCR.
 
-**Headers:**
-```
-Content-Type: multipart/form-data
-```
+**Headers:** `Content-Type: multipart/form-data`
 
-**Request Body:**
-```
-file: [archivo de imagen] (JPG, PNG, PDF)
-```
+**Request Body:** `file: [imagen JPG/PNG/PDF]`
 
 **Response Exitosa (200):**
 ```json
@@ -59,32 +52,9 @@ file: [archivo de imagen] (JPG, PNG, PDF)
 }
 ```
 
-**Response de Error (400/500):**
-```json
-{
-  "success": false,
-  "error": "No se pudo procesar la imagen",
-  "message": "El archivo no es legible o está dañado"
-}
-```
-
----
-
 ### 2. Escanear Nómina
 
 **Endpoint:** `POST /scan/nomina`
-
-**Descripción:** Extrae datos de un recibo de nómina.
-
-**Headers:**
-```
-Content-Type: multipart/form-data
-```
-
-**Request Body:**
-```
-file: [archivo de imagen] (JPG, PNG, PDF)
-```
 
 **Response Exitosa (200):**
 ```json
@@ -101,23 +71,9 @@ file: [archivo de imagen] (JPG, PNG, PDF)
 }
 ```
 
----
-
 ### 3. Escanear Estado de Cuenta
 
 **Endpoint:** `POST /scan/estado-cuenta`
-
-**Descripción:** Extrae datos bancarios de un estado de cuenta.
-
-**Headers:**
-```
-Content-Type: multipart/form-data
-```
-
-**Request Body:**
-```
-file: [archivo de imagen] (JPG, PNG, PDF)
-```
 
 **Response Exitosa (200):**
 ```json
@@ -140,22 +96,12 @@ file: [archivo de imagen] (JPG, PNG, PDF)
 
 **Endpoint:** `POST /api/calcular-tabla`
 
-**Descripción:** Calcula montos, intereses y descuentos para un crédito.
-
-**Headers:**
-```
-Content-Type: application/json
-```
-
 **Request Body:**
 ```json
-{
-  "monto": 25000,
-  "quincenas": 48
-}
+{ "monto": 25000, "quincenas": 48 }
 ```
 
-**Response Exitosa (200):**
+**Response (200):**
 ```json
 {
   "success": true,
@@ -169,42 +115,16 @@ Content-Type: application/json
 }
 ```
 
----
-
 ### 5. Generar Contrato PDF
 
 **Endpoint:** `POST /api/generar-contrato`
 
-**Descripción:** Genera un contrato PDF con todos los datos.
-
-**Headers:**
-```
-Content-Type: application/json
-```
-
 **Request Body:**
 ```json
-{
-  "ine": { ... },
-  "tabla": { ... },
-  "nomina": { ... },
-  "estadoCuenta": { ... },
-  "extra": { ... }
-}
+{ "ine": {}, "tabla": {}, "nomina": {}, "estadoCuenta": {}, "extra": {} }
 ```
 
-**Response Exitosa (200):**
-- Content-Type: `application/pdf`
-- Body: Archivo PDF binario
-
-**Response de Error (400/500):**
-```json
-{
-  "success": false,
-  "error": "Error al generar PDF",
-  "message": "Faltan datos requeridos"
-}
-```
+**Response (200):** Archivo PDF binario
 
 ---
 
@@ -212,21 +132,12 @@ Content-Type: application/json
 
 | Código | Descripción |
 |--------|-------------|
-| 400 | Bad Request - Datos inválidos |
-| 404 | Not Found - Endpoint no encontrado |
-| 413 | Payload Too Large - Archivo muy grande |
-| 415 | Unsupported Media Type - Formato no soportado |
-| 429 | Too Many Requests - Rate limiting |
-| 500 | Internal Server Error - Error del servidor |
-| 503 | Service Unavailable - Servicio no disponible |
-
----
-
-## Rate Limiting
-
-- Máximo 100 peticiones por IP por hora
-- Archivos de hasta 10MB
-- Formatos permitidos: JPG, PNG, PDF
+| 400 | Datos inválidos |
+| 404 | Endpoint no encontrado |
+| 413 | Archivo muy grande |
+| 415 | Formato no soportado |
+| 429 | Rate limiting |
+| 500 | Error del servidor |
 
 ---
 
@@ -234,16 +145,14 @@ Content-Type: application/json
 
 1. Cualquier cambio en estos contratos debe:
    - Documentarse en este archivo
-   - Notificarse en el canal `#api-contracts`
    - Actualizarse en AMBOS repositorios (`docs/api/API.md`)
 
 2. Flujo para cambios:
    - Crear issue: `[API] Descripción del cambio`
-   - Discusión en `#api-contracts`
    - Implementación en backend
    - Actualización en frontend
    - Actualización de este documento
 
 ---
 
-[Volver a README principal](../README.md)
+[Volver a DOCS README](../README.md)

@@ -4,9 +4,7 @@ Este repositorio utiliza **GitHub Flow** como flujo de trabajo para el desarroll
 
 ---
 
-## Convención de commits (recomendado)
-
-Para mantener un historial de cambios claro y entendible, se debe usar el siguiente formato:
+## Convención de commits
 
 ### Tipos de commit permitidos
 
@@ -25,18 +23,7 @@ git commit -m "feat: agregar escaneo de INE con OCR"
 
 ---
 
-## Objetivo del flujo
-
-- Reducir errores
-- Evitar conflictos de código
-- Mantener siempre una versión estable de la app
-- Facilitar el trabajo en equipo
-
----
-
 ## Estructura de ramas
-
-Existe **una rama principal** (main) y varias ramas temporales para el desarrollo:
 
 | Rama        | Descripción                                 |
 | ----------- | ------------------------------------------- |
@@ -58,22 +45,15 @@ chore/update-vite
 
 ## Rama main
 
-La rama main siempre debe estar estable:
-
 - El proyecto debe compilar correctamente (`npm run build`)
 - No debe contener código experimental
 - Está protegida (no se permite push directo)
-
-> Nadie debe hacer push directo a main  
-> Todos los cambios entran mediante Pull Requests
 
 ---
 
 ## Flujo de trabajo diario
 
 ### 1. Actualizar main
-
-Antes de empezar cualquier tarea:
 
 ```bash
 git checkout main
@@ -82,28 +62,11 @@ git pull origin main
 
 ### 2. Crear una rama para la tarea
 
-Cada tarea debe tener su propia rama:
-
 ```bash
 git checkout -b feature/nombre-de-la-tarea
 ```
 
 ### 3. Trabajar y hacer commits
-
-Hacer commits pequeños y descriptivos.
-
-**Convención de commits:**
-
-```bash
-feat: nueva funcionalidad
-fix: corrección de bug
-chore: configuración o mantenimiento
-refactor: refactor sin cambiar funcionalidad
-test: agregar tests
-docs: actualizar documentación
-```
-
-**Ejemplo:**
 
 ```bash
 git commit -m "feat: agregar pantalla de crédito"
@@ -117,11 +80,6 @@ git push origin feature/nombre-de-la-tarea
 
 ### 5. Crear Pull Request (PR)
 
-Desde GitHub:
-
-- Crear Pull Request hacia main
-- Asignar al menos 1 revisor
-
 **Checklist antes del merge:**
 
 - ✅ `npx tsc --noEmit` sin errores
@@ -129,30 +87,23 @@ Desde GitHub:
 - ✅ No hay console.log innecesarios
 - ✅ No se subieron archivos sensibles (.env)
 - ✅ PR hace una sola cosa
-- ✅ Documentación JSDoc actualizada
+- ✅ Documentación actualizada
 
 ### 6. Merge a main
 
-Una vez aprobado el PR:
-
-- Se hace merge a main
-- Se elimina la rama
-
-Esto mantiene el repositorio limpio y ordenado.
+Una vez aprobado el PR se hace merge a main y se elimina la rama.
 
 ---
 
-## 🔗 Relación Frontend-Backend
+## Relación Frontend-Backend
 
 ### Sincronización de contratos API
 
 1. Crear issue: `[API] Descripción del endpoint`
-2. Documentar en `docs/api/API.md`
+2. Documentar en [docs/api/API.md](../api/API.md)
 3. Frontend implementa con mock
 4. Backend implementa endpoint real
 5. Integrar y probar
-
-> Mantener `docs/api/API.md` sincronizado entre frontend y backend
 
 ---
 

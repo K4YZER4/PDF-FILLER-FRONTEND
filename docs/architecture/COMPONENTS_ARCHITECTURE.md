@@ -26,11 +26,11 @@
 
 | Componente | Props | Descripción |
 |-----------|-------|-------------|
-| `Button` | `variant: "primary" \| "secondary"`, `size: "sm" \| "md" \| "lg"`, `loading?: boolean` | Botón con estados |
-| `Input` | `error?: string`, más atributos HTML input | Input con mensaje de error |
-| `Card` | `className?: string`, `children` | Contenedor con bordes redondeados y sombra |
-| `Badge` | `variant: "success" \| "warning" \| "error" \| "info"` | Etiqueta de estado |
-| `Spinner` | `size: "sm" \| "md" \| "lg"` | Loader animado |
+| `Button` | `variant`, `size`, `loading` | Botón con estados |
+| `Input` | `error?`, atributos HTML input | Input con mensaje de error |
+| `Card` | `className?`, `children` | Contenedor con bordes redondeados y sombra |
+| `Badge` | `variant: success/warning/error/info` | Etiqueta de estado |
+| `Spinner` | `size: sm/md/lg` | Loader animado |
 
 ### Patrón de exportación
 ```tsx
@@ -73,7 +73,7 @@ feature-name/
 | Feature | Componente | Estado local | Store global |
 |---------|-----------|-------------|--------------|
 | `auth` | `LoginPage` | email, password, error | auth |
-| `upload-documents` | `SubirDocs` | docs[], scanResults, isScanning | documents |
+| `upload-documents` | `SubirDocs` | scanResults[], isScanning | documents |
 | `review-data` | `RevisionDatos` | expandedSection | formData |
 | `loan-data` | `CreditoAsesor` | monto, plazo, resultado | formData.tabla |
 | `preview-contract` | `VistaPrevia` | showToast | formData |
@@ -88,4 +88,7 @@ feature-name/
 3. **Props explícitas** (no `any` en interfaces)
 4. **Estados visuales**: loading, empty, error, success
 5. **Mobile-first**: diseñar primero para pantalla pequeña
-6. **Sin comentarios JSDoc** en código (el código debe ser autoexplicativo)
+
+---
+
+[Volver a CONTRIBUTING](../CONTRIBUTING.md)
