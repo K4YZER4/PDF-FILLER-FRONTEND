@@ -2,7 +2,6 @@
  * Archivo: components/ui/index.ts
  * Propósito: Archivo barrel que re-exporta todos los componentes UI base.
  */
-
 export { Button } from "./Button"
 export type { ButtonProps, ButtonVariant, ButtonSize } from "./Button"
 
@@ -17,3 +16,6 @@ export type { BadgeVariant, BadgeProps } from "./Badge"
 
 export { Spinner } from "./Spinner"
 export type { SpinnerProps } from "./Spinner"
+
+export { Card } from "./Card"
+export type { CardProps } from "./Card"

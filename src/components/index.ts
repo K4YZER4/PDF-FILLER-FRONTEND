@@ -1,20 +1,10 @@
 /**
  * Archivo: components/index.ts
- * Propósito: Archivo barrel principal que re-exporta todos los componentes de la aplicación.
- * Facilita las importaciones centralizadas desde "@/components".
+ * Propósito: Archivo barrel principal que re-exporta todos los componentes.
  */
+export { Button, Input, Select, Badge, Spinner, Card } from "./ui"
+export type { ButtonProps, ButtonVariant, ButtonSize, InputProps, SelectProps, SelectOption, BadgeVariant, BadgeProps, SpinnerProps, CardProps } from "./ui"
 
-// Componentes UI base
-export * from "./ui"
+export { FormField } from "./forms"
 
-// Componentes de formulario
-export * from "./forms"
-
-// Componentes de layout (estructura de la app)
-export * from "./layout"
-
-// Componentes de carga de archivos
-export * from "./upload"
-
-// Componentes de retroalimentación (toast, badges, estados)
-export * from "./feedback"
+export { UploadArea } from "./upload"

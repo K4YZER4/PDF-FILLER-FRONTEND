@@ -1,9 +1,9 @@
 /**
  * Archivo: features/documentos/SubirDocs.tsx
- * Propósito: Paso 1 del flujo - Subir documentos.
+ * Propósito: Paso 1 - Subir documentos con diseño profesional.
  */
 import { useState, useCallback } from "react"
-import { CheckCircle, AlertCircle, Loader2, Upload } from "lucide-react"
+import { CheckCircle, AlertCircle, Loader2, Upload, FileText } from "lucide-react"
 import { Card, UploadArea, Button } from "@/components"
 import { useContractStore } from "@/store/useContractStore"
 import type { ScanStatus } from "@/types"
@@ -12,17 +12,16 @@ interface DocItem {
   id: string
   label: string
   file: File | null
-  name: string | null
   status: ScanStatus
 }
 
 function SubirDocs() {
   const store = useContractStore()
   const [docs, setDocs] = useState<DocItem[]>([
-    { id: "ine", label: "INE (Foto del cliente)", file: store.documents.ineFile, name: null, status: "idle" },
-    { id: "nomina1", label: "Nómina 1", file: store.documents.nomina1File, name: null, status: "idle" },
-    { id: "nomina2", label: "Nómina 2", file: store.documents.nomina2File, name: null, status: "idle" },
-    { id: "estadoCuenta", label: "Estado de cuenta", file: store.documents.estadoCuentaFile, name: null, status: "idle" },
+    { id: "ine", label: "INE", file: store.documents.ineFile, status: "idle" },
+    { id: "nomina1", label: "Nómina 1", file: store.documents.nomina1File, status: "idle" },
+    { id: "nomina2", label: "Nómina 2", file: store.documents.nomina2File, status: "idle" },
+    { id: "estadoCuenta", label: "Estado de cuenta", file: store.documents.estadoCuentaFile, status: "idle" },
   ])
 
   const [isScanning, setIsScanning] = useState(false)
@@ -30,13 +29,11 @@ function SubirDocs() {
   const [scanResults, setScanResults] = useState<Record<string, "success" | "error">>({})
 
   const readyCount = docs.filter((d) => d.file !== null).length
-  const counterColor = readyCount <= 2 ? "text-error" : readyCount === 3 ? "text-warning" : "text-success"
 
   const handleFileSelect = useCallback(
-    (id: string, file: File) => {
-      setDocs((prev) =>
-        prev.map((d) => d.id === id ? { ...d, file, name: file.name, status: "idle" as ScanStatus } : d)
-      )
+    (id: string, file: File | null) => {
+      if (!file) return
+      setDocs((prev) => prev.map((d) => (d.id === id ? { ...d, file, status: "idle" } : d)))
       if (id === "ine") store.setDocument("ineFile", file)
       if (id === "nomina1") store.setDocument("nomina1File", file)
       if (id === "nomina2") store.setDocument("nomina2File", file)
@@ -47,10 +44,7 @@ function SubirDocs() {
 
   const scanDocument = (): Promise<boolean> => {
     return new Promise((resolve) => {
-      setTimeout(() => {
-        const success = Math.random() > 0.2
-        resolve(success)
-      }, 800)
+      setTimeout(() => resolve(Math.random() > 0.2), 800)
     })
   }
 
@@ -70,134 +64,88 @@ function SubirDocs() {
     }
 
     setIsScanning(false)
-    if (Object.values(scanResults).every((r) => r === "success")) {
-      store.setScanStatus("done")
-    } else {
-      store.setScanStatus("error")
-    }
-  }
-
-  const handleRetry = async (docId: string) => {
-    setScanResults((prev) => {
-      const next = { ...prev }
-      delete next[docId]
-      return next
-    })
-    const success = await scanDocument()
-    setScanResults((prev) => ({ ...prev, [docId]: success ? "success" : "error" }))
-    if (success) {
-      store.setScanStatus("done")
-    }
+    store.setScanStatus(Object.values(scanResults).every((r) => r === "success") ? "done" : "error")
   }
 
   return (
-    <div className="space-y-4 pb-4">
-      <Card title="Documento Principal">
-        <div className="space-y-2">
-          <UploadArea
-            label="INE (Foto del cliente)"
-            accept="image/*"
-            onFileSelect={(file) => handleFileSelect("ine", file)}
-            file={docs[0].file}
-            fileName={docs[0].name}
-            showFilename={false}
-          />
-          {docs[0].file && (
-            <div className="flex items-center gap-2 text-xs">
-              {scanResults["ine"] === "success" ? (
-                <CheckCircle size={14} className="text-success" />
-              ) : scanResults["ine"] === "error" ? (
-                <AlertCircle size={14} className="text-error" />
-              ) : null}
-              <span className={scanResults["ine"] === "error" ? "text-error" : "text-success"}>
-                {docs[0].name}
-              </span>
-              {scanResults["ine"] === "error" && (
-                <button onClick={() => handleRetry("ine")} className="text-primary underline text-xs">
-                  Reintentar
-                </button>
-              )}
-            </div>
-          )}
-        </div>
-      </Card>
+    <div className="max-w-4xl mx-auto space-y-6 p-4 md:p-6">
+      <div className="text-center mb-8">
+        <h2 className="text-2xl font-semibold text-stone-900 mb-2">Subir Documentos</h2>
+        <p className="text-sm text-stone-500">Sube los 4 documentos requeridos para continuar</p>
+      </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-        {docs.slice(1).map((doc) => (
-          <Card key={doc.id} title={doc.label}>
-            <div className="space-y-2">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {docs.map((doc) => (
+          <Card key={doc.id} className="p-5">
+            <div className="space-y-3">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <FileText size={18} className="text-primary" />
+                  <span className="text-sm font-medium text-stone-700">{doc.label}</span>
+                </div>
+                {scanResults[doc.id] === "success" && <CheckCircle size={16} className="text-green-500" />}
+                {scanResults[doc.id] === "error" && <AlertCircle size={16} className="text-red-500" />}
+              </div>
               <UploadArea
-                label={doc.label}
-                accept="image/*"
+                label=""
+                accept="image/*,.pdf"
                 onFileSelect={(file) => handleFileSelect(doc.id, file)}
                 file={doc.file}
-                fileName={doc.name}
-                showFilename={false}
+                showFilename={true}
               />
-              {doc.file && (
-                <div className="flex items-center gap-1 text-xs">
-                  {scanResults[doc.id] === "success" ? (
-                    <CheckCircle size={12} className="text-success" />
-                  ) : scanResults[doc.id] === "error" ? (
-                    <AlertCircle size={12} className="text-error" />
-                  ) : null}
-                  <span className="truncate">{doc.name}</span>
-                  {scanResults[doc.id] === "error" && (
-                    <button onClick={() => handleRetry(doc.id)} className="text-primary underline text-xs">
-                      Reintentar
-                    </button>
-                  )}
-                </div>
-              )}
             </div>
           </Card>
         ))}
       </div>
 
-      <div className={`text-center text-sm font-medium ${counterColor}`}>
-        {readyCount} de 4 documentos listos
+      <div className="flex items-center justify-center gap-2 text-sm">
+        <span className="text-stone-500">Documentos subidos:</span>
+        <span className={`font-semibold ${readyCount === 4 ? "text-green-600" : "text-amber-600"}`}>
+          {readyCount}/4
+        </span>
       </div>
 
-      <Button
-        variant="primary"
-        size="lg"
-        className="w-full"
-        disabled={readyCount < 4 || isScanning}
-        onClick={handleScanAll}
-        loading={isScanning}
-      >
-        <Upload size={16} />
-        Escanear todo
-      </Button>
+      <div className="flex justify-center">
+        <Button
+          variant="primary"
+          size="lg"
+          onClick={handleScanAll}
+          disabled={readyCount < 4 || isScanning}
+          loading={isScanning}
+          className="min-w-[200px]"
+        >
+          <Upload size={16} />
+          Escanear documentos
+        </Button>
+      </div>
 
       {isScanning && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-6 max-w-sm w-full space-y-4 mx-4">
-            <div className="flex items-center gap-3">
-              <Loader2 size={20} className="animate-spin text-primary" />
-              <span className="text-sm font-medium">Escaneando documentos...</span>
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <Card className="p-6 max-w-sm w-full">
+            <div className="space-y-4">
+              <div className="flex items-center gap-3">
+                <Loader2 size={20} className="animate-spin text-primary" />
+                <span className="font-medium text-stone-900">Escaneando documentos...</span>
+              </div>
+              <div className="space-y-2">
+                {docs.map((doc) => (
+                  <div key={doc.id} className="flex items-center gap-2 text-sm">
+                    {scanResults[doc.id] === "success" ? (
+                      <CheckCircle size={14} className="text-green-500" />
+                    ) : scanResults[doc.id] === "error" ? (
+                      <AlertCircle size={14} className="text-red-500" />
+                    ) : (
+                      <div className="w-3.5 h-3.5 rounded-full border-2 border-stone-300" />
+                    )}
+                    <span className="text-stone-600">{doc.label}</span>
+                  </div>
+                ))}
+              </div>
+              <div className="w-full bg-stone-200 rounded-full h-2">
+                <div className="bg-primary h-2 rounded-full transition-all" style={{ width: `${scanProgress}%` }} />
+              </div>
             </div>
-            <div className="space-y-2">
-              {docs.map((doc, index) => (
-                <div key={index} className="flex items-center gap-2 text-xs">
-                  {scanResults[docs[index].id] === "success" ? (
-                    <CheckCircle size={14} className="text-success" />
-                  ) : scanResults[docs[index].id] === "error" ? (
-                    <AlertCircle size={14} className="text-error" />
-                  ) : (
-                    <div className="w-3.5 h-3.5 rounded-full border-2 border-stone-300" />
-                  )}
-                  <span>{doc.label}</span>
-                </div>
-              ))}
-            </div>
-            <div className="w-full bg-stone-200 rounded-full h-2">
-              <div
-                className="bg-primary h-2 rounded-full transition-all duration-300"
-                style={{ width: `${scanProgress}%` }}
-              />
-            </div>
-          </div>
+          </Card>
         </div>
       )}
     </div>
