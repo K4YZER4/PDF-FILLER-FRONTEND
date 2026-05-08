@@ -1,5 +1,2 @@
-/**
- * Archivo: features/auth/index.ts
- * Propósito: Barrel file para exportar componentes de autenticación.
- */
+/** Barrel export del feature auth. */
 export { LoginPage } from "./LoginPage"

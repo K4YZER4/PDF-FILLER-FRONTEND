@@ -1,43 +1,49 @@
-/**
- * Archivo: types/index.ts
- * Propósito: Archivo barrel que re-exporta todos los tipos de la aplicación.
- * Centraliza las importaciones de tipos para facilitar su uso en otros módulos.
- */
+/** Tipos compartidos del dominio de contratos CREDIFOM. */
 
-// Tipos relacionados con la INE (identificación oficial mexicana)
-export type { INEDomicilio, INEData, ScanINEFields } from "./ine.types"
+/** Estados posibles del escaneo de documentos */
+export type ScanStatus = "idle" | "scanning" | "done" | "error"
 
-// Tipos relacionados con nómina y datos bancarios
-export type {
-  BANCO_OPTIONS,
-  Banco,
-  NominaData,
-  EstadoCuentaData,
-  ScanNominaResponse,
-  ScanEstadoCuentaResponse,
-} from "./nomina.types"
+/** Datos extraídos de la INE: información personal y domicilio */
+export interface INEData {
+  primerNombre: string
+  segundoNombre: string
+  primerApellido: string
+  segundoApellido: string
+  curp: string
+  sexo: string
+  fechaNacimiento: string
+  claveElector: string
+  domicilio: {
+    calle: string
+    codigoPostal: string
+    colonia: string
+    noExt: string
+    municipio: string
+    estado: string
+  }
+}
 
-// Tipos para la tabla de crédito y cálculos financieros
-export type {
-  TablaCreditoData,
-  TablaCreditoRequest,
-  PLAZO_OPTIONS,
-  PlazoQuincenas,
-} from "./tabla.types"
+/** Datos laborales extraídos de la nómina */
+export interface NominaData {
+  rfc: string
+  noEmpleado: string
+  dependencia: string
+  departamento: string
+  puesto: string
+  ingresoMensual: number
+}
 
-// Tipos para datos adicionales del contrato (referencias, contacto, etc.)
-export type {
-  ESTADO_CIVIL_OPTIONS,
-  EstadoCivil,
-  PersonalReference,
-  ExtraData,
-} from "./extra.types"
+/** Datos bancarios extraídos del estado de cuenta */
+export interface EstadoCuentaData {
+  noCuenta: string
+  banco: string
+  clabe: string
+}
 
-// Tipos para la comunicación con la API y estados de la aplicación
-export type {
-  ScanStatus,
-  TabStatus,
-  ApiResponse,
-  ApiError,
-  ContractGenerationPayload,
-} from "./api.types"
+/** Resultado del cálculo de la tabla crediticia */
+export interface TablaCreditoData {
+  montoPagare: number
+  descuentoQuincenal: number
+  tasaMensual: number
+  cat: number
+}

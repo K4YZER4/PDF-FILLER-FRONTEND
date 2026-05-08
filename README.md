@@ -1,107 +1,126 @@
-# PDF Filler Frontend
+# CREDIFOM - Generador de Contratos
 
-Aplicación web para la captura, escaneo OCR y generación de contratos PDF.  
-Permite procesar identificación oficial (INE), nómina, estado de cuenta y generar contratos crediticios automáticamente.
+Aplicación web para la generación de contratos de préstamo.  
+Diseñada **mobile-first** para uso en celulares y tablets, con soporte desktop.
 
 ---
 
 ## Tecnologías
 
-- **React 19** – Interfaz de usuario moderna
-- **TypeScript** – Tipado estático y mantenibilidad
-- **Vite** – Bundler rápido y moderno
+- **React 19** + **TypeScript** – UI moderna y tipada
+- **Vite 8** – Build rápido
 - **Tailwind CSS v4** – Estilos utilitarios
-- **Zustand** – Manejo de estado global simple
-- **React Hook Form + Zod** – Formularios validados
-- **React Router v7** – Navegación por pestañas
-- **Node.js + Express** – Backend API (OCR y generación PDF)
+- **Zustand 5** + **Immer** – Estado global simple e inmutable
+- **React Router v7** – Navegación por rutas
+- **Lucide React** – Iconos
 
 ---
 
 ## Estructura del Proyecto
 
 ```
-PDF-FILLER-FRONTEND/
-├── src/
-│   ├── components/        # Componentes reutilizables UI
-│   │   ├── ui/          # Botones, Inputs, Select, etc.
-│   │   ├── layout/      # Header, TabsNav, Footer
-│   │   ├── forms/       # FormField, CurrencyInput, etc.
-│   │   └── feedback/   # Toast, ScanStatus, etc.
-│   ├── features/         # Módulos principales (INE, Nómina, Crédito)
-│   ├── store/            # Estado global (Zustand)
-│   ├── services/         # Llamadas a API
-│   ├── types/           # Tipos e interfaces TypeScript
-│   ├── utils/           # Funciones auxiliares
-│   ├── hooks/           # Custom hooks
-│   └── assets/          # Imágenes y recursos
-├── docs/                # Documentación del proyecto
-├── public/              # Archivos públicos
-└── index.html           # Entrada HTML
+src/
+├── app/                      # Entry point y estilos globales
+│   ├── App.tsx               # Routing principal
+│   └── index.css             # Tema CREDIFOM
+├── features/                 # Módulos por funcionalidad
+│   ├── auth/                 # Login
+│   ├── upload-documents/     # Subir INE, nóminas, estado de cuenta
+│   ├── review-data/          # Revisar datos personales, laborales, bancarios
+│   ├── loan-data/            # Cálculo de crédito (monto, plazo)
+│   ├── preview-contract/     # Vista previa y descarga del contrato
+│   └── history/              # Historial de contratos generados
+├── layouts/                  # Layouts reutilizables
+│   ├── AuthLayout.tsx        # Layout público (login)
+│   ├── AppLayout.tsx         # Layout principal con header
+│   └── ContractLayout.tsx    # Stepper de 4 pasos
+├── routes/                   # Protección de rutas
+│   ├── PrivateRoute.tsx
+│   └── PublicRoute.tsx
+├── shared/components/        # UI components reutilizables
+│   ├── Button.tsx
+│   ├── Input.tsx
+│   ├── Card.tsx
+│   ├── Badge.tsx
+│   └── Spinner.tsx
+├── store/                    # Estado global (Zustand + immer)
+│   └── useContractStore.ts
+├── types/                    # Tipos TypeScript
+│   └── index.ts
+└── main.tsx                  # Entry point
 ```
 
 ---
 
-## Documentación
+## Routing
 
-Este proyecto sigue un flujo de trabajo y reglas claras para facilitar el trabajo en equipo y mantener la calidad del código.
-
-### Getting Started
-- **[Setup para desarrolladores](./docs/setup/DEVELOPMENT_SETUP.md)** - Instalación y configuración inicial
-- **[Guía de Contribución](./docs/CONTRIBUTING.md)** - Cómo contribuir al proyecto
-
-### Gestión del Proyecto
-- **[Flujo de Trabajo del Equipo](./docs/team/TEAM_WORKFLOW.md)** - Coordinación (2 frontend + 2 backend)
-- **[Documentación de API](./docs/api/API.md)** - Contratos entre frontend y backend
-- **[Dependencias del proyecto](./docs/DEPENDENCIES.md)** - Gestión de librerías
-
-### Arquitectura
-- **[Estructura del proyecto](./docs/ARCHITECTURE.md)** - Organización de carpetas
-- **[Arquitectura de Componentes](./docs/architecture/COMPONENTS_ARCHITECTURE.md)** - Estructura UI
-- **[Estándares de Código](./docs/guides/CODING_STANDARDS.md)** - Reglas de desarrollo
-
-### Paleta de Colores
-- **Primary:** `#5b2d8e` (Morado/Púrpura)
-- **Error/Warning:** `#efc12c` (Amarillo)
-- **Success:** `#16a34a` (Verde)
-- **White:** `#ffffff` (Blanco)
-
-### Git y Colaboración
-- **[GitHub Flow](./docs/workflows/GIT_WORKFLOW.md)** - Flujo de trabajo con Git
-- **[Guía de Pull Requests](./docs/workflows/PULL_REQUESTS.md)** - Cómo crear y revisar PRs
+| Ruta | Layout | Componente |
+|------|--------|------------|
+| `/login` | AuthLayout | LoginPage |
+| `/` | AppLayout | HistorialPage |
+| `/contracts/upload` | ContractLayout | SubirDocs |
+| `/contracts/review` | ContractLayout | RevisionDatos |
+| `/contracts/loan` | ContractLayout | CreditoAsesor |
+| `/contracts/preview` | ContractLayout | VistaPrevia |
 
 ---
 
-## Equipo de Desarrollo
+## Flujo de la Aplicación
 
-| Rol | Persona | Responsabilidades |
-|-----|---------|-------------------|
-| **Frontend Lead** | Dev 1 | - Arquitectura del frontend<br>- Coordinación de UI/UX<br>- Revisión de PRs frontend |
-| **Backend Lead** | Dev 2 | - Arquitectura del backend<br>- Diseño de API REST<br>- Base de datos y servicios OCR |
-| **Frontend Dev** | Dev 3 | - Implementación de pantallas<br>- Componentes UI<br>- Testing de componentes |
-| **Backend Dev** | Dev 4 | - Endpoints API<br>- Servicios de OCR<br>- Testing de integración |
+```
+Login → Historial → Nuevo Contrato
+                        │
+                        ▼
+               Subir documentos (paso 1)
+               INE, Nómina 1, Nómina 2, Estado de cuenta
+                        │
+                        ▼
+               Revisar datos (paso 2)
+               Personales · Domicilio · Laborales · Bancarios
+                        │
+                        ▼
+               Datos del préstamo (paso 3)
+               Monto · Plazo · Cálculo · Resumen
+                        │
+                        ▼
+               Vista previa (paso 4)
+               Descargar · Editar · Finalizar
+```
 
 ---
 
-## Scripts Disponibles
+## Paleta de Colores CREDIFOM
+
+| Variable | Color | Uso |
+|----------|-------|-----|
+| `primary` | `#5b2d90` | Botones, acentos |
+| `primary-hover` | `#6d3fb3` | Hover |
+| `primary-tint` | `#f3eefa` | Fondos suaves |
+| `brand` | `#f4b400` | Amarillo corporativo |
+| `success` | `#16a34a` | Éxito |
+| `error` | `#dc2626` | Error |
+| `warning` | `#f59e0b` | Advertencia |
+| `bg` | `#f8fafc` | Fondo general |
+| `surface` | `#ffffff` | Tarjetas |
+| `text-primary` | `#0f172a` | Texto principal |
+| `text-secondary` | `#64748b` | Texto secundario |
+| `border` | `#e2e8f0` | Bordes |
+
+---
+
+## Scripts
 
 ```bash
-npm run dev          # Inicia servidor de desarrollo (Vite)
-npm run build        # Build de producción
+npm run dev          # Servidor de desarrollo
+npm run build        # Build producción (tsc + vite)
 npm run preview      # Preview del build
-npx tsc --noEmit   # Verificación de tipos TypeScript
+npm run lint         # Linter
 ```
 
 ---
 
 ## Requisitos
 
-- **Node.js** 18+ 
-- **npm** 9+
-- **Navegador moderno** (Chrome, Firefox, Edge)
-- **Conexión a Internet** (para servicios de OCR)
-
----
-
-> **Nota:** Este proyecto está optimizado para escritorio (no móvil).  
-> La generación de PDFs requiere el backend API ejecutándose en `localhost:3000`.
+- **Node.js** 18+
+- **Navegador moderno** (Chrome, Firefox, Edge, Safari)
+- Diseñado **mobile-first** (celular → tablet → desktop)

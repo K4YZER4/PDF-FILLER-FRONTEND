@@ -2,31 +2,37 @@
  * Archivo: features/vistaprevia/VistaPrevia.tsx
  * Propósito: Paso 4 - Vista previa del contrato con diseño profesional.
  */
-import { useState } from "react"
-import { FileDown, Share2, Pencil, CheckCircle } from "lucide-react"
-import { Button, Card } from "@/components"
-import { useContractStore } from "@/store/useContractStore"
+import { useState } from "react";
+import { FileDown, Share2, Pencil, CheckCircle } from "lucide-react";
+import { Button, Card } from "@/shared/components";
+import { useContractStore } from "@/store/useContractStore";
 
 function VistaPrevia() {
-  const store = useContractStore()
-  const [showToast, setShowToast] = useState(false)
+  const store = useContractStore();
+  const [showToast, setShowToast] = useState(false);
 
-  const clientName = [
-    (store.formData.ine as any)?.primerNombre,
-    (store.formData.ine as any)?.segundoNombre,
-    (store.formData.ine as any)?.primerApellido,
-    (store.formData.ine as any)?.segundoApellido,
-  ].filter(Boolean).join(" ").toUpperCase() || "CLIENTE"
+  const clientName =
+    [
+      (store.formData.ine as any)?.primerNombre,
+      (store.formData.ine as any)?.segundoNombre,
+      (store.formData.ine as any)?.primerApellido,
+      (store.formData.ine as any)?.segundoApellido,
+    ]
+      .filter(Boolean)
+      .join(" ")
+      .toUpperCase() || "CLIENTE";
 
   const handleDownload = () => {
-    const blob = new Blob(["Contrato PDF simulado"], { type: "application/pdf" })
-    const url = URL.createObjectURL(blob)
-    const a = document.createElement("a")
-    a.href = url
-    a.download = `contrato-${Date.now()}.pdf`
-    a.click()
-    URL.revokeObjectURL(url)
-  }
+    const blob = new Blob(["Contrato PDF simulado"], {
+      type: "application/pdf",
+    });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `contrato-${Date.now()}.pdf`;
+    a.click();
+    URL.revokeObjectURL(url);
+  };
 
   const handleShare = async () => {
     if (navigator.share) {
@@ -35,42 +41,52 @@ function VistaPrevia() {
           title: "Contrato Generado",
           text: `Contrato de ${clientName}`,
           url: window.location.href,
-        })
+        });
       } catch {
         // Usuario canceló
       }
     } else {
-      await navigator.clipboard.writeText(window.location.href)
-      alert("Enlace copiado al portapapeles")
+      await navigator.clipboard.writeText(window.location.href);
+      alert("Enlace copiado al portapapeles");
     }
-  }
+  };
 
-  const handleEdit = () => store.setStep(2)
+  const handleEdit = () => store.setStep(2);
 
   const handleFinish = () => {
-    setShowToast(true)
+    setShowToast(true);
     setTimeout(() => {
-      setShowToast(false)
-      window.location.href = "/"
-    }, 2000)
-  }
+      setShowToast(false);
+      window.location.href = "/";
+    }, 2000);
+  };
 
   return (
     <div className="max-w-4xl mx-auto space-y-6 p-4 md:p-6">
       <div className="text-center mb-6">
-        <h2 className="text-2xl font-semibold text-stone-900 mb-2">Vista Previa</h2>
-        <p className="text-sm text-stone-500">Revisa el contrato antes de finalizar</p>
+        <h2 className="text-2xl font-semibold text-stone-900 mb-2">
+          Vista Previa
+        </h2>
+        <p className="text-sm text-stone-500">
+          Revisa el contrato antes de finalizar
+        </p>
       </div>
 
       {/* Simulación visual del PDF */}
       <Card className="p-6 md:p-8">
         <div className="border-b border-stone-200 pb-4 mb-6">
-          <h3 className="text-lg font-bold text-center text-primary">VISTA PREVIA DEL CONTRATO</h3>
+          <h3 className="text-lg font-bold text-center text-primary">
+            VISTA PREVIA DEL CONTRATO
+          </h3>
         </div>
 
         <div className="space-y-3 mb-6">
           {Array.from({ length: 8 }, (_, i) => (
-            <div key={i} className="h-3 bg-stone-100 rounded" style={{ width: `${75 + Math.random() * 25}%` }} />
+            <div
+              key={i}
+              className="h-3 bg-stone-100 rounded"
+              style={{ width: `${75 + Math.random() * 25}%` }}
+            />
           ))}
         </div>
 
@@ -79,7 +95,9 @@ function VistaPrevia() {
 
       {/* Información del contrato */}
       <Card className="p-5 md:p-6">
-        <h3 className="text-sm font-semibold text-stone-800 mb-4">Datos del Contrato</h3>
+        <h3 className="text-sm font-semibold text-stone-800 mb-4">
+          Datos del Contrato
+        </h3>
         <div className="space-y-3 text-sm">
           <div className="flex justify-between">
             <span className="text-stone-500">Cliente:</span>
@@ -93,7 +111,9 @@ function VistaPrevia() {
           </div>
           <div className="flex justify-between">
             <span className="text-stone-500">Plazo:</span>
-            <span className="font-medium">{store.formData.tabla?.descuentoQuincenal || "0"} QNAs</span>
+            <span className="font-medium">
+              {store.formData.tabla?.descuentoQuincenal || "0"} QNAs
+            </span>
           </div>
         </div>
       </Card>
@@ -137,7 +157,7 @@ function VistaPrevia() {
         </div>
       )}
     </div>
-  )
+  );
 }
 
-export { VistaPrevia }
+export { VistaPrevia };

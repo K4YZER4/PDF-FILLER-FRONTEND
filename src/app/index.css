@@ -1,0 +1,35 @@
+/** Tema global CREDIFOM para Tailwind CSS v4. Define la paleta de colores y la fuente base. */
+@import "tailwindcss";
+
+@theme {
+  /* Colores corporativos CREDIFOM */
+  --color-primary: #5b2d90;
+  --color-primary-hover: #6d3fb3;
+  --color-primary-tint: #f3eefa;
+  --color-brand: #f4b400;
+  --color-brand-tint: #fff8e6;
+  /* Estados */
+  --color-success: #16a34a;
+  --color-success-tint: #f0fdf4;
+  --color-error: #dc2626;
+  --color-error-tint: #fef2f2;
+  --color-warning: #f59e0b;
+  --color-warning-tint: #fffbeb;
+  /* Neutros */
+  --color-bg: #f8fafc;
+  --color-surface: #ffffff;
+  --color-text-primary: #0f172a;
+  --color-text-secondary: #64748b;
+  --color-border: #e2e8f0;
+  /* Tipografía */
+  --font-sans: "Inter", system-ui, -apple-system, sans-serif;
+}
+
+body {
+  font-family: var(--font-sans);
+  background-color: var(--color-bg);
+  color: var(--color-text-primary);
+  -webkit-font-smoothing: antialiased;
+}
+
+* { box-sizing: border-box; }
