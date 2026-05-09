@@ -1,35 +1,389 @@
-/** Tema global CREDIFOM para Tailwind CSS v4. Define la paleta de colores y la fuente base. */
 @import "tailwindcss";
+/**
+ * Tema global CREDIFOM – Tailwind CSS v4
+ *
+ * Uso rápido de referencia:
+ *   bg-primary          → fondo morado corporativo
+ *   text-primary        → texto morado corporativo
+ *   border-primary      → borde morado corporativo
+ *   bg-primary-tint     → fondo morado muy suave (filas, badges)
+ *   bg-brand            → fondo amarillo-dorado
+ *   bg-surface          → blanco puro (tarjetas, paneles)
+ *   bg-bg               → gris muy claro (fondo de página)
+ *   text-muted          → texto secundario gris
+ *   border-border       → borde estándar gris claro
+ */
 
+/* ─────────────────────────────────────────────
+   TEMA – TOKENS DE DISEÑO
+   ───────────────────────────────────────────── */
 @theme {
-  /* Colores corporativos CREDIFOM */
-  --color-primary: #5b2d90;
-  --color-primary-hover: #6d3fb3;
-  --color-primary-tint: #f3eefa;
-  --color-brand: #f4b400;
-  --color-brand-tint: #fff8e6;
-  /* Estados */
-  --color-success: #16a34a;
-  --color-success-tint: #f0fdf4;
-  --color-error: #dc2626;
-  --color-error-tint: #fef2f2;
-  --color-warning: #f59e0b;
-  --color-warning-tint: #fffbeb;
-  /* Neutros */
-  --color-bg: #f8fafc;
-  --color-surface: #ffffff;
-  --color-text-primary: #0f172a;
-  --color-text-secondary: #64748b;
-  --color-border: #e2e8f0;
-  /* Tipografía */
+  /* ── Tipografía ─────────────────────────────
+     Inter es la fuente base del sistema.
+     Los tamaños siguen una escala de 4 px.        */
   --font-sans: "Inter", system-ui, -apple-system, sans-serif;
+
+  --font-size-xs: 0.75rem; /* 12 px – labels pequeños, badges */
+  --font-size-sm: 0.875rem; /* 14 px – texto de tabla, ayuda   */
+  --font-size-base: 1rem; /* 16 px – body por defecto         */
+  --font-size-lg: 1.125rem; /* 18 px – títulos de sección       */
+  --font-size-xl: 1.25rem; /* 20 px – encabezados de panel     */
+  --font-size-2xl: 1.5rem; /* 24 px – títulos de página        */
+  --font-size-3xl: 1.875rem; /* 30 px – hero / bienvenida        */
+
+  --font-weight-normal: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+
+  --line-height-tight: 1.25;
+  --line-height-normal: 1.5;
+  --line-height-relaxed: 1.75;
+
+  /* ── Colores corporativos CREDIFOM ──────────
+     El morado #5b2d90 es el color principal.
+     Se usa en botones primarios, íconos activos,
+     pasos de wizard completados y bordes de foco. */
+  --color-primary: #5b2d90; /* morado principal              */
+  --color-primary-hover: #6d3fb3; /* morado más claro al hover     */
+  --color-primary-active: #4a2275; /* morado más oscuro al click    */
+  --color-primary-tint: #f3eefa; /* fondo morado muy suave        */
+  --color-primary-tint2: #e9d9f9; /* tint ligeramente más intenso  */
+  --color-primary-subtle: #d4b8f0; /* bordes sobre fondos tinted    */
+
+  /* ── Acento amarillo-dorado (brand) ─────────
+     Aparece en el logo "credi" y en el icono
+     de handshake de la pantalla de bienvenida.  */
+  --color-brand: #f4b400; /* amarillo dorado               */
+  --color-brand-hover: #e0a200; /* dorado oscuro al hover        */
+  --color-brand-tint: #fff8e6; /* fondo amarillo muy suave      */
+  --color-brand-subtle: #fde68a; /* borde o highlight dorado      */
+
+  /* ── Estados semánticos ─────────────────────
+     Paleta estándar de feedback visual.         */
+  --color-success: #16a34a;
+  --color-success-hover: #15803d;
+  --color-success-tint: #f0fdf4;
+  --color-success-subtle: #bbf7d0;
+
+  --color-error: #dc2626;
+  --color-error-hover: #b91c1c;
+  --color-error-tint: #fef2f2;
+  --color-error-subtle: #fecaca;
+
+  --color-warning: #f59e0b;
+  --color-warning-hover: #d97706;
+  --color-warning-tint: #fffbeb;
+  --color-warning-subtle: #fde68a;
+
+  --color-info: #0ea5e9;
+  --color-info-hover: #0284c7;
+  --color-info-tint: #f0f9ff;
+  --color-info-subtle: #bae6fd;
+
+  /* ── Neutros ────────────────────────────────
+     El fondo de página es gris muy claro (#f8fafc).
+     Las tarjetas y paneles son blanco puro.
+     Las tablas alternan blanco / primary-tint.   */
+  --color-bg: #f8fafc; /* fondo global de la app        */
+  --color-bg-dark: #f1f5f9; /* fondo de paneles secundarios  */
+  --color-surface: #ffffff; /* tarjetas, modales, sidebars   */
+  --color-surface-raised: #ffffff; /* elementos elevados (popovers) */
+
+  --color-text-primary: #0f172a; /* negro azulado – títulos       */
+  --color-text-secondary: #475569; /* gris medio – subtítulos       */
+  --color-text-muted: #94a3b8; /* gris claro – placeholders     */
+  --color-text-disabled: #cbd5e1; /* texto deshabilitado           */
+  --color-text-inverse: #ffffff; /* texto sobre fondos oscuros    */
+  --color-text-link: #5b2d90; /* enlaces – igual que primary   */
+
+  --color-border: #e2e8f0; /* borde estándar                */
+  --color-border-strong: #cbd5e1; /* borde con más contraste       */
+  --color-border-focus: #5b2d90; /* borde de foco (=primary)      */
+
+  /* ── Sombras ────────────────────────────────
+     Las tarjetas tienen sombra muy sutil.        */
+  --shadow-xs: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --shadow-sm: 0 1px 3px 0 rgb(0 0 0 / 0.08), 0 1px 2px -1px rgb(0 0 0 / 0.06);
+  --shadow-md:
+    0 4px 6px -1px rgb(0 0 0 / 0.08), 0 2px 4px -2px rgb(0 0 0 / 0.06);
+  --shadow-lg:
+    0 10px 15px -3px rgb(0 0 0 / 0.08), 0 4px 6px -4px rgb(0 0 0 / 0.05);
+
+  /* ── Radio de borde ─────────────────────────
+     El diseño usa esquinas redondeadas suaves.   */
+  --radius-sm: 0.25rem; /* 4 px  – badges, chips               */
+  --radius-md: 0.5rem; /* 8 px  – inputs, botones             */
+  --radius-lg: 0.75rem; /* 12 px – tarjetas, paneles           */
+  --radius-xl: 1rem; /* 16 px – modales                     */
+  --radius-full: 9999px; /* píldoras / avatares                 */
+
+  /* ── Espaciado ──────────────────────────────
+     Escala de 4 px. Tailwind v4 genera utilidades
+     automáticamente desde --spacing-*, pero definir
+     los alias semánticos ayuda a mantener consistencia. */
+  --spacing-page-x: 1.5rem; /* padding horizontal de página (24 px) */
+  --spacing-page-y: 1.5rem; /* padding vertical de página   (24 px) */
+  --spacing-section: 2rem; /* separación entre secciones   (32 px) */
+  --spacing-card: 1.25rem; /* padding interno de tarjeta   (20 px) */
+
+  /* ── Z-index ────────────────────────────────  */
+  --z-dropdown: 100;
+  --z-sticky: 200;
+  --z-modal: 300;
+  --z-toast: 400;
+
+  /* ── Transiciones ───────────────────────────  */
+  --transition-fast: 150ms ease;
+  --transition-normal: 200ms ease;
+  --transition-slow: 300ms ease;
+}
+
+/* ─────────────────────────────────────────────
+   RESET Y BASE
+   ───────────────────────────────────────────── */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
 }
 
 body {
   font-family: var(--font-sans);
+  font-size: var(--font-size-base);
+  line-height: var(--line-height-normal);
   background-color: var(--color-bg);
   color: var(--color-text-primary);
   -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
-* { box-sizing: border-box; }
+/* ─────────────────────────────────────────────
+   UTILIDADES SEMÁNTICAS ADICIONALES
+   Clases que Tailwind v4 no genera solas porque
+   usan nombres de token compuestos o alias.
+   ───────────────────────────────────────────── */
+
+/* Texto */
+.text-muted {
+  color: var(--color-text-muted);
+}
+.text-link {
+  color: var(--color-text-link);
+  text-decoration: underline;
+}
+.text-inverse {
+  color: var(--color-text-inverse);
+}
+.text-disabled {
+  color: var(--color-text-disabled);
+}
+
+/* Fondo tinted (wizard steps, row highlights) */
+.bg-primary-tint2 {
+  background-color: var(--color-primary-tint2);
+}
+.bg-primary-subtle {
+  background-color: var(--color-primary-subtle);
+}
+.bg-brand-subtle {
+  background-color: var(--color-brand-subtle);
+}
+.bg-success-subtle {
+  background-color: var(--color-success-subtle);
+}
+.bg-error-subtle {
+  background-color: var(--color-error-subtle);
+}
+.bg-warning-subtle {
+  background-color: var(--color-warning-subtle);
+}
+.bg-info-subtle {
+  background-color: var(--color-info-subtle);
+}
+
+/* Bordes semánticos */
+.border-focus {
+  border-color: var(--color-border-focus);
+}
+.border-strong {
+  border-color: var(--color-border-strong);
+}
+
+/* Sombras */
+.shadow-xs {
+  box-shadow: var(--shadow-xs);
+}
+.shadow-sm {
+  box-shadow: var(--shadow-sm);
+}
+.shadow-md {
+  box-shadow: var(--shadow-md);
+}
+.shadow-lg {
+  box-shadow: var(--shadow-lg);
+}
+
+/* ─────────────────────────────────────────────
+   COMPONENTES BASE DEL SISTEMA CREDIFOM
+   ───────────────────────────────────────────── */
+
+/* Botón primario (morado) */
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1.25rem;
+  background-color: var(--color-primary);
+  color: var(--color-text-inverse);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  border-radius: var(--radius-md);
+  border: none;
+  cursor: pointer;
+  transition:
+    background-color var(--transition-fast),
+    box-shadow var(--transition-fast);
+}
+.btn-primary:hover {
+  background-color: var(--color-primary-hover);
+  box-shadow: var(--shadow-sm);
+}
+.btn-primary:active {
+  background-color: var(--color-primary-active);
+}
+.btn-primary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Botón outline */
+.btn-outline {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1.25rem;
+  background-color: transparent;
+  color: var(--color-primary);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  border-radius: var(--radius-md);
+  border: 1.5px solid var(--color-primary);
+  cursor: pointer;
+  transition: background-color var(--transition-fast);
+}
+.btn-outline:hover {
+  background-color: var(--color-primary-tint);
+}
+
+/* Tarjeta base */
+.card {
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-card);
+  box-shadow: var(--shadow-sm);
+}
+
+/* Input base */
+.input {
+  width: 100%;
+  padding: 0.5rem 0.75rem;
+  font-size: var(--font-size-sm);
+  font-family: var(--font-sans);
+  color: var(--color-text-primary);
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  outline: none;
+  transition:
+    border-color var(--transition-fast),
+    box-shadow var(--transition-fast);
+}
+.input::placeholder {
+  color: var(--color-text-muted);
+}
+.input:focus {
+  border-color: var(--color-border-focus);
+  box-shadow: 0 0 0 3px var(--color-primary-tint);
+}
+.input:disabled {
+  background-color: var(--color-bg-dark);
+  color: var(--color-text-disabled);
+  cursor: not-allowed;
+}
+
+/* Badge / chip de estado */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.125rem 0.5rem;
+  border-radius: var(--radius-full);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-medium);
+}
+.badge-primary {
+  background-color: var(--color-primary-tint);
+  color: var(--color-primary);
+}
+.badge-success {
+  background-color: var(--color-success-tint);
+  color: var(--color-success);
+}
+.badge-error {
+  background-color: var(--color-error-tint);
+  color: var(--color-error);
+}
+.badge-warning {
+  background-color: var(--color-warning-tint);
+  color: var(--color-warning);
+}
+.badge-info {
+  background-color: var(--color-info-tint);
+  color: var(--color-info);
+}
+
+/* Step indicator (wizard "Nuevo contrato") */
+.step-dot {
+  width: 1.75rem;
+  height: 1.75rem;
+  border-radius: var(--radius-full);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-bold);
+  border: 2px solid var(--color-border);
+  color: var(--color-text-muted);
+  background-color: var(--color-surface);
+  transition: all var(--transition-normal);
+}
+.step-dot.active {
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+}
+.step-dot.done {
+  border-color: var(--color-primary);
+  background-color: var(--color-primary);
+  color: var(--color-text-inverse);
+}
+
+/* ─────────────────────────────────────────────
+   SCROLL
+   ───────────────────────────────────────────── */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: var(--color-bg);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--color-border-strong);
+  border-radius: var(--radius-full);
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-text-muted);
+}

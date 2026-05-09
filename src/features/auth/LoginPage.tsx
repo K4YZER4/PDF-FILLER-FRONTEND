@@ -10,6 +10,8 @@ import { useContractStore } from "@/store/useContractStore";
 import type { UserRole } from "@/store/useContractStore";
 import loginIllustration from "@/assets/LogIn-.png";
 import logo from "@/assets/Logo.png";
+// Importa el tema global (Tailwind CSS + fuentes) para estilos rápidos en este componente.
+import "@/app/index.css";
 
 const MOCK_USERS: { email: string; password: string; role: UserRole }[] = [
   { email: "asesor@credifom.mx", password: "1234", role: "asesor" },
@@ -52,7 +54,7 @@ function LoginPage() {
         flex flex-col justify-center
         w-full md:w-1/3
         px-8 py-12 sm:px-14 lg:px-20
-        bg-[#F4F4F6]
+        bg-bg
       "
       >
         {/* Logo */}
