@@ -10,7 +10,9 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Eye, EyeOff, AlertCircle } from "lucide-react";
 // Componentes
-import { Button } from "@/shared/components";
+import { Button } from "@/components";
+import { Input } from "@/components/ui";
+
 import { useContractStore } from "@/store/useContractStore";
 import type { UserRole } from "@/store/useContractStore";
 // Assets
@@ -120,31 +122,15 @@ function LoginPage() {
           {/* ───────────────── Formulario ───────────────── */}
           <form onSubmit={handleSubmit} className="space-y-5">
             {/* Usuario */}
-            <div className="space-y-2">
-              <label
-                htmlFor="email"
-                className="
-            text-sm
-            font-medium
-            text-text-secondary
-          "
-              >
-                Usuario
-              </label>
-
-              <input
-                id="email"
-                type="email"
-                autoComplete="username"
-                placeholder="Usuario"
-                value={email}
-                onChange={(e) => {
-                  setEmail(e.target.value);
-                  setError("");
-                }}
-                className="input"
-              />
-            </div>
+            <Input
+              labelText="Usuario"
+              placeholder="Usuario"
+              value={email}
+              onChange={(e) => {
+                setEmail(e.target.value);
+                setError("");
+              }}
+            />
 
             {/* Contraseña */}
             <div className="space-y-2">

@@ -4,7 +4,7 @@
  */
 import { useState } from "react";
 import { FileDown, Share2, Pencil, CheckCircle } from "lucide-react";
-import { Button, Card } from "@/shared/components";
+import { Button, Card } from "@/components";
 import { useContractStore } from "@/store/useContractStore";
 
 function VistaPrevia() {

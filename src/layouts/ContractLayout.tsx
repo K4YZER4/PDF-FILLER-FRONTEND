@@ -6,7 +6,7 @@
 import { Outlet, useNavigate } from "react-router-dom";
 import { useLocation } from "react-router-dom";
 import { FileText, Search, Calculator, Eye, CheckCircle } from "lucide-react";
-import { Button } from "@/shared/components";
+import { Button } from "@/components";
 import { useContractStore } from "@/store/useContractStore";
 
 const STEPS = [

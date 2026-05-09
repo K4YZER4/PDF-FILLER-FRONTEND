@@ -7,7 +7,7 @@
  *  Los campos de domicilio se guardan dentro de ine.domicilio, el resto directamente en su sección. */
 import { useState } from "react";
 import { ChevronDown, User, Home, Briefcase, Building } from "lucide-react";
-import { Card, Input } from "@/shared/components";
+import { Card, Input } from "@/components";
 import { useContractStore } from "@/store/useContractStore";
 
 type SectionId = "personales" | "domicilio" | "laborales" | "bancarios";

@@ -14,7 +14,7 @@ import {
   Loader2,
   X,
 } from "lucide-react";
-import { Button, Card } from "@/shared/components";
+import { Button, Card } from "@/components";
 import { useContractStore } from "@/store/useContractStore";
 
 interface DocItem {
