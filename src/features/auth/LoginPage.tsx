@@ -116,7 +116,7 @@ function LoginPage() {
               Input de usuario — usa react-hook-form via {...register()}
               El error de zod se pasa directamente como prop error
             */}
-            <Input
+              <Input
               id="email"
               label="Usuario"
               required
@@ -124,7 +124,7 @@ function LoginPage() {
               placeholder="asesor@credifom.mx"
               autoComplete="username"
               error={errors.email?.message}
-              {...register("email")}
+              {...register("email", { onChange: () => setServerError("") })}
             />
 
             {/*
@@ -139,7 +139,7 @@ function LoginPage() {
               placeholder="••••••••"
               autoComplete="current-password"
               error={errors.password?.message}
-              {...register("password")}
+              {...register("password", { onChange: () => setServerError("") })}
             />
 
             {/* Recuperar contraseña */}

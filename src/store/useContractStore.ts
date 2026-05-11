@@ -6,6 +6,7 @@
  */
 import { create } from "zustand"
 import { immer } from "zustand/middleware/immer"
+import { persist } from "zustand/middleware"
 import type { INEData, NominaData, EstadoCuentaData, TablaCreditoData, ScanStatus } from "@/types"
 
 /** Roles disponibles en la aplicación */
@@ -152,9 +153,10 @@ const initialFormData: FormDataState = {
   tabla: null,
 }
 
-/** Store principal con immer para mutaciones */
+/** Store principal con persist + immer para mutaciones y sesión persistente */
 const useContractStore = create<ContractState>()(
-  immer((set) => ({
+  persist(
+    immer((set) => ({
     // === ESTADO INICIAL ===
     auth: {
       user: null,
@@ -253,7 +255,12 @@ const useContractStore = create<ContractState>()(
         state.formData = { ...initialFormData }
         // Mantener historial en mockup
       }),
-  }))
+  })),
+    {
+      name: "credifom-auth",
+      partialize: (state) => ({ auth: state.auth }),
+    }
+  )
 )
 
 export { useContractStore }
