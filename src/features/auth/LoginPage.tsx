@@ -11,8 +11,7 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 // Componentes
-import { Input } from "@/components/ui/index";
-import { Button } from "@/components/index";
+import { Input, Button } from "@/components/ui/index";
 import { Toggle } from "@/features/auth/components/Toggle";
 
 import { useContractStore } from "@/store/useContractStore";
@@ -116,7 +115,7 @@ function LoginPage() {
               Input de usuario — usa react-hook-form via {...register()}
               El error de zod se pasa directamente como prop error
             */}
-              <Input
+            <Input
               id="email"
               label="Usuario"
               required
@@ -185,8 +184,9 @@ function LoginPage() {
 
             <Button
               type="submit"
+              variant="primary"
               size="lg"
-              className="w-full"
+              fullWidth
               loading={isSubmitting}
             >
               Iniciar sesión

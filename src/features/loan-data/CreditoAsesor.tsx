@@ -6,7 +6,9 @@
  *  - handleConfirm guarda el resultado en el store para que el stepper pueda avanzar. */
 import { useState } from "react";
 import { TrendingUp, FileDown } from "lucide-react";
-import { Card, Button, Input } from "@/components";
+
+import { Button } from "@/components/ui";
+import { Card, Input } from "@/components";
 import { useContractStore } from "@/store/useContractStore";
 
 function CreditoAsesor() {

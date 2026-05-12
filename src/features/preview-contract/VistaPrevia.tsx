@@ -7,7 +7,9 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { FileDown, Pencil, CheckCircle } from "lucide-react";
-import { Button, Card } from "@/components";
+
+import { Button } from "@/components/ui";
+import { Card } from "@/components";
 import { useContractStore } from "@/store/useContractStore";
 
 function VistaPrevia() {

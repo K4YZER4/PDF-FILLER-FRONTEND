@@ -6,7 +6,10 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Eye, Share2, Search } from "lucide-react";
-import { Input, Card, Badge } from "@/components";
+// Componentes
+import { Input, Badge } from "@/components";
+import { Card } from "@/features/history/components/index";
+
 import { useContractStore } from "@/store/useContractStore";
 
 function HistorialPage() {

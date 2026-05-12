@@ -101,6 +101,8 @@
   --color-border-strong: #cbd5e1; /* borde con más contraste       */
   --color-border-focus: #5b2d90; /* borde de foco (=primary)      */
 
+  --color-header-bg: #ebebf3; /* fondo del header */
+
   /* ── Sombras ────────────────────────────────
      Las tarjetas tienen sombra muy sutil.        */
   --shadow-xs: 0 1px 2px 0 rgb(0 0 0 / 0.05);
