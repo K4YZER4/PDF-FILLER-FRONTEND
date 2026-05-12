@@ -7,8 +7,14 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Eye, Share2, Search } from "lucide-react";
 // Componentes
-import { Input, Badge } from "@/components";
-import { Card } from "@/features/history/components/index";
+import { Input } from "@/components/ui";
+import { EmptyState } from "@/components/feedback";
+
+import { Badge } from "@/components";
+import { Card } from "@/features/history/componenrs/index";
+
+// Imagenes
+import emptyContract from "@/assets/empty-contracts.png";
 
 import { useContractStore } from "@/store/useContractStore";
 
@@ -41,6 +47,7 @@ function HistorialPage() {
   };
 
   return (
+    // Buscador
     <div className="max-w-5xl mx-auto px-4 md:px-6 py-6 space-y-4">
       <div className="relative">
         <Search
@@ -51,15 +58,22 @@ function HistorialPage() {
           placeholder="Buscar por nombre..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
+          leftIcon={<Search size={16} />}
           className="pl-9"
         />
       </div>
 
+      {/* Esto se muestra si no hay contratos */}
       {filtered.length === 0 ? (
-        <div className="flex flex-col items-center justify-center py-16 gap-4 text-center">
-          <p className="text-sm text-text-secondary">No hay contratos aún</p>
-        </div>
+        <EmptyState
+          title="Aún no hay contratos registrados"
+          description="Cuando crees un contrato aparecerá aquí para poder visualizarlo, compartirlo y darle seguimiento."
+          image={emptyContract}
+          actionLabel="Crear contrato"
+          onAction={() => navigate("/contracts/upload")}
+        />
       ) : (
+        // Cards de contratos
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {filtered.map((contract: any) => (
             <Card

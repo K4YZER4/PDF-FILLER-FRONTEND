@@ -206,7 +206,7 @@ function SubirDocs() {
           onClick={handleScanAll}
           disabled={readyCount < 4 || isScanning}
           loading={isScanning}
-          className="min-w-[200px]"
+          className="min-w-[50]"
         >
           <Upload size={16} /> Leer documentos
         </Button>

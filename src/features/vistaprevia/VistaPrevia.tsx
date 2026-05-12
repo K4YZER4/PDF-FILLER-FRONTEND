@@ -150,7 +150,7 @@ function VistaPrevia() {
 
       {/* Toast de éxito */}
       {showToast && (
-        <div className="fixed top-6 right-6 z-[999]">
+        <div className="fixed top-6 right-6 z-999">
           <div className="bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-lg shadow-lg flex items-center gap-2 text-sm">
             <CheckCircle size={16} />
             <span>Contrato generado exitosamente</span>

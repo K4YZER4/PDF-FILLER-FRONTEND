@@ -19,6 +19,8 @@ interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   autofilled?: boolean;
   // Permite pasar un ícono personalizado que se muestra a la derecha del input (ej: ícono de búsqueda)
   rightIcon?: React.ReactNode;
+  // Permite pasar un ícono personalizado que se muestra a la izquierda del input (ej: ícono de búsqueda)
+  leftIcon?: React.ReactNode;
   // Muestra el conteo de caracteres (ej: "12/50") a la derecha del input
   showCount?: boolean;
 }
@@ -32,6 +34,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
       hint,
       autofilled = false,
       rightIcon,
+      leftIcon,
       type = "text",
       className = "",
       disabled,
@@ -45,6 +48,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
     const isPassword = type === "password";
     const inputType = isPassword ? (showPassword ? "text" : "password") : type;
     const hasRightSlot = isPassword || rightIcon;
+    const hasLeftSlot = !!leftIcon;
 
     return (
       <div className="flex flex-col gap-1">
@@ -87,7 +91,9 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
               "w-full rounded-md border text-base transition-all duration-150",
               "placeholder:text-text-tertiary",
               // Padding — deja espacio si hay ícono derecho
-              hasRightSlot ? "px-3 py-2.5 pr-11" : "px-3 py-2.5",
+              "py-2.5",
+              hasLeftSlot ? "pl-10" : "pl-3",
+              hasRightSlot ? "pr-11" : "pr-3",
               // Fuente mínima 16px para evitar zoom en iOS
               "text-[16px]",
               // Estado default
@@ -144,6 +150,12 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
               ) : (
                 rightIcon
               )}
+            </div>
+          )}
+          {/* Icono izquierdo */}
+          {hasLeftSlot && (
+            <div className="absolute left-3 top-1/2 -translate-y-1/2 text-text-tertiary">
+              {leftIcon}
             </div>
           )}
         </div>

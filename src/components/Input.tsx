@@ -1,9 +1,9 @@
 /** Input de texto reutilizable con soporte para mensaje de error.
  *  Muestra un span con el error debajo del input si la prop error está definida. */
-import { forwardRef } from "react"
+import { forwardRef } from "react";
 
 interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
-  error?: string
+  error?: string;
 }
 
 const Input = forwardRef<HTMLInputElement, InputProps>(
@@ -18,11 +18,11 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
         />
         {error && <span className="text-xs text-error">{error}</span>}
       </div>
-    )
-  }
-)
+    );
+  },
+);
 
-Input.displayName = "Input"
+Input.displayName = "Input";
 
-export { Input }
-export type { InputProps }
+export { Input };
+export type { InputProps };

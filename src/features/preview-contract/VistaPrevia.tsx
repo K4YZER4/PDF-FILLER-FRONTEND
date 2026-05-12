@@ -114,7 +114,7 @@ function VistaPrevia() {
         <CheckCircle size={16} /> Finalizar
       </Button>
       {showToast && (
-        <div className="fixed top-6 right-6 z-[999]">
+        <div className="fixed top-6 right-6 z-999">
           <div className="bg-success-tint border border-success/20 text-success px-4 py-3 rounded-lg shadow-lg flex items-center gap-2 text-sm">
             <CheckCircle size={16} /> Contrato generado exitosamente
           </div>
