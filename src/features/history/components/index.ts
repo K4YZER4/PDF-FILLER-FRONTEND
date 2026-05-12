@@ -1,3 +1,4 @@
 import { TimeFilter } from "./TimeFilter";
 import { AdvisorFilter } from "./AdvisorFilter";
-export { TimeFilter, AdvisorFilter };
+import { ContractCard } from "./ContractCard";
+export { TimeFilter, AdvisorFilter, ContractCard };
