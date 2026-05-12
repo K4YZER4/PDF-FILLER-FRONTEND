@@ -10,7 +10,6 @@ import { Eye, Share2, Search } from "lucide-react";
 import { Input } from "@/components/ui";
 import { EmptyState } from "@/components/feedback";
 
-import { Badge } from "@/components";
 import { Card } from "@/features/history/componenrs/index";
 
 // Imagenes
@@ -90,18 +89,11 @@ function HistorialPage() {
                       {contract.date} · {contract.asesor}
                     </p>
                   </div>
-                  <Badge
-                    variant={
-                      contract.status === "completado" ? "success" : "warning"
-                    }
-                  >
-                    {contract.status}
-                  </Badge>
                 </div>
                 <div className="flex items-center justify-between text-sm">
                   <div>
                     <p className="text-xs text-text-secondary">Monto</p>
-                    <p className="font-semibold text-primary">
+                    <p className="font-semibold text-money">
                       ${contract.monto?.toLocaleString() || 0}
                     </p>
                   </div>

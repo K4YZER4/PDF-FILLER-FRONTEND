@@ -59,6 +59,11 @@
   --color-brand-tint: #fff8e6; /* fondo amarillo muy suave      */
   --color-brand-subtle: #fde68a; /* borde o highlight dorado      */
 
+  /* ── Colores financieros ───────────────────── */
+  --color-money: #6366f1;
+  --color-money-hover: #4f46e5;
+  --color-money-tint: #eef2ff;
+
   /* ── Estados semánticos ─────────────────────
      Paleta estándar de feedback visual.         */
   --color-success: #16a34a;
