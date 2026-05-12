@@ -5,37 +5,52 @@
  *  - Datos Laborales → 6 campos (RFC, empleado, puesto, etc.)
  *  - Datos Bancarios → 3 campos (cuenta, banco, CLABE)
  *  Los campos de domicilio se guardan dentro de ine.domicilio, el resto directamente en su sección. */
-import { useState } from "react";
-import { ChevronDown } from "lucide-react";
-
+import { useState, useMemo } from "react";
+import { ChevronDown, CheckCircle2 } from "lucide-react";
 import { Input } from "@/components/ui";
 import { Card } from "@/components";
 import { useContractStore } from "@/store/useContractStore";
+import { sections, type SectionId } from "@/constants/revisionFields";
 
-import { sections } from "@/constants/revisionFields";
+function isSectionComplete(id: SectionId, formData: any): boolean {
+  const raw = (field: string, sec: string) => {
+    const data = formData[sec] as any;
+    if (!data) return "";
+    if (sec === "ine" && ["calle","codigoPostal","colonia","noExt","municipio","estado"].includes(field))
+      return data.domicilio?.[field] || "";
+    return data[field] ?? "";
+  };
 
-type SectionId = "personales" | "domicilio" | "laborales" | "bancarios";
+  const section = sections.find((s) => s.id === id);
+  if (!section) return false;
+
+  return section.fields.every((f) => {
+    const val = raw(f.id, section.section);
+    if (f.id === "ingresoMensual") return Number(val) > 0;
+    return String(val).trim().length > 0;
+  });
+}
 
 function RevisionDatos() {
-  const [expandedSection, setExpandedSection] =
-    useState<SectionId>("personales");
+  const [expandedSection, setExpandedSection] = useState<SectionId>("personales");
   const formData = useContractStore((s) => s.formData);
   const setFormData = useContractStore((s) => s.setFormData);
 
+  const completion = useMemo(
+    () => ({
+      personales: isSectionComplete("personales", formData),
+      domicilio: isSectionComplete("domicilio", formData),
+      laborales: isSectionComplete("laborales", formData),
+      bancarios: isSectionComplete("bancarios", formData),
+    }),
+    [formData],
+  );
+
   const domicilioFields = [
-    "calle",
-    "codigoPostal",
-    "colonia",
-    "noExt",
-    "municipio",
-    "estado",
+    "calle", "codigoPostal", "colonia", "noExt", "municipio", "estado",
   ];
 
-  const update = (
-    section: "ine" | "nomina" | "banco",
-    field: string,
-    value: string,
-  ) => {
+  const update = (section: "ine" | "nomina" | "banco", field: string, value: string) => {
     if (section === "ine" && domicilioFields.includes(field)) {
       setFormData("ine", {
         ...(formData.ine as any),
@@ -46,15 +61,12 @@ function RevisionDatos() {
     }
   };
 
-  const getFieldValue = (
-    section: "ine" | "nomina" | "banco",
-    fieldId: string,
-  ): string => {
+  const getFieldValue = (section: "ine" | "nomina" | "banco", fieldId: string): string => {
     const data = formData[section] as any;
     if (!data) return "";
     if (section === "ine" && domicilioFields.includes(fieldId))
       return data.domicilio?.[fieldId] || "";
-    return data[fieldId] || "";
+    return data[fieldId] ?? "";
   };
 
   return (
@@ -79,6 +91,9 @@ function RevisionDatos() {
                 <span className="text-sm font-semibold text-text-primary">
                   {section.title}
                 </span>
+                {completion[section.id] && (
+                  <CheckCircle2 size={16} className="text-success" aria-label="Completo" />
+                )}
               </div>
               <ChevronDown
                 size={18}

@@ -167,3 +167,5 @@ export const sections = [
     ],
   },
 ];
+
+export type SectionId = (typeof sections)[number]["id"];

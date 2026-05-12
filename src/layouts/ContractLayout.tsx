@@ -22,11 +22,13 @@ function ContractLayout() {
   const navigate = useNavigate();
   const location = useLocation();
   const documents = useContractStore((s) => s.documents);
-  const tablaData = useContractStore((s) => s.formData.tabla);
+  const formData = useContractStore((s) => s.formData);
   const resetContract = useContractStore((s) => s.resetContract);
   const [showExitModal, setShowExitModal] = useState(false);
 
-  const currentStep = STEPS.findIndex((s) => location.pathname.endsWith(s.path));
+  const currentStep = STEPS.findIndex((s) =>
+    location.pathname.endsWith(s.path),
+  );
   const stepNumber = currentStep >= 0 ? currentStep + 1 : 1;
 
   const handleStepNav = (path: string) => navigate(path, { relative: "path" });
@@ -41,8 +43,18 @@ function ContractLayout() {
   const canContinue = (): boolean => {
     const path = location.pathname;
     if (path.endsWith("upload")) return documents.scanStatus === "done";
-    if (path.endsWith("review")) return true;
-    if (path.endsWith("loan")) return tablaData !== null;
+
+    if (path.endsWith("review")) {
+      const { ine, nomina, banco } = formData;
+      const d = (ine as any)?.domicilio || {};
+      const allPersonales = ["primerNombre","segundoNombre","primerApellido","segundoApellido","curp","sexo","fechaNacimiento","claveElector"].every((f) => (ine as any)?.[f]?.trim());
+      const allDomicilio = ["calle","codigoPostal","colonia","noExt","municipio","estado"].every((f) => d[f]?.trim());
+      const allLaborales = ["rfc","noEmpleado","dependencia","departamento","puesto"].every((f) => (nomina as any)?.[f]?.trim()) && Number((nomina as any)?.ingresoMensual) > 0;
+      const allBancarios = ["noCuenta","banco","clabe"].every((f) => (banco as any)?.[f]?.trim());
+      return allPersonales && allDomicilio && allLaborales && allBancarios;
+    }
+
+    if (path.endsWith("loan")) return formData.tabla !== null;
     return false;
   };
 
@@ -53,7 +65,10 @@ function ContractLayout() {
   };
 
   const goPrev = () => {
-    if (stepNumber === 1) { setShowExitModal(true); return; }
+    if (stepNumber === 1) {
+      setShowExitModal(true);
+      return;
+    }
     const idx = STEPS.findIndex((s) => location.pathname.endsWith(s.path));
     if (idx > 0) navigate(STEPS[idx - 1].path, { relative: "path" });
   };
@@ -61,7 +76,10 @@ function ContractLayout() {
   return (
     <div className="min-h-screen bg-bg flex flex-col">
       {/* Header */}
-      <header className="sticky top-0 z-50 border-b border-border" style={{ backgroundColor: "#ebebf3" }}>
+      <header
+        className="sticky top-0 z-50 border-b border-border"
+        style={{ backgroundColor: "#ebebf3" }}
+      >
         <div className="max-w-5xl mx-auto px-4 md:px-6 py-4">
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-3">
@@ -69,17 +87,25 @@ function ContractLayout() {
                 <FileText size={20} className="text-white" />
               </div>
               <div>
-                <h1 className="text-base font-bold text-text-primary">Nuevo Contrato</h1>
-                <p className="text-xs text-text-secondary">Paso {stepNumber} de 4</p>
+                <h1 className="text-base font-bold text-text-primary">
+                  Nuevo Contrato
+                </h1>
               </div>
             </div>
-            <button type="button" onClick={handleExitClick} aria-label="Salir del contrato"
+            <button
+              type="button"
+              onClick={handleExitClick}
+              aria-label="Salir del contrato"
               className="w-9 h-9 rounded-lg flex items-center justify-center text-text-secondary border border-border hover:bg-white hover:text-text-primary transition-colors"
             >
               <LogOut size={16} aria-hidden="true" />
             </button>
           </div>
-          <ContractStepper steps={STEPS} currentIndex={currentStep} onNavigate={handleStepNav} />
+          <ContractStepper
+            steps={STEPS}
+            currentIndex={currentStep}
+            onNavigate={handleStepNav}
+          />
         </div>
       </header>
 
@@ -91,15 +117,27 @@ function ContractLayout() {
       {/* Footer */}
       <footer className="sticky bottom-0 bg-surface border-t border-border">
         <div className="max-w-5xl mx-auto px-4 md:px-6 py-4 flex gap-3 md:gap-4">
-          <Button variant="secondary" onClick={goPrev} className="flex-1 md:flex-none md:min-w-[30]">
+          <Button
+            variant="secondary"
+            onClick={goPrev}
+            className="flex-1 md:flex-none md:min-w-[30]"
+          >
             {stepNumber === 1 ? "Cancelar" : "Volver"}
           </Button>
           {stepNumber < 4 ? (
-            <Button variant="primary" onClick={goNext} disabled={!canContinue()} className="flex-1 md:flex-none md:min-w-[30]">
+            <Button
+              variant="primary"
+              onClick={goNext}
+              disabled={!canContinue()}
+              className="flex-1 md:flex-none md:min-w-[30]"
+            >
               Siguiente
             </Button>
           ) : (
-            <Button variant="primary" className="flex-1 md:flex-none md:min-w-[30] bg-success hover:bg-success-hover">
+            <Button
+              variant="primary"
+              className="flex-1 md:flex-none md:min-w-[30] bg-success hover:bg-success-hover"
+            >
               Generar contrato
             </Button>
           )}
@@ -107,7 +145,9 @@ function ContractLayout() {
       </footer>
 
       {/* Modal salida */}
-      {showExitModal && <ExitModal onConfirm={handleExitConfirm} onCancel={handleExitCancel} />}
+      {showExitModal && (
+        <ExitModal onConfirm={handleExitConfirm} onCancel={handleExitCancel} />
+      )}
     </div>
   );
 }
