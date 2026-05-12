@@ -6,9 +6,13 @@
  *  - Datos Bancarios → 3 campos (cuenta, banco, CLABE)
  *  Los campos de domicilio se guardan dentro de ine.domicilio, el resto directamente en su sección. */
 import { useState } from "react";
-import { ChevronDown, User, Home, Briefcase, Building } from "lucide-react";
-import { Card, Input } from "@/components";
+import { ChevronDown } from "lucide-react";
+
+import { Input } from "@/components/ui";
+import { Card } from "@/components";
 import { useContractStore } from "@/store/useContractStore";
+
+import { sections } from "@/constants/revisionFields";
 
 type SectionId = "personales" | "domicilio" | "laborales" | "bancarios";
 
@@ -53,64 +57,6 @@ function RevisionDatos() {
     return data[fieldId] || "";
   };
 
-  const sections = [
-    {
-      id: "personales" as const,
-      title: "Datos Personales",
-      icon: User,
-      section: "ine" as const,
-      fields: [
-        { id: "primerNombre", label: "Primer nombre" },
-        { id: "segundoNombre", label: "Segundo nombre" },
-        { id: "primerApellido", label: "Primer apellido" },
-        { id: "segundoApellido", label: "Segundo apellido" },
-        { id: "curp", label: "CURP" },
-        { id: "sexo", label: "Sexo" },
-        { id: "fechaNacimiento", label: "Fecha de nacimiento" },
-        { id: "claveElector", label: "Clave de elector" },
-      ],
-    },
-    {
-      id: "domicilio" as const,
-      title: "Domicilio",
-      icon: Home,
-      section: "ine" as const,
-      fields: [
-        { id: "calle", label: "Calle" },
-        { id: "codigoPostal", label: "Código postal" },
-        { id: "colonia", label: "Colonia" },
-        { id: "noExt", label: "No. ext" },
-        { id: "municipio", label: "Municipio" },
-        { id: "estado", label: "Estado" },
-      ],
-    },
-    {
-      id: "laborales" as const,
-      title: "Datos Laborales",
-      icon: Briefcase,
-      section: "nomina" as const,
-      fields: [
-        { id: "rfc", label: "RFC" },
-        { id: "noEmpleado", label: "No. empleado" },
-        { id: "dependencia", label: "Dependencia" },
-        { id: "departamento", label: "Departamento" },
-        { id: "puesto", label: "Puesto" },
-        { id: "ingresoMensual", label: "Ingreso mensual" },
-      ],
-    },
-    {
-      id: "bancarios" as const,
-      title: "Datos Bancarios",
-      icon: Building,
-      section: "banco" as const,
-      fields: [
-        { id: "noCuenta", label: "No. de cuenta" },
-        { id: "banco", label: "Banco" },
-        { id: "clabe", label: "CLABE interbancaria" },
-      ],
-    },
-  ];
-
   return (
     <div className="max-w-4xl mx-auto space-y-4 p-4 md:p-6">
       <div className="text-center mb-6">
@@ -152,6 +98,8 @@ function RevisionDatos() {
                       </label>
                       <Input
                         id={field.id}
+                        inputSize="sm"
+                        placeholder={field.placeholder}
                         value={getFieldValue(section.section, field.id)}
                         onChange={(e) =>
                           update(section.section, field.id, e.target.value)

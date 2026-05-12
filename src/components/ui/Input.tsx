@@ -23,7 +23,22 @@ interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   leftIcon?: React.ReactNode;
   // Muestra el conteo de caracteres (ej: "12/50") a la derecha del input
   showCount?: boolean;
+  // Tamaños reutilizables del input
+  inputSize?: "sm" | "md" | "lg";
 }
+
+/**
+ * Variantes de tamaño reutilizables.
+ * Permiten adaptar el input según el contexto:
+ * - sm → tablas, filtros, formularios densos
+ * - md → tamaño estándar
+ * - lg → formularios importantes / auth
+ */
+const sizeStyles = {
+  sm: "py-2 text-sm",
+  md: "py-2.5 text-[16px]",
+  lg: "py-3 text-base",
+};
 
 const Input = forwardRef<HTMLInputElement, InputProps>(
   (
@@ -36,6 +51,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
       rightIcon,
       leftIcon,
       type = "text",
+      inputSize = "md",
       className = "",
       disabled,
       id,
@@ -86,16 +102,19 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
             id={id}
             type={inputType}
             disabled={disabled}
+            // Inputs numéricos:
+            // - No permiten negativos
+            // - Incrementan de 1000 en 1000 con las flechas
+            min={type === "number" ? 0 : props.min}
+            step={type === "number" ? 1000 : props.step}
             className={cn(
               // Base
               "w-full rounded-md border text-base transition-all duration-150",
               "placeholder:text-text-tertiary",
               // Padding — deja espacio si hay ícono derecho
-              "py-2.5",
+              sizeStyles[inputSize],
               hasLeftSlot ? "pl-10" : "pl-3",
               hasRightSlot ? "pr-11" : "pr-3",
-              // Fuente mínima 16px para evitar zoom en iOS
-              "text-[16px]",
               // Estado default
               !error &&
                 !autofilled &&

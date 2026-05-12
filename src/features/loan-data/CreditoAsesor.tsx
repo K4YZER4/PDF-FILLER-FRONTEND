@@ -7,8 +7,8 @@
 import { useState } from "react";
 import { TrendingUp, FileDown } from "lucide-react";
 
-import { Button } from "@/components/ui";
-import { Card, Input } from "@/components";
+import { Button, Input } from "@/components/ui";
+import { Card } from "@/components";
 import { useContractStore } from "@/store/useContractStore";
 
 function CreditoAsesor() {
@@ -68,10 +68,10 @@ function CreditoAsesor() {
             Monto neto (capital)
           </label>
           <Input
-            type="number"
-            value={monto}
-            onChange={(e) => setMonto(e.target.value)}
             placeholder="Ej: 15000"
+            value={monto}
+            type="number"
+            onChange={(e) => setMonto(e.target.value)}
           />
         </div>
         <div className="space-y-1.5">

@@ -1,6 +1,4 @@
 /** Barrel export de componentes UI compartidos. */
-export { Input } from "./Input";
-export type { InputProps } from "./Input";
 
 export { Badge } from "./Badge";
 export type { BadgeVariant, BadgeProps } from "./Badge";
