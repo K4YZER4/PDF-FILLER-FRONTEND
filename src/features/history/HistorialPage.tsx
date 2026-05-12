@@ -1,31 +1,28 @@
 /** Pantalla de historial de contratos generados.
  *  - Buscador por nombre del cliente.
+ *  - Filtros: Todos / Semana / Hoy (TimeFilter) y por asesor (AdvisorFilter, solo admin).
  *  - Grid de tarjetas responsive (1/2/3 columnas).
  *  - Cada tarjeta muestra: nombre, fecha, asesor, monto, plazo, badge de estado.
  *  - Botones: Ver (navega a preview) y Compartir (navigator.share con fallback clipboard). */
-import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Eye, Share2, Search } from "lucide-react";
-// Componentes
 import { Input } from "@/components/ui";
 import { EmptyState } from "@/components/feedback";
-
 import { Card } from "@/features/history/componenrs/index";
-
-// Imagenes
 import emptyContract from "@/assets/empty-contracts.png";
-
 import { useContractStore } from "@/store/useContractStore";
+import { useContractFilters } from "@/features/history/hooks";
+import { TimeFilter, AdvisorFilter } from "@/features/history/components";
 
 function HistorialPage() {
   const navigate = useNavigate();
-  const history = useContractStore((s) => s.history);
-  const [search, setSearch] = useState("");
-
-  const filtered = history.contracts.filter(
-    (c: any) =>
-      !search || c.clientName.toLowerCase().includes(search.toLowerCase()),
-  );
+  const userRole = useContractStore((s) => s.auth.role);
+  const {
+    search, setSearch,
+    timeFilter, setTimeFilter,
+    advisorFilter, setAdvisorFilter,
+    uniqueAdvisors, filtered,
+  } = useContractFilters();
 
   const handleShare = async (contract: any) => {
     const url = `${window.location.origin}/contracts/preview`;
@@ -60,6 +57,14 @@ function HistorialPage() {
           leftIcon={<Search size={16} />}
           className="pl-9"
         />
+      </div>
+
+      {/* Fila de filtros: temporal arriba, asesor abajo en móvil / lado a lado en desktop */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <TimeFilter value={timeFilter} onChange={setTimeFilter} />
+        {userRole === "admin" && (
+          <AdvisorFilter value={advisorFilter} onChange={setAdvisorFilter} advisors={uniqueAdvisors} />
+        )}
       </div>
 
       {/* Esto se muestra si no hay contratos */}
