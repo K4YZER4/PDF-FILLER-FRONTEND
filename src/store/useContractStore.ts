@@ -257,9 +257,10 @@ const useContractStore = create<ContractState>()(
 
       logout: () =>
         set((state) => {
-          state.auth.user = null;
-          state.auth.role = null;
-          state.auth.isAuthenticated = false;
+          state.auth = { user: null, role: null, isAuthenticated: false };
+          state.step = { current: 1 };
+          state.documents = { ...initialDocuments };
+          state.formData = { ...initialFormData };
         }),
 
       // ── Pasos ───────────────────────────────────────────────────────────────

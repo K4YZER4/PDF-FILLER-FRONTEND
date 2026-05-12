@@ -18,10 +18,14 @@ function HistorialPage() {
   const navigate = useNavigate();
   const userRole = useContractStore((s) => s.auth.role);
   const {
-    search, setSearch,
-    timeFilter, setTimeFilter,
-    advisorFilter, setAdvisorFilter,
-    uniqueAdvisors, filtered,
+    search,
+    setSearch,
+    timeFilter,
+    setTimeFilter,
+    advisorFilter,
+    setAdvisorFilter,
+    uniqueAdvisors,
+    filtered,
   } = useContractFilters();
 
   const handleShare = async (contract: any) => {
@@ -60,10 +64,14 @@ function HistorialPage() {
       </div>
 
       {/* Fila de filtros: temporal arriba, asesor abajo en móvil / lado a lado en desktop */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+      <div className="flex items-center gap-2">
         <TimeFilter value={timeFilter} onChange={setTimeFilter} />
         {userRole === "admin" && (
-          <AdvisorFilter value={advisorFilter} onChange={setAdvisorFilter} advisors={uniqueAdvisors} />
+          <AdvisorFilter
+            value={advisorFilter}
+            onChange={setAdvisorFilter}
+            advisors={uniqueAdvisors}
+          />
         )}
       </div>
 
