@@ -1,12 +1,18 @@
 /** Paso 2 del flujo: Revisar y editar datos extraídos.
- *  Organizado en 4 secciones tipo accordion (una abierta a la vez):
+ *  Organizado en 4 secciones tipo accordion (solo una abierta a la vez,
+ *  todas se pueden cerrar):
  *  - Datos Personales → 8 campos (nombre, apellidos, CURP, etc.)
  *  - Domicilio → 6 campos (calle, CP, colonia, etc.) almacenados en ine.domicilio
  *  - Datos Laborales → 6 campos (RFC, empleado, puesto, etc.)
  *  - Datos Bancarios → 3 campos (cuenta, banco, CLABE)
- *  Los campos de domicilio se guardan dentro de ine.domicilio, el resto directamente en su sección. */
+ *  Los campos de domicilio se guardan dentro de ine.domicilio, el resto directamente en su sección.
+ *
+ *  Visual:
+ *  - Asterisco rojo (*) en campos obligatorios
+ *  - Check verde en secciones completas
+ *  - Alerta naranja en secciones colapsadas con datos incompletos */
 import { useState, useMemo } from "react";
-import { ChevronDown, CheckCircle2 } from "lucide-react";
+import { ChevronDown, CheckCircle2, AlertTriangle } from "lucide-react";
 import { Input } from "@/components/ui";
 import { Card } from "@/components";
 import { useContractStore } from "@/store/useContractStore";
@@ -32,7 +38,7 @@ function isSectionComplete(id: SectionId, formData: any): boolean {
 }
 
 function RevisionDatos() {
-  const [expandedSection, setExpandedSection] = useState<SectionId>("personales");
+  const [expandedSection, setExpandedSection] = useState<SectionId | null>("personales");
   const formData = useContractStore((s) => s.formData);
   const setFormData = useContractStore((s) => s.setFormData);
 
@@ -49,6 +55,10 @@ function RevisionDatos() {
   const domicilioFields = [
     "calle", "codigoPostal", "colonia", "noExt", "municipio", "estado",
   ];
+
+  const toggleSection = (id: SectionId) => {
+    setExpandedSection((prev) => (prev === id ? null : id));
+  };
 
   const update = (section: "ine" | "nomina" | "banco", field: string, value: string) => {
     if (section === "ine" && domicilioFields.includes(field)) {
@@ -80,30 +90,47 @@ function RevisionDatos() {
         </p>
       </div>
       <div className="space-y-3">
-        {sections.map((section) => (
-          <Card key={section.id} className="overflow-hidden">
+        {sections.map((section) => {
+          const isExpanded = expandedSection === section.id;
+          const isComplete = completion[section.id];
+          const isCollapsedWithIssues = !isExpanded && !isComplete;
+
+          let cardBorder = "border-border";
+          if (isComplete) cardBorder = "border-success/30";
+          else if (!isExpanded && !isComplete) cardBorder = "border-error/40";
+
+          return (
+          <Card key={section.id} className={`overflow-hidden border-2 transition-colors ${cardBorder}`}>
             <button
               className="w-full flex items-center justify-between p-4 md:p-5 hover:bg-bg transition-colors"
-              onClick={() => setExpandedSection(section.id)}
+              onClick={() => toggleSection(section.id)}
             >
-              <div className="flex items-center gap-3">
-                <section.icon size={20} className="text-primary" />
+              <div className="flex items-center gap-2.5">
+                <section.icon size={20} className="text-primary shrink-0" />
                 <span className="text-sm font-semibold text-text-primary">
                   {section.title}
                 </span>
-                {completion[section.id] && (
-                  <CheckCircle2 size={16} className="text-success" aria-label="Completo" />
-                )}
+                {isComplete ? (
+                  <CheckCircle2 size={16} className="text-success shrink-0" aria-label="Completo" />
+                ) : isCollapsedWithIssues ? (
+                  <AlertTriangle size={16} className="text-warning shrink-0" aria-label="Faltan datos" />
+                ) : null}
               </div>
               <ChevronDown
                 size={18}
-                className={`text-text-secondary transition-transform ${expandedSection === section.id ? "rotate-180" : ""}`}
+                className={`text-text-secondary transition-transform shrink-0 ${isExpanded ? "rotate-180" : ""}`}
               />
             </button>
-            {expandedSection === section.id && (
+            {isExpanded && (
               <div className="px-4 md:px-5 pb-5">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {section.fields.map((field) => (
+                  {section.fields.map((field) => {
+                    const val = getFieldValue(section.section, field.id);
+                    const isFilled = field.id === "ingresoMensual"
+                      ? Number(val) > 0
+                      : String(val).trim().length > 0;
+
+                    return (
                     <div key={field.id} className="space-y-1.5">
                       <label
                         htmlFor={field.id}
@@ -114,19 +141,24 @@ function RevisionDatos() {
                       <Input
                         id={field.id}
                         inputSize="sm"
+                        required
+                        success={isFilled}
+                        error={!isFilled ? "Obligatorio" : undefined}
                         placeholder={field.placeholder}
-                        value={getFieldValue(section.section, field.id)}
+                        value={val}
                         onChange={(e) =>
                           update(section.section, field.id, e.target.value)
                         }
                       />
                     </div>
-                  ))}
+                    );
+                  })}
                 </div>
               </div>
             )}
           </Card>
-        ))}
+          );
+        })}
       </div>
     </div>
   );

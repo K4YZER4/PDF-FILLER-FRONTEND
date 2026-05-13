@@ -11,8 +11,12 @@ interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   label?: string;
   // Muestra un asterisco rojo junto al label para indicar que el campo es obligatorio
   required?: boolean;
+  // Muestra el borde rojo sin mensaje (campo obligatorio vacío)
+  invalid?: boolean;
   // Mensaje de error que se muestra debajo del input y cambia el estilo a estado error
   error?: string;
+  // Muestra el borde verde cuando el campo está correctamente lleno
+  success?: boolean;
   // Texto de ayuda que se muestra debajo del input cuando no hay error
   hint?: string;
   // Muestra un badge "Auto ✓" para indicar que el campo fue autollenado por el navegador (ej: con contraseña guardada)
@@ -45,7 +49,9 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
     {
       label,
       required = false,
+      invalid = false,
       error,
+      success = false,
       hint,
       autofilled = false,
       rightIcon,
@@ -116,22 +122,30 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
               hasLeftSlot ? "pl-10" : "pl-3",
               hasRightSlot ? "pr-11" : "pr-3",
               // Estado default
-              !error &&
-                !autofilled &&
-                !disabled && [
+              !error && !invalid && !autofilled && !success && !disabled && [
                   "border-border bg-surface text-text-primary",
                   "hover:border-border-secondary",
                   "focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/15",
                 ],
-              // Estado error
+              // Estado error (con mensaje)
               error && [
-                "border-error bg-error-tint text-text-primary",
+                "border-error text-text-primary",
                 "focus:outline-none focus:border-error focus:ring-2 focus:ring-error/15",
+              ],
+              // Estado inválido (solo borde rojo, sin mensaje)
+              invalid && !error && [
+                "border-error text-text-primary",
+                "focus:outline-none focus:border-error focus:ring-2 focus:ring-error/15",
+              ],
+              // Estado éxito (campo lleno)
+              success && !error && !invalid && !autofilled && [
+                "border-success text-text-primary",
+                "focus:outline-none focus:border-success focus:ring-2 focus:ring-success/15",
               ],
               // Estado autollenado
               autofilled &&
                 !error && [
-                  "border-success bg-success-tint text-success",
+                  "border-success text-success",
                   "focus:outline-none focus:border-success focus:ring-2 focus:ring-success/15",
                 ],
               // Estado disabled
@@ -141,7 +155,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
               ],
               className,
             )}
-            aria-invalid={!!error}
+            aria-invalid={!!error || invalid}
             aria-describedby={
               error ? `${id}-error` : hint ? `${id}-hint` : undefined
             }
@@ -179,12 +193,12 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
           )}
         </div>
 
-        {/* Mensaje de error */}
+        {/* Mensaje de error — oculto en móvil para reducir scroll */}
         {error && (
           <p
             id={`${id}-error`}
             role="alert"
-            className="flex items-center gap-1 text-xs text-error"
+            className="max-md:hidden flex items-center gap-1 text-xs text-error"
           >
             <AlertCircle size={13} aria-hidden="true" />
             {error}
