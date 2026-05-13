@@ -53,8 +53,10 @@ interface DocumentsState {
   estadoCuentaFile: File | null;
   /** idle → scanning → done → error */
   scanStatus: ScanStatus;
-  /** Progreso del escaneo 0-100 para la barra de progreso */
+  /** Progreso del escaneo 0-100 */
   scanProgress: number;
+  /** Resultado por documento durante el escaneo: "pending" | "success" | "error" */
+  scanResults: Record<string, "pending" | "success" | "error">;
 }
 
 /** Slice de datos del formulario organizados por sección */
@@ -130,6 +132,11 @@ interface ContractState {
   /** Limpia todos los documentos y resetea el estado del OCR */
   resetDocuments: () => void;
 
+  /** Escanea todos los documentos subidos de forma simulada.
+   *  Actualiza scanStatus y scanProgress durante el proceso.
+   *  Retorna "done" si todos se escanearon OK, "error" si alguno falló. */
+  scanDocuments: () => Promise<"done" | "error">;
+
   // ── Acciones de formulario ──
 
   /** Actualiza una sección completa del formulario */
@@ -176,6 +183,7 @@ const initialDocuments: DocumentsState = {
   estadoCuentaFile: null,
   scanStatus: "idle",
   scanProgress: 0,
+  scanResults: {},
 };
 
 const initialFormData: FormDataState = {
@@ -307,6 +315,40 @@ const useContractStore = create<ContractState>()(
         set((state) => {
           state.documents = { ...initialDocuments };
         }),
+
+      scanDocuments: async () => {
+        set((state) => {
+          state.documents.scanStatus = "scanning";
+          state.documents.scanProgress = 0;
+          state.documents.scanResults = {
+            ine: "pending",
+            nomina1: "pending",
+            nomina2: "pending",
+            estadoCuenta: "pending",
+          };
+        });
+
+        const docIds = ["ine", "nomina1", "nomina2", "estadoCuenta"];
+        const total = docIds.length;
+        let allOk = true;
+
+        for (let i = 0; i < total; i++) {
+          await new Promise((r) => setTimeout(r, 800));
+          const success = Math.random() > 0.2;
+          if (!success) allOk = false;
+
+          set((state) => {
+            state.documents.scanResults[docIds[i]] = success ? "success" : "error";
+            state.documents.scanProgress = ((i + 1) / total) * 100;
+          });
+        }
+
+        set((state) => {
+          state.documents.scanStatus = allOk ? "done" : "error";
+          state.documents.scanProgress = 100;
+        });
+        return allOk ? "done" : "error";
+      },
 
       // ── Formulario ──────────────────────────────────────────────────────────
 

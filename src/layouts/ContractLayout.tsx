@@ -5,8 +5,9 @@
  */
 import { useState } from "react";
 import { Outlet, useNavigate, useLocation } from "react-router-dom";
-import { FileText, Search, Calculator, Eye, LogOut } from "lucide-react";
+import { FileText, Search, Calculator, Eye, LogOut, Upload, Loader2, CheckCircle, AlertCircle } from "lucide-react";
 import { Button } from "@/components/ui";
+import { Card } from "@/components";
 import { useContractStore } from "@/store/useContractStore";
 import { ContractStepper, ExitModal } from "@/layouts/components";
 import type { Step } from "@/layouts/components";
@@ -18,6 +19,13 @@ const STEPS: readonly Step[] = [
   { path: "preview", label: "Vista previa", icon: Eye },
 ];
 
+const DOC_SCAN_ITEMS = [
+  { id: "ine", label: "INE" },
+  { id: "nomina1", label: "Nómina 1" },
+  { id: "nomina2", label: "Nómina 2" },
+  { id: "estadoCuenta", label: "Estado de cuenta" },
+] as const;
+
 function ContractLayout() {
   const navigate = useNavigate();
   const location = useLocation();
@@ -25,6 +33,15 @@ function ContractLayout() {
   const documents = useContractStore((s) => s.documents);
   const formData = useContractStore((s) => s.formData);
   const resetContract = useContractStore((s) => s.resetContract);
+  const scanDocuments = useContractStore((s) => s.scanDocuments);
+  const scanStatus = useContractStore((s) => s.documents.scanStatus);
+  const scanResults = useContractStore((s) => s.documents.scanResults);
+
+  const ineFile = useContractStore((s) => s.documents.ineFile);
+  const nomina1File = useContractStore((s) => s.documents.nomina1File);
+  const nomina2File = useContractStore((s) => s.documents.nomina2File);
+  const estadoCuentaFile = useContractStore((s) => s.documents.estadoCuentaFile);
+  const allFilesLoaded = !!(ineFile && nomina1File && nomina2File && estadoCuentaFile);
 
   const [showExitModal, setShowExitModal] = useState(false);
 
@@ -45,6 +62,15 @@ function ContractLayout() {
     resetContract();
     navigate("/");
   };
+
+  const handleScan = async () => {
+    const result = await scanDocuments();
+    if (result === "done") {
+      navigate(STEPS[1].path, { relative: "path" });
+    }
+  };
+
+  const isUploadStep = location.pathname.endsWith("upload");
 
   const canContinue = (): boolean => {
     const path = location.pathname;
@@ -180,7 +206,23 @@ function ContractLayout() {
               {stepNumber === 1 ? "Cancelar" : "Volver"}
             </Button>
 
-            {stepNumber < 4 ? (
+            {isUploadStep && scanStatus !== "done" ? (
+              scanStatus === "scanning" ? (
+                <Button variant="primary" disabled loading className="w-44">
+                  Escaneando...
+                </Button>
+              ) : (
+                <Button
+                  variant="primary"
+                  onClick={handleScan}
+                  disabled={!allFilesLoaded}
+                  leftIcon={<Upload size={16} />}
+                  className="w-44"
+                >
+                  Leer documentos
+                </Button>
+              )
+            ) : stepNumber < 4 ? (
               <Button
                 variant="primary"
                 onClick={goNext}
@@ -200,6 +242,35 @@ function ContractLayout() {
           </div>
         </div>
       </footer>
+
+      {/* Overlay de escaneo con estado por documento */}
+      {scanStatus === "scanning" && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <Card className="p-6 max-w-sm w-full space-y-4">
+            <div className="flex items-center gap-3">
+              <Loader2 size={20} className="animate-spin text-primary" />
+              <span className="font-medium text-text-primary">Escaneando...</span>
+            </div>
+            <div className="space-y-2">
+              {DOC_SCAN_ITEMS.map((item) => {
+                const result = scanResults[item.id];
+                return (
+                  <div key={item.id} className="flex items-center gap-2 text-sm">
+                    {result === "success" ? (
+                      <CheckCircle size={14} className="text-success" />
+                    ) : result === "error" ? (
+                      <AlertCircle size={14} className="text-error" />
+                    ) : (
+                      <div className="w-3.5 h-3.5 rounded-full border-2 border-border" />
+                    )}
+                    <span className="text-text-secondary">{item.label}</span>
+                  </div>
+                );
+              })}
+            </div>
+          </Card>
+        </div>
+      )}
 
       {/* Modal salida */}
       {showExitModal && (
