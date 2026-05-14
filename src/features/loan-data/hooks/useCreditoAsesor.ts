@@ -97,33 +97,33 @@ export function useCreditoAsesor() {
   const saved = store.formData
 
   const [asesorData, setAsesorData] = useState<AsesorData>(() => ({
-    folio:         (saved.asesorData as any)?.folio         ?? "",
-    sucursal:      (saved.asesorData as any)?.sucursal      ?? "",
-    numVendedor:   (saved.asesorData as any)?.numVendedor   ?? "",
-    asesor:        (saved.asesorData as any)?.asesor        ?? (userRole !== "admin" ? userName : ""),
-    fechaContrato: (saved.asesorData as any)?.fechaContrato ?? "",
-    fechaArranque: (saved.asesorData as any)?.fechaArranque ?? "",
-    lugar:         (saved.asesorData as any)?.lugar         ?? "",
-    mesDescuento:  (saved.asesorData as any)?.mesDescuento  ?? "",
-    anioDescuento: (saved.asesorData as any)?.anioDescuento ?? "",
+    folio:         saved.asesorData.folio ?? "",
+    sucursal:      saved.asesorData.sucursal ?? "",
+    numVendedor:   saved.asesorData.numVendedor ?? "",
+    asesor:        saved.asesorData.asesor ?? (userRole !== "admin" ? userName : ""),
+    fechaContrato: saved.asesorData.fechaContrato ?? "",
+    fechaArranque: saved.asesorData.fechaArranque ?? "",
+    lugar:         saved.asesorData.lugar ?? "",
+    mesDescuento:  saved.asesorData.mesDescuento ?? "",
+    anioDescuento: saved.asesorData.anioDescuento ?? "",
   }))
 
   const [contactoData, setContactoData] = useState<ContactoData>(() => ({
-    tel:         (saved.contactoData as any)?.tel         ?? "",
-    celular:     (saved.contactoData as any)?.celular     ?? "",
-    telCasa:     (saved.contactoData as any)?.telCasa     ?? "",
-    correo:      (saved.contactoData as any)?.correo      ?? "",
-    estadoCivil: (saved.contactoData as any)?.estadoCivil ?? "",
+    tel:         saved.contactoData.tel ?? "",
+    celular:     saved.contactoData.celular ?? "",
+    telCasa:     saved.contactoData.telCasa ?? "",
+    correo:      saved.contactoData.correo ?? "",
+    estadoCivil: saved.contactoData.estadoCivil ?? "",
   }))
 
   const [antiguedadData, setAntiguedadData] = useState<AntiguedadData>(() => ({
-    fechaIngreso: (saved.antiguedadData as any)?.fechaIngreso ?? "",
-    meses:        (saved.antiguedadData as any)?.meses        ?? "",
-    anos:         (saved.antiguedadData as any)?.anos         ?? "",
+    fechaIngreso: saved.antiguedadData.fechaIngreso ?? "",
+    meses:        saved.antiguedadData.meses ?? "",
+    anos:         saved.antiguedadData.anos ?? "",
   }))
 
   const [referencias, setReferencias] = useState<Referencias>(() => {
-    const r = (saved.referencias as any) || []
+    const r = saved.referencias
     return [0, 1, 2].map((i) => ({
       nombre:   r[i]?.nombre   ?? "",
       telefono: r[i]?.telefono ?? "",
@@ -135,10 +135,10 @@ export function useCreditoAsesor() {
   }, [monto])
 
   useEffect(() => { store.setFormData("plazoQnas", plazo) }, [plazo])
-  useEffect(() => { store.setFormData("asesorData", asesorData as any) }, [asesorData])
-  useEffect(() => { store.setFormData("contactoData", contactoData as any) }, [contactoData])
-  useEffect(() => { store.setFormData("antiguedadData", antiguedadData as any) }, [antiguedadData])
-  useEffect(() => { store.setFormData("referencias", referencias as any) }, [referencias])
+  useEffect(() => { store.setFormData("asesorData", asesorData) }, [asesorData])
+  useEffect(() => { store.setFormData("contactoData", contactoData) }, [contactoData])
+  useEffect(() => { store.setFormData("antiguedadData", antiguedadData) }, [antiguedadData])
+  useEffect(() => { store.setFormData("referencias", referencias) }, [referencias])
 
   const updateAsesor = useCallback(
     <K extends keyof AsesorData>(key: K, value: AsesorData[K]) =>

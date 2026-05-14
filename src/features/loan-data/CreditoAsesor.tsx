@@ -12,7 +12,7 @@
 import { useState } from "react"
 import { TrendingUp, User, Phone, Calendar, Users } from "lucide-react"
 import { Card } from "@/components"
-import { useContractStore } from "@/store/useContractStore"
+import { useClientName } from "@/store/selectors"
 import { useCreditoAsesor } from "./hooks/useCreditoAsesor"
 import {
   AccordionSection,
@@ -34,21 +34,10 @@ const SECTIONS = [
 function CreditoAsesor() {
   const [expandedSection, setExpandedSection] = useState<string | null>("prestamo")
   const hook = useCreditoAsesor()
-  const store = useContractStore()
+  const clientName = useClientName()
 
   const toggle = (id: string) =>
     setExpandedSection((prev) => (prev === id ? null : id))
-
-  const clientName =
-    [
-      (store.formData.ine as any)?.primerNombre,
-      (store.formData.ine as any)?.segundoNombre,
-      (store.formData.ine as any)?.primerApellido,
-      (store.formData.ine as any)?.segundoApellido,
-    ]
-      .filter(Boolean)
-      .join(" ")
-      .toUpperCase() || "CLIENTE"
 
   return (
     <div className="max-w-4xl mx-auto space-y-4 p-4 md:p-6">

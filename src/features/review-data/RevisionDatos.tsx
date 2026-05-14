@@ -23,6 +23,7 @@ import { ChevronDown, CheckCircle2, AlertTriangle } from "lucide-react";
 import { Input } from "@/components/ui";
 import { Card } from "@/components";
 import { useContractStore } from "@/store/useContractStore";
+import type { FormDataState } from "@/store/useContractStore";
 import {
   sections,
   type SectionId,
@@ -64,7 +65,7 @@ const DOMICILIO_FIELDS = [
  *   - ingresoMensual debe ser un número mayor a 0
  *   - El resto de campos deben tener al menos un carácter no vacío
  */
-function isSectionComplete(id: SectionId, formData: any): boolean {
+function isSectionComplete(id: SectionId, formData: FormDataState): boolean {
   const section = sections.find((s) => s.id === id);
   if (!section) return false;
 
@@ -84,21 +85,20 @@ function isSectionComplete(id: SectionId, formData: any): boolean {
  * Se puede usar tanto en isSectionComplete como en el componente.
  */
 function getFieldValueFromData(
-  formData: any,
+  formData: FormDataState,
   section: "ine" | "nomina" | "banco",
   fieldId: string,
 ): string {
-  const data = formData[section] as any;
-  if (!data) return "";
-
   const isDomicilioField = (DOMICILIO_FIELDS as readonly string[]).includes(
     fieldId,
   );
   if (section === "ine" && isDomicilioField) {
-    return data.domicilio?.[fieldId] ?? "";
+    return formData.ine.domicilio?.[fieldId as keyof NonNullable<typeof formData.ine.domicilio>] ?? "";
   }
 
-  return data[fieldId] ?? "";
+  const data = formData[section];
+  if (!data) return "";
+  return data[fieldId as keyof typeof data] ?? "";
 }
 
 /**
@@ -273,19 +273,16 @@ function RevisionDatos() {
     );
 
     if (section === "ine" && isDomicilioField) {
-      // Actualiza solo el campo dentro de domicilio,
-      // preservando el resto de los campos del domicilio actual
       setFormData("ine", {
-        ...(formData.ine as any),
+        ...formData.ine,
         domicilio: {
-          ...(formData.ine as any)?.domicilio,
+          ...(formData.ine.domicilio || {}),
           [field]: value,
         },
       });
     } else {
-      // Actualiza el campo directamente en su sección
       setFormData(section, {
-        ...(formData[section] as any),
+        ...formData[section],
         [field]: value,
       });
     }

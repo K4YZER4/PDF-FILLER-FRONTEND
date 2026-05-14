@@ -8,7 +8,10 @@ Este documento define los contratos entre el frontend (PDF-FILLER-FRONTEND) y el
 
 ```
 Desarrollo: http://localhost:3000
+Producción:  (definido en VITE_API_BASE)
 ```
+
+La URL base se configura via `VITE_API_BASE` en `.env`. Por defecto: `http://localhost:3000`.
 
 ---
 
@@ -29,20 +32,17 @@ Desarrollo: http://localhost:3000
 {
   "success": true,
   "data": {
-    "nombre1": "JUAN",
-    "nombre2": "CARLOS",
-    "apellidoPaterno": "PEREZ",
-    "apellidoMaterno": "LOPEZ",
+    "primerNombre": "JUAN",
+    "segundoNombre": "CARLOS",
+    "primerApellido": "PEREZ",
+    "segundoApellido": "LOPEZ",
     "curp": "PEMJ800101HDFLXL09",
-    "fechaNac": "1980-01-01",
+    "fechaNacimiento": "1980-01-01",
     "sexo": "H",
     "claveElector": "PEMJ800101HDFLXL09",
-    "seccion": "1234",
-    "vigencia": "2025-12-31",
-    "numEmision": "1234567890",
     "domicilio": {
       "calle": "AV INDEPENDENCIA",
-      "numeroCasa": "123",
+      "noExt": "123",
       "colonia": "CENTRO",
       "codigoPostal": "81000",
       "municipio": "GUASAVE",
@@ -81,7 +81,7 @@ Desarrollo: http://localhost:3000
   "success": true,
   "data": {
     "rfc": "PELJ800101ABC",
-    "numeroCuenta": "1234567890",
+    "noCuenta": "1234567890",
     "clabe": "012180001234567890",
     "banco": "BBVA"
   }
@@ -109,8 +109,7 @@ Desarrollo: http://localhost:3000
     "montoPagare": 32000,
     "descuentoQuincenal": 666.67,
     "cat": 24.5,
-    "tasaMensual": 2.04,
-    "importeInteres": 7000
+    "tasaMensual": 2.04
   }
 }
 ```
@@ -121,10 +120,74 @@ Desarrollo: http://localhost:3000
 
 **Request Body:**
 ```json
-{ "ine": {}, "tabla": {}, "nomina": {}, "estadoCuenta": {}, "extra": {} }
+{
+  "ine": {},
+  "nomina": {},
+  "estadoCuenta": {},
+  "asesorData": {},
+  "contactoData": {},
+  "antiguedadData": {},
+  "referencias": [],
+  "capitalMonto": 25000,
+  "plazoQnas": 48,
+  "tabla": {}
+}
 ```
 
-**Response (200):** Archivo PDF binario
+**Response (200):** Archivo PDF binario (`Content-Type: application/pdf`)
+
+### 6. Autenticación
+
+**Endpoint:** `POST /api/auth/login`
+
+**Request Body:**
+```json
+{
+  "email": "asesor@credifom.mx",
+  "password": "1234"
+}
+```
+
+**Response Exitosa (200):**
+```json
+{
+  "success": true,
+  "data": {
+    "token": "eyJhbGciOiJIUzI1NiIs...",
+    "user": {
+      "email": "asesor@credifom.mx",
+      "role": "asesor",
+      "name": "MARIA LOPEZ"
+    }
+  }
+}
+```
+
+### 7. Listar Contratos
+
+**Endpoint:** `GET /api/contracts`
+
+**Headers:** `Authorization: Bearer <token>`
+
+**Response (200):**
+```json
+{
+  "success": true,
+  "data": [
+    {
+      "id": "CTR-001",
+      "clientName": "JUAN PEREZ GARCIA",
+      "date": "2026-01-15",
+      "monto": 25000,
+      "plazo": 48,
+      "asesor": "MARIA LOPEZ",
+      "status": "completado"
+    }
+  ]
+}
+```
+
+Query params: `?page=1&limit=10&search=JUAN`
 
 ---
 
@@ -133,9 +196,11 @@ Desarrollo: http://localhost:3000
 | Código | Descripción |
 |--------|-------------|
 | 400 | Datos inválidos |
+| 401 | No autorizado / Token inválido |
 | 404 | Endpoint no encontrado |
 | 413 | Archivo muy grande |
 | 415 | Formato no soportado |
+| 422 | Error de validación (con errores por campo) |
 | 429 | Rate limiting |
 | 500 | Error del servidor |
 
@@ -152,6 +217,11 @@ Desarrollo: http://localhost:3000
    - Implementación en backend
    - Actualización en frontend
    - Actualización de este documento
+
+3. La infraestructura de API está en `src/lib/`:
+   - `api.ts` — Instancia axios con interceptors
+   - `auth.ts` — Manejo de tokens JWT
+   - `errors.ts` — Clases de error tipadas
 
 ---
 

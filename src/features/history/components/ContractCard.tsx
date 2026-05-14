@@ -2,7 +2,7 @@
  *  Muestra: nombre del cliente, fecha, asesor, monto, plazo y botones de acción.
  *  El sharing usa navigator.share con fallback a clipboard. */
 import { Eye, Share2 } from "lucide-react";
-import { Card } from "@/features/history/componenrs/index";
+import { Card } from "@/components";
 
 interface ContractCardProps {
   contract: {

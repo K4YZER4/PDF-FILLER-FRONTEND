@@ -8,6 +8,7 @@ import { Outlet, useNavigate, useLocation } from "react-router-dom";
 import { FileText, Search, Calculator, Eye, LogOut, Upload, Loader2, CheckCircle, AlertCircle, FileDown, Pencil, Share2 } from "lucide-react";
 import { Button } from "@/components/ui";
 import { Card } from "@/components";
+import { ErrorBoundary } from "@/components/feedback";
 import { useContractStore } from "@/store/useContractStore";
 import { ContractStepper, ExitModal } from "@/layouts/components";
 import type { Step } from "@/layouts/components";
@@ -94,10 +95,8 @@ function ContractLayout() {
     setShowFinishToast(true);
     addContract({
       id: `CTR-${Date.now()}`,
-      clientName: [
-        (formData.ine as any)?.primerNombre,
-        (formData.ine as any)?.segundoNombre,
-      ].filter(Boolean).join(" ") || "CLIENTE",
+      clientName: [formData.ine.primerNombre, formData.ine.segundoNombre]
+        .filter(Boolean).join(" ") || "CLIENTE",
       date: new Date().toISOString().split("T")[0],
       monto: formData.tabla?.montoPagare ?? 0,
       plazo: formData.tabla
@@ -108,13 +107,13 @@ function ContractLayout() {
     });
     setTimeout(() => {
       setShowFinishToast(false);
-      window.location.href = "/";
+      navigate("/");
     }, 2000);
   };
 
   const handleShare = useCallback(async () => {
     const text = `Contrato CREDIFOM\nCliente: ${
-      [(formData.ine as any)?.primerNombre, (formData.ine as any)?.primerApellido].filter(Boolean).join(" ") || "CLIENTE"
+      [formData.ine.primerNombre, formData.ine.primerApellido].filter(Boolean).join(" ") || "CLIENTE"
     }\nMonto: $${(formData.tabla?.montoPagare ?? 0).toLocaleString()}`;
     if (navigator.share) {
       try { await navigator.share({ title: "Contrato CREDIFOM", text }); }
@@ -132,37 +131,32 @@ function ContractLayout() {
 
     if (currentSegment === "review") {
       const { ine, nomina, banco } = formData;
-
-      const d = (ine as any)?.domicilio || {};
+      const d = ine.domicilio;
 
       const allPersonales = [
-        "primerNombre",
-        "segundoNombre",
-        "primerApellido",
-        "segundoApellido",
-        "curp",
-        "sexo",
-        "fechaNacimiento",
-        "claveElector",
-      ].every((f) => (ine as any)?.[f]?.trim());
+        ine.primerNombre,
+        ine.segundoNombre,
+        ine.primerApellido,
+        ine.segundoApellido,
+        ine.curp,
+        ine.sexo,
+        ine.fechaNacimiento,
+        ine.claveElector,
+      ].every((f) => f?.trim());
 
       const allDomicilio = [
-        "calle",
-        "codigoPostal",
-        "colonia",
-        "noExt",
-        "municipio",
-        "estado",
-      ].every((f) => d[f]?.trim());
+        d?.calle,
+        d?.codigoPostal,
+        d?.colonia,
+        d?.noExt,
+        d?.municipio,
+        d?.estado,
+      ].every((f) => f?.trim());
 
-      const allLaborales =
-        ["rfc", "noEmpleado", "dependencia", "departamento", "puesto"].every(
-          (f) => (nomina as any)?.[f]?.trim(),
-        ) && Number((nomina as any)?.ingresoMensual) > 0;
+      const laboralFields = [nomina.rfc, nomina.noEmpleado, nomina.dependencia, nomina.departamento, nomina.puesto];
+      const allLaborales = laboralFields.every((f) => f?.trim()) && Number(nomina.ingresoMensual) > 0;
 
-      const allBancarios = ["noCuenta", "banco", "clabe"].every((f) =>
-        (banco as any)?.[f]?.trim(),
-      );
+      const allBancarios = [banco.noCuenta, banco.banco, banco.clabe].every((f) => f?.trim());
 
       return allPersonales && allDomicilio && allLaborales && allBancarios;
     }
@@ -171,12 +165,10 @@ function ContractLayout() {
       const m = formData.capitalMonto;
       if (m <= 0 || m % 1000 !== 0) return false;
 
-      const ad = formData.asesorData || {};
-      const cd = formData.contactoData || {};
-      const ant = formData.antiguedadData || {};
-      const refs = formData.referencias || [];
-
-      if (!ad || !cd || !ant || !refs || refs.length < 3) return false;
+      const ad = formData.asesorData;
+      const cd = formData.contactoData;
+      const ant = formData.antiguedadData;
+      const refs = formData.referencias;
 
       if ((ad.folio?.length ?? 0) !== 5) return false;
       if (!ad.sucursal?.trim()) return false;
@@ -285,7 +277,9 @@ function ContractLayout() {
 
       {/* Contenido */}
       <main className="flex-1 py-3 md:py-4">
-        <Outlet />
+        <ErrorBoundary context="Error al cargar la sección del contrato">
+          <Outlet />
+        </ErrorBoundary>
       </main>
 
       {/* Footer */}

@@ -27,6 +27,10 @@ import type {
   EstadoCuentaData,
   TablaCreditoData,
   ScanStatus,
+  AsesorData,
+  ContactoData,
+  AntiguedadData,
+  Referencias,
 } from "@/types";
 
 // ─── Tipos ────────────────────────────────────────────────────────────────────
@@ -69,10 +73,10 @@ interface FormDataState {
   tabla: TablaCreditoData | null;
   capitalMonto: number;
   plazoQnas: number;
-  asesorData: Record<string, string>;
-  contactoData: Record<string, string>;
-  antiguedadData: Record<string, string>;
-  referencias: Array<Record<string, string>>;
+  asesorData: AsesorData;
+  contactoData: ContactoData;
+  antiguedadData: AntiguedadData;
+  referencias: Referencias;
 }
 
 /** Contrato individual en el historial */
@@ -466,23 +470,17 @@ const useContractStore = create<ContractState>()(
       /**
        * Configuración de persistencia en localStorage.
        *
-       * name: clave en localStorage donde se guarda el estado.
+       * Solo persistimos auth para mantener la sesión del usuario.
+       * Los datos del formulario (formData) NO se persisten porque
+       * contienen información sensible (CURP, RFC, CLABE).
+       * Los documentos (File) se guardan en IndexedDB mediante fileStorage.ts.
        *
-       * partialize: filtra qué parte del estado se persiste.
-       * Guardamos auth, step, formData y los metadatos del escaneo.
-       * Los archivos (File) se guardan aparte en IndexedDB mediante
-       * fileStorage.ts porque no son serializables a JSON.
+       * Migración: usuarios con datos viejos en localStorage perderán
+       * su contrato en progreso al actualizar, pero la sesión se conserva.
        */
       name: "credifom-auth",
       partialize: (state) => ({
         auth: state.auth,
-        step: state.step,
-        formData: state.formData,
-        documents: {
-          scanStatus: state.documents.scanStatus,
-          scanProgress: state.documents.scanProgress,
-          scanResults: state.documents.scanResults,
-        },
       }),
     },
   ),
@@ -491,4 +489,4 @@ const useContractStore = create<ContractState>()(
 // ─── Exports ──────────────────────────────────────────────────────────────────
 
 export { useContractStore };
-export type { UserRole, Contract, ContractState };
+export type { UserRole, Contract, ContractState, FormDataState };
