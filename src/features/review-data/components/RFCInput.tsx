@@ -37,10 +37,12 @@ import { forwardRef } from "react";
 import { Input, type InputProps } from "@/components/ui";
 
 /**
- * Regex estructural del RFC para persona física (13 caracteres).
- * No valida palabras inconvenientes ni homonimia — eso lo hace el SAT.
+ * Regex básico del RFC para persona física (13 caracteres).
+ * Solo verifica que sean 13 caracteres alfanuméricos válidos.
+ * La validación estructural exacta (4 letras + 6 dígitos + 3 alfanum)
+ * puede dar falsos positivos con homoclaves reales del SAT.
  */
-const RFC_REGEX = /^[A-ZÑ&]{4}\d{6}[A-Z0-9]{3}$/;
+const RFC_REGEX = /^[A-Z0-9Ñ&]{13}$/;
 
 type RFCInputProps = Omit<InputProps, "onChange"> & {
   onChange?: (value: string) => void;

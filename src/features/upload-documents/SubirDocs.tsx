@@ -17,7 +17,7 @@
  *       - Rojo: documento falló → el usuario puede reemplazarlo
  *       - Normal: aún no se ha escaneado */
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Upload, FileText, X, CheckCircle, AlertCircle } from "lucide-react";
 
 import { Card } from "@/components";
@@ -76,6 +76,30 @@ function SubirDocs() {
 
   // Refs ocultos tipo file → se disparan al hacer clic en Cámara o Archivo
   const fileRefs = useRef<Record<string, HTMLInputElement | null>>({});
+
+  // ── Restaurar archivos desde IndexedDB al montar ─────────────────────────
+  // Al recargar la página, los File objects se pierden del store (no son
+  // serializables a JSON). Se recuperan desde IndexedDB donde quedaron
+  // guardados por setDocument.
+  useEffect(() => {
+    const s = useContractStore.getState();
+    const needsRestore = !s.documents.ineFile
+      && !s.documents.nomina1File
+      && !s.documents.nomina2File
+      && !s.documents.estadoCuentaFile;
+
+    if (needsRestore) {
+      s.restoreDocuments().then(() => {
+        const updated = useContractStore.getState();
+        setDocs([
+          { id: "ine", label: "INE", file: updated.documents.ineFile },
+          { id: "nomina1", label: "Nómina 1", file: updated.documents.nomina1File },
+          { id: "nomina2", label: "Nómina 2", file: updated.documents.nomina2File },
+          { id: "estadoCuenta", label: "Estado de cuenta", file: updated.documents.estadoCuentaFile },
+        ]);
+      });
+    }
+  }, []);
 
   // ── Derivados ──────────────────────────────────────────────────────────────
 

@@ -20,6 +20,7 @@
 import { create } from "zustand";
 import { immer } from "zustand/middleware/immer";
 import { persist } from "zustand/middleware";
+import { saveFile, loadFile, clearAllFiles } from "@/utils/fileStorage";
 import type {
   INEData,
   NominaData,
@@ -136,6 +137,9 @@ interface ContractState {
    *  Actualiza scanStatus y scanProgress durante el proceso.
    *  Retorna "done" si todos se escanearon OK, "error" si alguno falló. */
   scanDocuments: () => Promise<"done" | "error">;
+
+  /** Restaura los archivos desde IndexedDB al cargar la página. */
+  restoreDocuments: () => Promise<void>;
 
   // ── Acciones de formulario ──
 
@@ -263,13 +267,15 @@ const useContractStore = create<ContractState>()(
           state.auth.isAuthenticated = true;
         }),
 
-      logout: () =>
+      logout: () => {
         set((state) => {
           state.auth = { user: null, role: null, isAuthenticated: false };
           state.step = { current: 1 };
           state.documents = { ...initialDocuments };
           state.formData = { ...initialFormData };
-        }),
+        });
+        clearAllFiles().catch(console.error);
+      },
 
       // ── Pasos ───────────────────────────────────────────────────────────────
 
@@ -296,10 +302,16 @@ const useContractStore = create<ContractState>()(
 
       // ── Documentos ──────────────────────────────────────────────────────────
 
-      setDocument: (key, value) =>
+      setDocument: (key, value) => {
         set((state) => {
           (state.documents as Record<string, unknown>)[key] = value;
-        }),
+        });
+        if (value instanceof File) {
+          saveFile(key, value).catch(console.error);
+        } else if (value === null) {
+          clearAllFiles().catch(console.error);
+        }
+      },
 
       setScanStatus: (status) =>
         set((state) => {
@@ -311,10 +323,24 @@ const useContractStore = create<ContractState>()(
           state.documents.scanProgress = progress;
         }),
 
-      resetDocuments: () =>
+      resetDocuments: () => {
         set((state) => {
           state.documents = { ...initialDocuments };
-        }),
+        });
+        clearAllFiles().catch(console.error);
+      },
+
+      restoreDocuments: async () => {
+        const keys = ["ineFile", "nomina1File", "nomina2File", "estadoCuentaFile"] as const;
+        for (const key of keys) {
+          const file = await loadFile(key);
+          if (file) {
+            set((state) => {
+              (state.documents as Record<string, unknown>)[key] = file;
+            });
+          }
+        }
+      },
 
       scanDocuments: async () => {
         set((state) => {
@@ -377,16 +403,18 @@ const useContractStore = create<ContractState>()(
 
       // ── Reset ───────────────────────────────────────────────────────────────
 
-      resetContract: () =>
+      resetContract: () => {
         set((state) => {
           // Solo limpia el contrato en progreso
           // NO toca auth ni history
           state.documents = { ...initialDocuments };
           state.formData = { ...initialFormData };
           state.step = { current: 1 };
-        }),
+        });
+        clearAllFiles().catch(console.error);
+      },
 
-      resetAll: () =>
+      resetAll: () => {
         set((state) => {
           // Limpia todo excepto el historial
           // Se llama antes del logout para no dejar datos sensibles en memoria
@@ -394,21 +422,32 @@ const useContractStore = create<ContractState>()(
           state.step = { current: 1 };
           state.documents = { ...initialDocuments };
           state.formData = { ...initialFormData };
-        }),
+        });
+        clearAllFiles().catch(console.error);
+      },
     })),
     {
       /**
        * Configuración de persistencia en localStorage.
        *
-       * name: clave en localStorage donde se guarda el estado
+       * name: clave en localStorage donde se guarda el estado.
        *
        * partialize: filtra qué parte del estado se persiste.
-       * Solo guardamos auth para que la sesión sobreviva recargas.
-       * Los documentos y datos del formulario NO se persisten —
-       * son datos sensibles que solo deben vivir durante la sesión activa.
+       * Guardamos auth, step, formData y los metadatos del escaneo.
+       * Los archivos (File) se guardan aparte en IndexedDB mediante
+       * fileStorage.ts porque no son serializables a JSON.
        */
       name: "credifom-auth",
-      partialize: (state) => ({ auth: state.auth }),
+      partialize: (state) => ({
+        auth: state.auth,
+        step: state.step,
+        formData: state.formData,
+        documents: {
+          scanStatus: state.documents.scanStatus,
+          scanProgress: state.documents.scanProgress,
+          scanResults: state.documents.scanResults,
+        },
+      }),
     },
   ),
 );

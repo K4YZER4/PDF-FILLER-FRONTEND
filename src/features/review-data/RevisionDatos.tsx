@@ -206,6 +206,10 @@ function renderField(
     case "clabe":
       return <CLABEInput {...shared} onChange={onUpdate} />;
 
+    // Clave de elector — 18 caracteres alfanuméricos
+    case "claveElector":
+      return <Input {...shared} maxLength={18} onChange={(e) => onUpdate(e.target.value)} />;
+
     // Input genérico para campos que no tienen restricciones especiales
     default:
       return <Input {...shared} onChange={(e) => onUpdate(e.target.value)} />;
