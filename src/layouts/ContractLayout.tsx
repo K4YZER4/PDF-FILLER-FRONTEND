@@ -3,9 +3,9 @@
  *  Footer moderno con acciones alineadas.
  *  Modal de confirmación al salir.
  */
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { Outlet, useNavigate, useLocation } from "react-router-dom";
-import { FileText, Search, Calculator, Eye, LogOut, Upload, Loader2, CheckCircle, AlertCircle } from "lucide-react";
+import { FileText, Search, Calculator, Eye, LogOut, Upload, Loader2, CheckCircle, AlertCircle, FileDown, Pencil, Share2 } from "lucide-react";
 import { Button } from "@/components/ui";
 import { Card } from "@/components";
 import { useContractStore } from "@/store/useContractStore";
@@ -32,6 +32,7 @@ function ContractLayout() {
 
   const documents = useContractStore((s) => s.documents);
   const formData = useContractStore((s) => s.formData);
+  const store = useContractStore();
   const resetContract = useContractStore((s) => s.resetContract);
   const scanDocuments = useContractStore((s) => s.scanDocuments);
   const scanStatus = useContractStore((s) => s.documents.scanStatus);
@@ -45,9 +46,8 @@ function ContractLayout() {
 
   const [showExitModal, setShowExitModal] = useState(false);
 
-  const currentStep = STEPS.findIndex((s) =>
-    location.pathname.endsWith(s.path),
-  );
+  const currentSegment = location.pathname.split("/").filter(Boolean).pop();
+  const currentStep = STEPS.findIndex((s) => s.path === currentSegment);
 
   const stepNumber = currentStep >= 0 ? currentStep + 1 : 1;
 
@@ -70,16 +70,67 @@ function ContractLayout() {
     }
   };
 
-  const isUploadStep = location.pathname.endsWith("upload");
+  const isUploadStep = currentSegment === "upload";
+  const isLoanStep = currentSegment === "loan";
+  const isPreviewStep = currentSegment === "preview";
+
+  const addContract = useContractStore((s) => s.addContract);
+
+  const [showFinishToast, setShowFinishToast] = useState(false);
+
+  const handleDownload = () => {
+    const blob = new Blob(["Contrato PDF"], { type: "application/pdf" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `contrato-${Date.now()}.pdf`;
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
+  const handleEdit = () => navigate(STEPS[1].path, { relative: "path" });
+
+  const handleFinish = () => {
+    setShowFinishToast(true);
+    addContract({
+      id: `CTR-${Date.now()}`,
+      clientName: [
+        (formData.ine as any)?.primerNombre,
+        (formData.ine as any)?.segundoNombre,
+      ].filter(Boolean).join(" ") || "CLIENTE",
+      date: new Date().toISOString().split("T")[0],
+      monto: formData.tabla?.montoPagare ?? 0,
+      plazo: formData.tabla
+        ? Math.round((formData.tabla.montoPagare) / (formData.tabla.descuentoQuincenal || 1))
+        : 0,
+      asesor: "ASESOR",
+      status: "completado",
+    });
+    setTimeout(() => {
+      setShowFinishToast(false);
+      window.location.href = "/";
+    }, 2000);
+  };
+
+  const handleShare = useCallback(async () => {
+    const text = `Contrato CREDIFOM\nCliente: ${
+      [(formData.ine as any)?.primerNombre, (formData.ine as any)?.primerApellido].filter(Boolean).join(" ") || "CLIENTE"
+    }\nMonto: $${(formData.tabla?.montoPagare ?? 0).toLocaleString()}`;
+    if (navigator.share) {
+      try { await navigator.share({ title: "Contrato CREDIFOM", text }); }
+        catch { /* usuario canceló */ }
+    } else {
+      await navigator.clipboard.writeText(text);
+      alert("Información copiada al portapapeles");
+    }
+  }, [formData]);
 
   const canContinue = (): boolean => {
-    const path = location.pathname;
-
-    if (path.endsWith("upload")) {
+    if (currentSegment === "upload") {
       return documents.scanStatus === "done";
     }
 
-    if (path.endsWith("review")) {
+    if (currentSegment === "review") {
       const { ine, nomina, banco } = formData;
 
       const d = (ine as any)?.domicilio || {};
@@ -116,18 +167,62 @@ function ContractLayout() {
       return allPersonales && allDomicilio && allLaborales && allBancarios;
     }
 
-    if (path.endsWith("loan")) {
-      return formData.tabla !== null;
+    if (currentSegment === "loan") {
+      const m = formData.capitalMonto;
+      if (m <= 0 || m % 1000 !== 0) return false;
+
+      const ad = formData.asesorData || {};
+      const cd = formData.contactoData || {};
+      const ant = formData.antiguedadData || {};
+      const refs = formData.referencias || [];
+
+      if (!ad || !cd || !ant || !refs || refs.length < 3) return false;
+
+      if ((ad.folio?.length ?? 0) !== 5) return false;
+      if (!ad.sucursal?.trim()) return false;
+      if ((ad.numVendedor?.length ?? 0) !== 3) return false;
+      if (!ad.asesor?.trim()) return false;
+      if (!ad.fechaContrato) return false;
+      if (!ad.fechaArranque) return false;
+      if (!ad.lugar?.trim()) return false;
+      if (!ad.mesDescuento) return false;
+      if ((ad.anioDescuento?.length ?? 0) !== 4) return false;
+
+      if ((cd.tel?.length ?? 0) !== 10) return false;
+      if ((cd.celular?.length ?? 0) !== 10) return false;
+      if ((cd.telCasa?.length ?? 0) !== 10) return false;
+      if (!cd.correo?.includes("@")) return false;
+      if (!cd.estadoCivil) return false;
+
+      if (!ant.fechaIngreso) return false;
+      if (!ant.meses?.length) return false;
+      if (!ant.anos?.length) return false;
+
+      return refs.every((r) => r?.nombre?.trim() && (r?.telefono?.length ?? 0) === 10);
     }
 
     return false;
   };
 
   const goNext = () => {
-    const idx = STEPS.findIndex((s) => location.pathname.endsWith(s.path));
-
-    if (idx >= 0 && idx < STEPS.length - 1) {
-      navigate(STEPS[idx + 1].path, { relative: "path" });
+    if (currentStep >= 0 && currentStep < STEPS.length - 1) {
+      if (currentSegment === "loan") {
+        const monto = formData.capitalMonto;
+        if (monto <= 0 || monto % 1000 !== 0) {
+          alert("Introduzca un monto válido (múltiplo de 1000)");
+          return;
+        }
+        if (!formData.tabla) {
+          const plazo = formData.plazoQnas || 48;
+          store.setFormData("tabla", {
+            montoPagare: monto * 1.15,
+            descuentoQuincenal: (monto * 1.15) / plazo,
+            tasaMensual: 0.025,
+            cat: 0.32,
+          });
+        }
+      }
+      navigate(STEPS[currentStep + 1].path, { relative: "path" });
     }
   };
 
@@ -137,10 +232,8 @@ function ContractLayout() {
       return;
     }
 
-    const idx = STEPS.findIndex((s) => location.pathname.endsWith(s.path));
-
-    if (idx > 0) {
-      navigate(STEPS[idx - 1].path, { relative: "path" });
+    if (currentStep > 0) {
+      navigate(STEPS[currentStep - 1].path, { relative: "path" });
     }
   };
 
@@ -202,9 +295,11 @@ function ContractLayout() {
       >
         <div className="max-w-5xl mx-auto px-4 md:px-6 py-4">
           <div className="flex items-center justify-end gap-3">
-            <Button variant="secondary" onClick={goPrev} className="w-35">
-              {stepNumber === 1 ? "Cancelar" : "Volver"}
-            </Button>
+            {!isPreviewStep && (
+              <Button variant="secondary" onClick={goPrev} className="w-35">
+                {stepNumber === 1 ? "Cancelar" : "Volver"}
+              </Button>
+            )}
 
             {isUploadStep && scanStatus !== "done" ? (
               scanStatus === "scanning" ? (
@@ -223,18 +318,58 @@ function ContractLayout() {
                 </Button>
               )
             ) : stepNumber < 4 ? (
-              <Button
-                variant="primary"
-                onClick={goNext}
-                disabled={!canContinue()}
-                className="w-35"
-              >
-                Siguiente
-              </Button>
+              isLoanStep ? (
+                <Button
+                  variant="primary"
+                  onClick={goNext}
+                  disabled={!canContinue()}
+                  className="w-44 bg-success hover:bg-success-hover"
+                >
+                  Generar Contrato
+                </Button>
+              ) : (
+                <Button
+                  variant="primary"
+                  onClick={goNext}
+                  disabled={!canContinue()}
+                  className="w-44"
+                >
+                  Siguiente
+                </Button>
+              )
+            ) : isPreviewStep ? (
+              <>
+                <div className="hidden md:flex gap-3">
+                  <Button variant="secondary" onClick={handleDownload}>
+                    <FileDown size={16} /> Descargar
+                  </Button>
+                  <Button variant="secondary" onClick={handleEdit}>
+                    <Pencil size={16} /> Editar
+                  </Button>
+                  <Button variant="secondary" onClick={handleShare}>
+                    <Share2 size={16} /> Compartir
+                  </Button>
+                </div>
+                <div className="flex md:hidden gap-3">
+                  <Button variant="secondary" onClick={handleDownload}>
+                    <FileDown size={16} /> Descargar
+                  </Button>
+                  <Button variant="secondary" onClick={handleEdit}>
+                    <Pencil size={16} /> Editar
+                  </Button>
+                </div>
+                <Button
+                  variant="primary"
+                  onClick={handleFinish}
+                  className="w-35 bg-success hover:bg-success-hover"
+                >
+                  <CheckCircle size={16} /> Finalizar
+                </Button>
+              </>
             ) : (
               <Button
                 variant="primary"
-                className="w-35 bg-success hover:bg-success-hover"
+                className="w-44 bg-success hover:bg-success-hover"
               >
                 Generar contrato
               </Button>
@@ -269,6 +404,29 @@ function ContractLayout() {
               })}
             </div>
           </Card>
+        </div>
+      )}
+
+
+
+      {/* Floating share button — solo móvil */}
+      {isPreviewStep && (
+        <button
+          type="button"
+          onClick={handleShare}
+          aria-label="Compartir contrato"
+          className="md:hidden fixed bottom-24 right-6 z-40 w-14 h-14 rounded-full bg-primary text-white shadow-lg flex items-center justify-center hover:bg-primary-hover transition-all active:scale-95"
+        >
+          <Share2 size={22} />
+        </button>
+      )}
+
+      {/* Toast de finalización */}
+      {showFinishToast && (
+        <div className="fixed top-6 right-6 z-999 animate-in fade-in slide-in-from-top-2 duration-300">
+          <div className="bg-success-tint border border-success/20 text-success px-4 py-3 rounded-lg shadow-lg flex items-center gap-2 text-sm">
+            <CheckCircle size={16} /> Contrato generado exitosamente
+          </div>
         </div>
       )}
 

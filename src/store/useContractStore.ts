@@ -67,6 +67,12 @@ interface FormDataState {
   banco: Partial<EstadoCuentaData>;
   extras: Record<string, unknown>;
   tabla: TablaCreditoData | null;
+  capitalMonto: number;
+  plazoQnas: number;
+  asesorData: Record<string, string>;
+  contactoData: Record<string, string>;
+  antiguedadData: Record<string, string>;
+  referencias: Array<Record<string, string>>;
 }
 
 /** Contrato individual en el historial */
@@ -196,6 +202,36 @@ const initialFormData: FormDataState = {
   banco: {},
   extras: {},
   tabla: null,
+  capitalMonto: 0,
+  plazoQnas: 48,
+  asesorData: {
+    folio: "",
+    sucursal: "",
+    numVendedor: "",
+    asesor: "",
+    fechaContrato: "",
+    fechaArranque: "",
+    lugar: "",
+    mesDescuento: "",
+    anioDescuento: "",
+  },
+  contactoData: {
+    tel: "",
+    celular: "",
+    telCasa: "",
+    correo: "",
+    estadoCivil: "",
+  },
+  antiguedadData: {
+    fechaIngreso: "",
+    meses: "",
+    anos: "",
+  },
+  referencias: [
+    { nombre: "", telefono: "" },
+    { nombre: "", telefono: "" },
+    { nombre: "", telefono: "" },
+  ],
 };
 
 // ─── Datos mock ───────────────────────────────────────────────────────────────
