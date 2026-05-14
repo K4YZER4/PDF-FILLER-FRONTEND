@@ -159,7 +159,7 @@ function renderField(
     case "dependencia":
     case "departamento":
     case "puesto":
-      return <NameInput {...shared} maxLength={60} onChange={onUpdate} />;
+      return <NameInput {...shared} maxLength={40} onChange={onUpdate} />;
 
     // CURP — 18 caracteres alfanuméricos, formato oficial validado
     case "curp":

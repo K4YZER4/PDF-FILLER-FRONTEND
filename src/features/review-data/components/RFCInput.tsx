@@ -1,10 +1,45 @@
-/** Input para RFC de persona física (13 caracteres).
- *  Acepta letras y números, convierte a mayúsculas.
- *  Valida formato básico al completar los 13 caracteres. */
+/**
+ * ──────────────────────────────────────────────────────────────────────────────
+ * RFCInput.tsx  —  Input para RFC de persona física (13 caracteres)
+ * ──────────────────────────────────────────────────────────────────────────────
+ *
+ * ¿Qué hace?
+ *   Renderiza un <input> que solo acepta letras (incluyendo Ñ y &), números,
+ *   máximo 13 caracteres, y convierte todo a mayúsculas.
+ *   Al completar los 13 caracteres valida el formato básico del RFC.
+ *
+ * Formato RFC (persona física):
+ *   [A-ZÑ&]{4}  →  4 letras derivadas del nombre (apellido paterno, vocal
+ *                    interna del paterno, apellido materno, nombre)
+ *   \d{6}       →  6 dígitos de la fecha de nacimiento (YYMMDD)
+ *   [A-Z0-9]{3} →  3 caracteres alfanuméricos (homoclave asignada por el SAT)
+ *
+ * La validación del RFC es compleja (incluye homonimia, palabras
+ * inconvenientes, etc.) pero aquí solo hacemos una validación
+ * estructural básica. La validación definitiva la hace el SAT.
+ *
+ * Props:
+ *   value, error  →  Del padre
+ *   onChange: (value: string) => void
+ *
+ * Nota sobre el error:
+ *   Si el padre ya reportó error (ej: "Obligatorio"), se muestra ese.
+ *   Al llegar a 13 caracteres se valida formato. Si no corresponde,
+ *   muestra "Formato de RFC inválido".
+ *
+ * Diferencia con CURP:
+ *   RFC y CURP comparten los primeros 13 caracteres (RFC es la base de la CURP),
+ *   pero CURP agrega 5 caracteres adicionales (entidad + homonimia + dígito).
+ *   Por eso ambos inputs son similares pero con diferente regex y maxLength.
+ */
+
 import { forwardRef } from "react";
 import { Input, type InputProps } from "@/components/ui";
 
-// 4 letras (nombre+apellidos) + 6 dígitos (fecha) + 3 alfanuméricos (homoclave)
+/**
+ * Regex estructural del RFC para persona física (13 caracteres).
+ * No valida palabras inconvenientes ni homonimia — eso lo hace el SAT.
+ */
 const RFC_REGEX = /^[A-ZÑ&]{4}\d{6}[A-Z0-9]{3}$/;
 
 type RFCInputProps = Omit<InputProps, "onChange"> & {
@@ -38,9 +73,7 @@ const RFCInput = forwardRef<HTMLInputElement, RFCInputProps>(
         spellCheck={false}
         onChange={handleChange}
         error={error ?? rfcError}
-        hint={
-          !error && !rfcError ? `${currentLength}/13 caracteres` : undefined
-        }
+        hint={!error && !rfcError ? `${currentLength}/13 caracteres` : undefined}
         {...props}
       />
     );
