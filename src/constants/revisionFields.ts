@@ -9,9 +9,24 @@
  * Cada campo tiene un id, label y placeholder.
  */
 
-import { User, Home, Briefcase, Building } from "lucide-react";
+import { User, Home, Briefcase, Building, LucideIcon } from "lucide-react";
 
-export const sections = [
+export interface FieldDef {
+  id: string;
+  label: string;
+  placeholder: string;
+  required?: boolean;
+}
+
+export interface SectionDef {
+  id: string;
+  title: string;
+  icon: LucideIcon;
+  section: "ine" | "nomina" | "banco";
+  fields: FieldDef[];
+}
+
+export const sections: SectionDef[] = [
   {
     id: "personales" as const,
     title: "Datos Personales",

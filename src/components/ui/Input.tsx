@@ -122,7 +122,11 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
               hasLeftSlot ? "pl-10" : "pl-3",
               hasRightSlot ? "pr-11" : "pr-3",
               // Estado default
-              !error && !invalid && !autofilled && !success && !disabled && [
+              !error &&
+                !invalid &&
+                !autofilled &&
+                !success &&
+                !disabled && [
                   "border-border bg-surface text-text-primary",
                   "hover:border-border-secondary",
                   "focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/15",
@@ -133,15 +137,19 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
                 "focus:outline-none focus:border-error focus:ring-2 focus:ring-error/15",
               ],
               // Estado inválido (solo borde rojo, sin mensaje)
-              invalid && !error && [
-                "border-error text-text-primary",
-                "focus:outline-none focus:border-error focus:ring-2 focus:ring-error/15",
-              ],
+              invalid &&
+                !error && [
+                  "border-error text-text-primary",
+                  "focus:outline-none focus:border-error focus:ring-2 focus:ring-error/15",
+                ],
               // Estado éxito (campo lleno)
-              success && !error && !invalid && !autofilled && [
-                "border-success text-text-primary",
-                "focus:outline-none focus:border-success focus:ring-2 focus:ring-success/15",
-              ],
+              success &&
+                !error &&
+                !invalid &&
+                !autofilled && [
+                  "border-success text-text-primary",
+                  "focus:outline-none focus:border-success focus:ring-2 focus:ring-success/15",
+                ],
               // Estado autollenado
               autofilled &&
                 !error && [
