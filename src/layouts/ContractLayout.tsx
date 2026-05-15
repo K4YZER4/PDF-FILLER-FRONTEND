@@ -5,13 +5,39 @@
  */
 import { useState, useCallback } from "react";
 import { Outlet, useNavigate, useLocation } from "react-router-dom";
-import { FileText, Search, Calculator, Eye, LogOut, Upload, Loader2, CheckCircle, AlertCircle, FileDown, Pencil, Share2 } from "lucide-react";
+import {
+  FileText,
+  Search,
+  Calculator,
+  Eye,
+  LogOut,
+  Upload,
+  Loader2,
+  CheckCircle,
+  AlertCircle,
+  FileDown,
+  Pencil,
+  Share2,
+} from "lucide-react";
 import { Button } from "@/components/ui";
 import { Card } from "@/components";
 import { ErrorBoundary } from "@/components/feedback";
 import { useContractStore } from "@/store/useContractStore";
-import { ContractStepper, ExitModal } from "@/layouts/components";
+import { ContractStepper } from "@/layouts/components";
 import type { Step } from "@/layouts/components";
+
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+
+import { TriangleAlert } from "lucide-react";
 
 const STEPS: readonly Step[] = [
   { path: "upload", label: "Documentos", icon: FileText },
@@ -42,8 +68,15 @@ function ContractLayout() {
   const ineFile = useContractStore((s) => s.documents.ineFile);
   const nomina1File = useContractStore((s) => s.documents.nomina1File);
   const nomina2File = useContractStore((s) => s.documents.nomina2File);
-  const estadoCuentaFile = useContractStore((s) => s.documents.estadoCuentaFile);
-  const allFilesLoaded = !!(ineFile && nomina1File && nomina2File && estadoCuentaFile);
+  const estadoCuentaFile = useContractStore(
+    (s) => s.documents.estadoCuentaFile,
+  );
+  const allFilesLoaded = !!(
+    ineFile &&
+    nomina1File &&
+    nomina2File &&
+    estadoCuentaFile
+  );
 
   const [showExitModal, setShowExitModal] = useState(false);
 
@@ -55,8 +88,6 @@ function ContractLayout() {
   const handleStepNav = (path: string) => navigate(path, { relative: "path" });
 
   const handleExitClick = () => setShowExitModal(true);
-
-  const handleExitCancel = () => setShowExitModal(false);
 
   const handleExitConfirm = () => {
     setShowExitModal(false);
@@ -95,12 +126,17 @@ function ContractLayout() {
     setShowFinishToast(true);
     addContract({
       id: `CTR-${Date.now()}`,
-      clientName: [formData.ine.primerNombre, formData.ine.segundoNombre]
-        .filter(Boolean).join(" ") || "CLIENTE",
+      clientName:
+        [formData.ine.primerNombre, formData.ine.segundoNombre]
+          .filter(Boolean)
+          .join(" ") || "CLIENTE",
       date: new Date().toISOString().split("T")[0],
       monto: formData.tabla?.montoPagare ?? 0,
       plazo: formData.tabla
-        ? Math.round((formData.tabla.montoPagare) / (formData.tabla.descuentoQuincenal || 1))
+        ? Math.round(
+            formData.tabla.montoPagare /
+              (formData.tabla.descuentoQuincenal || 1),
+          )
         : 0,
       asesor: "ASESOR",
       status: "completado",
@@ -113,11 +149,16 @@ function ContractLayout() {
 
   const handleShare = useCallback(async () => {
     const text = `Contrato CREDIFOM\nCliente: ${
-      [formData.ine.primerNombre, formData.ine.primerApellido].filter(Boolean).join(" ") || "CLIENTE"
+      [formData.ine.primerNombre, formData.ine.primerApellido]
+        .filter(Boolean)
+        .join(" ") || "CLIENTE"
     }\nMonto: $${(formData.tabla?.montoPagare ?? 0).toLocaleString()}`;
     if (navigator.share) {
-      try { await navigator.share({ title: "Contrato CREDIFOM", text }); }
-        catch { /* usuario canceló */ }
+      try {
+        await navigator.share({ title: "Contrato CREDIFOM", text });
+      } catch {
+        /* usuario canceló */
+      }
     } else {
       await navigator.clipboard.writeText(text);
       alert("Información copiada al portapapeles");
@@ -153,10 +194,20 @@ function ContractLayout() {
         d?.estado,
       ].every((f) => f?.trim());
 
-      const laboralFields = [nomina.rfc, nomina.noEmpleado, nomina.dependencia, nomina.departamento, nomina.puesto];
-      const allLaborales = laboralFields.every((f) => f?.trim()) && Number(nomina.ingresoMensual) > 0;
+      const laboralFields = [
+        nomina.rfc,
+        nomina.noEmpleado,
+        nomina.dependencia,
+        nomina.departamento,
+        nomina.puesto,
+      ];
+      const allLaborales =
+        laboralFields.every((f) => f?.trim()) &&
+        Number(nomina.ingresoMensual) > 0;
 
-      const allBancarios = [banco.noCuenta, banco.banco, banco.clabe].every((f) => f?.trim());
+      const allBancarios = [banco.noCuenta, banco.banco, banco.clabe].every(
+        (f) => f?.trim(),
+      );
 
       return allPersonales && allDomicilio && allLaborales && allBancarios;
     }
@@ -190,7 +241,9 @@ function ContractLayout() {
       if (!ant.meses?.length) return false;
       if (!ant.anos?.length) return false;
 
-      return refs.every((r) => r?.nombre?.trim() && (r?.telefono?.length ?? 0) === 10);
+      return refs.every(
+        (r) => r?.nombre?.trim() && (r?.telefono?.length ?? 0) === 10,
+      );
     }
 
     return false;
@@ -378,13 +431,18 @@ function ContractLayout() {
           <Card className="p-6 max-w-sm w-full space-y-4">
             <div className="flex items-center gap-3">
               <Loader2 size={20} className="animate-spin text-primary" />
-              <span className="font-medium text-text-primary">Escaneando...</span>
+              <span className="font-medium text-text-primary">
+                Escaneando...
+              </span>
             </div>
             <div className="space-y-2">
               {DOC_SCAN_ITEMS.map((item) => {
                 const result = scanResults[item.id];
                 return (
-                  <div key={item.id} className="flex items-center gap-2 text-sm">
+                  <div
+                    key={item.id}
+                    className="flex items-center gap-2 text-sm"
+                  >
                     {result === "success" ? (
                       <CheckCircle size={14} className="text-success" />
                     ) : result === "error" ? (
@@ -400,8 +458,6 @@ function ContractLayout() {
           </Card>
         </div>
       )}
-
-
 
       {/* Floating share button — solo móvil */}
       {isPreviewStep && (
@@ -426,7 +482,44 @@ function ContractLayout() {
 
       {/* Modal salida */}
       {showExitModal && (
-        <ExitModal onConfirm={handleExitConfirm} onCancel={handleExitCancel} />
+        <AlertDialog open={showExitModal} onOpenChange={setShowExitModal}>
+          <AlertDialogContent
+            className="
+    w-[92%]
+    max-w-md
+    rounded-2xl
+    p-5
+    sm:p-6
+  "
+          >
+            <AlertDialogHeader>
+              <div className="mx-auto mb-3 flex h-12 w-12 sm:h-14 sm:w-14 items-center justify-center rounded-full bg-error/10">
+                <TriangleAlert className="text-error" size={28} />
+              </div>
+              <AlertDialogTitle className="text-xl">
+                ¿Salir del contrato?
+              </AlertDialogTitle>
+
+              <AlertDialogDescription className="mt-2">
+                Se perderán todos los datos capturados del contrato actual. Esta
+                acción no se puede deshacer.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+
+            <AlertDialogFooter>
+              <AlertDialogCancel className="flex-1 h-12">
+                Continuar editando
+              </AlertDialogCancel>
+
+              <AlertDialogAction
+                onClick={handleExitConfirm}
+                className="flex-1 h-12 bg-error hover:bg-error/90"
+              >
+                Salir y descartar
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
       )}
     </div>
   );
