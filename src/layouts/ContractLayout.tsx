@@ -25,7 +25,7 @@ import { ErrorBoundary } from "@/components/feedback";
 import { useContractStore } from "@/store/useContractStore";
 import { ContractStepper } from "@/layouts/components";
 import type { Step } from "@/layouts/components";
-
+// Componentes para el modal de confirmación
 import {
   AlertDialog,
   AlertDialogAction,
@@ -138,7 +138,7 @@ function ContractLayout() {
               (formData.tabla.descuentoQuincenal || 1),
           )
         : 0,
-      asesor: "ASESOR",
+      asesor: formData.asesorData.asesor || "ASESOR",
       status: "completado",
     });
     setTimeout(() => {

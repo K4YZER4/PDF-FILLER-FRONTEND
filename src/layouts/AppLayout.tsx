@@ -14,6 +14,18 @@ import { Plus, LogOut } from "lucide-react";
 import { Button } from "@/components/ui";
 import { useContractStore } from "@/store/useContractStore";
 
+// Componentes para el modal de confirmación
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+
 // ─── Tipos ────────────────────────────────────────────────────────────────────
 
 interface AppLayoutProps {
@@ -46,9 +58,6 @@ function AppLayout({ children, title = "Historial" }: AppLayoutProps) {
     logout();
     navigate("/login");
   };
-
-  /** El usuario canceló — cierra el modal sin hacer nada */
-  const handleLogoutCancel = () => setShowLogoutModal(false);
 
   return (
     <div className="min-h-screen bg-bg flex flex-col">
@@ -100,59 +109,47 @@ function AppLayout({ children, title = "Historial" }: AppLayoutProps) {
       {/* ── Contenido de la pantalla ── */}
       <main className="flex-1">{children}</main>
 
-      {/*
-        Modal de confirmación de cierre de sesión.
-        Se renderiza solo cuando showLogoutModal=true.
-        El clic en el overlay oscuro también cancela.
-      */}
+      {/* Modal cerrar sesión */}
       {showLogoutModal && (
-        <div
-          role="dialog"
-          aria-modal="true"
-          aria-labelledby="logout-modal-title"
-          aria-describedby="logout-modal-desc"
-          className="fixed inset-0 z-50 flex items-center justify-center p-4"
-        >
-          {/* Overlay — clic fuera cancela */}
-          <div
-            className="absolute inset-0 bg-black/40 backdrop-blur-sm"
-            onClick={handleLogoutCancel}
-            aria-hidden="true"
-          />
+        <AlertDialog open={showLogoutModal} onOpenChange={setShowLogoutModal}>
+          <AlertDialogContent
+            className="
+        w-[92%]
+        max-w-md
+        rounded-2xl
+        p-5
+        sm:p-6
+      "
+          >
+            <AlertDialogHeader>
+              <div className="mx-auto mb-3 flex h-12 w-12 sm:h-14 sm:w-14 items-center justify-center rounded-full bg-error/10">
+                <LogOut className="text-error" size={26} />
+              </div>
 
-          {/* Tarjeta del modal */}
-          <div className="relative bg-surface rounded-xl border border-border shadow-xl w-full max-w-sm p-6 flex flex-col gap-4">
-            <div className="flex flex-col gap-1">
-              <h2
-                id="logout-modal-title"
-                className="text-base font-semibold text-text-primary"
-              >
+              <AlertDialogTitle className="text-xl">
                 ¿Cerrar sesión?
-              </h2>
-              <p
-                id="logout-modal-desc"
-                className="text-sm text-text-secondary leading-relaxed"
-              >
-                Tu sesión se cerrará y tendrás que iniciar sesión de nuevo para
-                continuar.
-              </p>
-            </div>
+              </AlertDialogTitle>
 
-            {/* Acciones — cancelar izquierda, confirmar derecha */}
-            <div className="flex gap-3 justify-end">
-              <Button
-                variant="secondary"
-                size="md"
-                onClick={handleLogoutCancel}
-              >
+              <AlertDialogDescription className="mt-2">
+                Tu sesión se cerrará y tendrás que iniciar sesión nuevamente
+                para continuar.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+
+            <AlertDialogFooter>
+              <AlertDialogCancel className="flex-1 h-12">
                 Cancelar
-              </Button>
-              <Button variant="danger" size="md" onClick={handleLogoutConfirm}>
+              </AlertDialogCancel>
+
+              <AlertDialogAction
+                onClick={handleLogoutConfirm}
+                className="flex-1 h-12 bg-error hover:bg-error/90"
+              >
                 Cerrar sesión
-              </Button>
-            </div>
-          </div>
-        </div>
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
       )}
     </div>
   );
