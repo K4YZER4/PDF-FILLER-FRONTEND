@@ -81,7 +81,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
               htmlFor={id}
               className={cn(
                 "text-sm font-medium",
-                disabled ? "text-text-tertiary" : "text-text-primary",
+                disabled ? "text-text-muted" : "text-text-primary",
               )}
             >
               {label}
@@ -112,11 +112,11 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
             // - No permiten negativos
             // - Incrementan de 1000 en 1000 con las flechas
             min={type === "number" ? 0 : props.min}
-            step={type === "number" ? 1000 : props.step}
+            step={props.step ?? (type === "number" ? 1000 : undefined)}
             className={cn(
               // Base
               "w-full rounded-md border text-base transition-all duration-150",
-              "placeholder:text-text-tertiary",
+              "placeholder:text-text-muted",
               // Padding — deja espacio si hay ícono derecho
               sizeStyles[inputSize],
               hasLeftSlot ? "pl-10" : "pl-3",
@@ -158,7 +158,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
                 ],
               // Estado disabled
               disabled && [
-                "border-border bg-bg text-text-tertiary",
+                "border-border bg-bg text-text-muted",
                 "cursor-not-allowed opacity-60",
               ],
               className,
@@ -177,7 +177,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
                 <button
                   type="button"
                   onClick={() => setShowPassword((v) => !v)}
-                  className="text-text-tertiary hover:text-text-secondary transition-colors p-0.5"
+                  className="text-text-mutedhover:text-text-secondary transition-colors p-0.5"
                   aria-label={
                     showPassword ? "Ocultar contraseña" : "Mostrar contraseña"
                   }
@@ -195,7 +195,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
           )}
           {/* Icono izquierdo */}
           {hasLeftSlot && (
-            <div className="absolute left-3 top-1/2 -translate-y-1/2 text-text-tertiary">
+            <div className="absolute left-3 top-1/2 -translate-y-1/2 text-text-muted">
               {leftIcon}
             </div>
           )}
@@ -215,7 +215,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
 
         {/* Hint — solo si no hay error */}
         {hint && !error && (
-          <p id={`${id}-hint`} className="text-xs text-text-tertiary">
+          <p id={`${id}-hint`} className="text-xs text-text-muted">
             {hint}
           </p>
         )}

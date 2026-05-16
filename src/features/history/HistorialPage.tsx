@@ -12,6 +12,8 @@ import {
   AdvisorFilter,
   ContractCard,
 } from "@/features/history/components";
+// Tipos
+import type { Contract } from "@/store/useContractStore";
 
 // Imagenes
 import emptyContract from "@/assets/empty-contracts.png";
@@ -73,7 +75,7 @@ function HistorialPage() {
         />
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {filtered.map((contract: any) => (
+          {filtered.map((contract: Contract) => (
             <ContractCard
               key={contract.id}
               contract={contract}

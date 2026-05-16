@@ -127,17 +127,18 @@ function ContractLayout() {
     addContract({
       id: `CTR-${Date.now()}`,
       clientName:
-        [formData.ine.primerNombre, formData.ine.segundoNombre]
+        [
+          formData.ine.primerNombre,
+          formData.ine.segundoNombre,
+          formData.ine.primerApellido,
+          formData.ine.segundoApellido,
+        ]
           .filter(Boolean)
-          .join(" ") || "CLIENTE",
+          .join(" ")
+          .toUpperCase() || "CLIENTE",
       date: new Date().toISOString().split("T")[0],
       monto: formData.tabla?.montoPagare ?? 0,
-      plazo: formData.tabla
-        ? Math.round(
-            formData.tabla.montoPagare /
-              (formData.tabla.descuentoQuincenal || 1),
-          )
-        : 0,
+      plazo: formData.plazoQnas,
       asesor: formData.asesorData.asesor || "ASESOR",
       status: "completado",
     });

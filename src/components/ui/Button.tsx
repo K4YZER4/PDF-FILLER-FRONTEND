@@ -63,10 +63,10 @@ const variantClasses: Record<ButtonVariant, string> = {
    * Fondo blanco, borde gris
    */
   secondary: [
-    "bg-primary text-white border border-transparent",
-    "hover:bg-primary-hover",
-    "active:bg-primary-active",
-    "focus-visible:ring-2 focus-visible:ring-primary/40 focus-visible:outline-none",
+    "bg-secondary text-white border border-transparent",
+    "hover:bg-secondary-hover",
+    "active:bg-secondary-active",
+    "focus-visible:ring-2 focus-visible:ring-secondary/40 focus-visible:outline-none",
   ].join(" "),
 
   /**

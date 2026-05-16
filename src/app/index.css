@@ -51,6 +51,11 @@
   --color-primary-tint2: #e9d9f9; /* tint ligeramente más intenso  */
   --color-primary-subtle: #d4b8f0; /* bordes sobre fondos tinted    */
 
+  /* ── Secundario gris ─────────────────────── */
+  --color-secondary: #64748b; /* slate-500 – gris medio, fondo del botón */
+  --color-secondary-hover: #475569; /* slate-600 – más oscuro para hover      */
+  --color-secondary-active: #334155; /* slate-700 – click    
+
   /* ── Acento amarillo-dorado (brand) ─────────
      Aparece en el logo "credi" y en el icono
      de handshake de la pantalla de bienvenida.  */

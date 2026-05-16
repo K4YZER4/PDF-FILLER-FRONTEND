@@ -9,6 +9,7 @@
  */
 import { useMemo, useState } from "react";
 import { useContractStore } from "@/store/useContractStore";
+import type { Contract } from "@/store/useContractStore";
 
 type TimeFilter = "todos" | "semana" | "hoy";
 
@@ -47,7 +48,7 @@ interface UseContractFiltersReturn {
   advisorFilter: string;
   setAdvisorFilter: (v: string) => void;
   uniqueAdvisors: string[];
-  filtered: any[];
+  filtered: Contract[];
 }
 
 function useContractFilters(): UseContractFiltersReturn {
@@ -58,7 +59,7 @@ function useContractFilters(): UseContractFiltersReturn {
 
   // Extrae asesores únicos de todos los contratos para el select de filtro
   const uniqueAdvisors = useMemo(
-    () => [...new Set(contracts.map((c: any) => c.asesor))],
+    () => [...new Set(contracts.map((c: Contract) => c.asesor))],
     [contracts],
   );
 
@@ -66,20 +67,25 @@ function useContractFilters(): UseContractFiltersReturn {
   const filtered = useMemo(
     () =>
       contracts
-        .filter((c: any) => matchesTimeFilter(c.date, timeFilter))
-        .filter((c: any) => !advisorFilter || c.asesor === advisorFilter)
+        .filter((c: Contract) => matchesTimeFilter(c.date, timeFilter))
+        .filter((c: Contract) => !advisorFilter || c.asesor === advisorFilter)
         .filter(
-          (c: any) =>
-            !search || c.clientName.toLowerCase().includes(search.toLowerCase()),
+          (c: Contract) =>
+            !search ||
+            c.clientName.toLowerCase().includes(search.toLowerCase()),
         ),
     [contracts, timeFilter, advisorFilter, search],
   );
 
   return {
-    search, setSearch,
-    timeFilter, setTimeFilter,
-    advisorFilter, setAdvisorFilter,
-    uniqueAdvisors, filtered,
+    search,
+    setSearch,
+    timeFilter,
+    setTimeFilter,
+    advisorFilter,
+    setAdvisorFilter,
+    uniqueAdvisors,
+    filtered,
   };
 }
 

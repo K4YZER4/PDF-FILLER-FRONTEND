@@ -45,6 +45,7 @@ const NumericInput = forwardRef<HTMLInputElement, NumericInputProps>(
       <Input
         ref={ref}
         type="text"
+        step={1}
         inputMode="numeric"
         pattern="[0-9]*"
         autoCorrect="off"
