@@ -12,6 +12,7 @@ import { useState, ReactNode } from "react";
 import { useNavigate } from "react-router-dom";
 import { Plus, LogOut } from "lucide-react";
 import { Button } from "@/components/ui";
+import { ErrorBoundary } from "@/components/feedback";
 import { useContractStore } from "@/store/useContractStore";
 
 // Componentes para el modal de confirmación
@@ -67,14 +68,9 @@ function AppLayout({ children, title = "Historial" }: AppLayoutProps) {
         style={{ backgroundColor: "#ebebf3" }}
       >
         <div className="max-w-5xl mx-auto px-4 md:px-6 py-4 flex items-center justify-between">
-          {/* Título de la pantalla */}
           <h1 className="text-lg font-bold text-text-primary">{title}</h1>
 
           <div className="flex items-center gap-2">
-            {/*
-              Botón "Nuevo contrato" — inicia el flujo de 4 pasos.
-              Navega al primer paso: subir documentos.
-            */}
             <Button
               variant="primary"
               size="sm"
@@ -84,10 +80,6 @@ function AppLayout({ children, title = "Historial" }: AppLayoutProps) {
               Nuevo contrato
             </Button>
 
-            {/*
-              Botón cerrar sesión — solo muestra ícono para no
-              saturar el header en móvil. El modal confirma la acción.
-            */}
             <button
               type="button"
               onClick={handleLogoutClick}
@@ -107,19 +99,21 @@ function AppLayout({ children, title = "Historial" }: AppLayoutProps) {
       </header>
 
       {/* ── Contenido de la pantalla ── */}
-      <main className="flex-1">{children}</main>
+      <ErrorBoundary context="Error al cargar la pantalla">
+        <main className="flex-1">{children}</main>
+      </ErrorBoundary>
 
       {/* Modal cerrar sesión */}
       {showLogoutModal && (
         <AlertDialog open={showLogoutModal} onOpenChange={setShowLogoutModal}>
           <AlertDialogContent
             className="
-        w-[92%]
-        max-w-md
-        rounded-2xl
-        p-5
-        sm:p-6
-      "
+              w-[92%]
+              max-w-md
+              rounded-2xl
+              p-5
+              sm:p-6
+            "
           >
             <AlertDialogHeader>
               <div className="mx-auto mb-3 flex h-12 w-12 sm:h-14 sm:w-14 items-center justify-center rounded-full bg-error/10">

@@ -70,7 +70,7 @@ interface ErrorFallbackProps {
 
 function ErrorFallback({ message, onRetry }: ErrorFallbackProps) {
   return (
-    <div className="flex items-center justify-center min-h-75 p-6">
+    <div className="flex items-center justify-center min-h-screen flex-1 p-6">
       <Card className="max-w-md w-full p-8 text-center space-y-4">
         <AlertTriangle size={48} className="mx-auto text-warning" />
         <h2 className="text-lg font-semibold text-text-primary">
@@ -93,5 +93,5 @@ function ErrorFallback({ message, onRetry }: ErrorFallbackProps) {
   );
 }
 
-export { ErrorBoundary };
-export type { ErrorBoundaryProps };
+export { ErrorBoundary, ErrorFallback };
+export type { ErrorBoundaryProps, ErrorFallbackProps };

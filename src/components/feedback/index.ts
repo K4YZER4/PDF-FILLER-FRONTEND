@@ -1,2 +1,3 @@
 export { EmptyState } from "./EmptyState";
-export { ErrorBoundary } from "./ErrorBoundary";
+export { ErrorBoundary, ErrorFallback } from "./ErrorBoundary";
+export type { ErrorFallbackProps } from "./ErrorBoundary";
