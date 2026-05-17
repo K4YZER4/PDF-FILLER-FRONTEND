@@ -8,7 +8,7 @@
  *   - Meses (numérico, hasta 3 dígitos)
  *   - Años (numérico, hasta 3 dígitos)
  */
-import { NumericInput, DateInput } from "@/features/review-data/components";
+import { NumericInput, DateInput } from "@/components/ui";
 import type { AntiguedadData } from "../types";
 
 interface AntiguedadSectionProps {

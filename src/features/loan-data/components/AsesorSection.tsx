@@ -14,12 +14,7 @@
  *   - Mes de Descuento (selector)
  *   - Año de Descuento (4 dígitos)
  */
-import { Input } from "@/components/ui";
-import {
-  NameInput,
-  NumericInput,
-  DateInput,
-} from "@/features/review-data/components";
+import { Input, NameInput, NumericInput, DateInput } from "@/components/ui";
 import { SelectField } from "./SelectField";
 import { ASESORES_REGISTRADOS, MESES } from "../constants";
 import type { AsesorData } from "../types";

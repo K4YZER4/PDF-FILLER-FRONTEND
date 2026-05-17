@@ -10,7 +10,7 @@
  * Los índices 0, 1, 2 corresponden a la tupla `Referencias`
  * definida en types.ts.
  */
-import { NameInput, NumericInput } from "@/features/review-data/components";
+import { NameInput, NumericInput } from "@/components/ui";
 import type { Referencias } from "../types";
 
 interface ReferenciasSectionProps {

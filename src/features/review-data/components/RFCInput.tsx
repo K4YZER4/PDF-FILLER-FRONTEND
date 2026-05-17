@@ -75,7 +75,9 @@ const RFCInput = forwardRef<HTMLInputElement, RFCInputProps>(
         spellCheck={false}
         onChange={handleChange}
         error={error ?? rfcError}
-        hint={!error && !rfcError ? `${currentLength}/13 caracteres` : undefined}
+        hint={
+          !error && !rfcError ? `${currentLength}/13 caracteres` : undefined
+        }
         {...props}
       />
     );

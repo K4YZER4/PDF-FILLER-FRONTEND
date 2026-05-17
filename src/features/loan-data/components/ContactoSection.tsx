@@ -9,7 +9,7 @@
  *   - Estado Civil (selector: SOLTERO, CASADO, DIVORCIADO, UNIÓN LIBRE)
  */
 import { Input } from "@/components/ui";
-import { NumericInput } from "@/features/review-data/components";
+import { NumericInput } from "@/components/ui";
 import { SelectField } from "./SelectField";
 import { ESTADOS_CIVILES } from "../constants";
 import type { ContactoData } from "../types";

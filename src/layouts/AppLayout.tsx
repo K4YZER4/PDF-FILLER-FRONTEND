@@ -76,7 +76,7 @@ function AppLayout({ children, title = "Historial" }: AppLayoutProps) {
               Navega al primer paso: subir documentos.
             */}
             <Button
-              variant="secondary"
+              variant="primary"
               size="sm"
               leftIcon={<Plus size={16} />}
               onClick={() => navigate("/contracts/upload")}

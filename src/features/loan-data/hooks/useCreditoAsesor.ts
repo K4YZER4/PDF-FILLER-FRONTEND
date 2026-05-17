@@ -15,57 +15,13 @@
 
 import { useState, useEffect, useMemo, useCallback } from "react"
 import { useContractStore } from "@/store/useContractStore"
-import type {
-  AsesorData,
-  ContactoData,
-  AntiguedadData,
-  Referencias,
-  ResultadoCalculo,
-} from "../types"
-
-// ─── Validaciones ─────────────────────────────────────────────────────────────
-
-/** Retorna true si todos los campos de datos del asesor están completos y con formato válido. */
-export function isAsesorComplete(d: AsesorData): boolean {
-  return (
-    (d.folio?.length ?? 0) === 5 &&
-    (d.sucursal?.trim()?.length ?? 0) > 0 &&
-    (d.numVendedor?.length ?? 0) === 3 &&
-    (d.asesor?.trim()?.length ?? 0) > 0 &&
-    (d.fechaContrato?.length ?? 0) > 0 &&
-    (d.fechaArranque?.length ?? 0) > 0 &&
-    (d.lugar?.trim()?.length ?? 0) > 0 &&
-    (d.mesDescuento?.length ?? 0) > 0 &&
-    (d.anioDescuento?.length ?? 0) === 4
-  )
-}
-
-/** Retorna true si teléfonos (10 dígitos), correo (contiene @) y estado civil están completos. */
-export function isContactoComplete(d: ContactoData): boolean {
-  return (
-    (d.tel?.length ?? 0) === 10 &&
-    (d.celular?.length ?? 0) === 10 &&
-    (d.telCasa?.length ?? 0) === 10 &&
-    (d.correo?.includes?.("@") ?? false) &&
-    (d.estadoCivil?.length ?? 0) > 0
-  )
-}
-
-/** Retorna true si fecha de ingreso, meses y años están llenos. */
-export function isAntiguedadComplete(d: AntiguedadData): boolean {
-  return (
-    (d.fechaIngreso?.length ?? 0) > 0 &&
-    (d.meses?.length ?? 0) > 0 &&
-    (d.anos?.length ?? 0) > 0
-  )
-}
-
-/** Retorna true si las 3 referencias tienen nombre y teléfono de 10 dígitos. */
-export function isReferenciasComplete(refs: Referencias): boolean {
-  return refs.every(
-    (r) => (r?.nombre?.trim()?.length ?? 0) > 0 && (r?.telefono?.length ?? 0) === 10,
-  )
-}
+import type { ResultadoCalculo, AsesorData, ContactoData, AntiguedadData, Referencias } from "../types"
+import {
+  isAsesorComplete,
+  isContactoComplete,
+  isAntiguedadComplete,
+  isReferenciasComplete,
+} from "../utils/validation"
 
 /**
  * Hook principal del paso 3.

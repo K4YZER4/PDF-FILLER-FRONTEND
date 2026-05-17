@@ -19,3 +19,7 @@ export {
   AlertDialogAction,
   AlertDialogCancel,
 } from "./alert-dialog";
+
+export { NameInput } from "./NameInput";
+export { NumericInput } from "./NumericInput";
+export { DateInput } from "./DateInput";
