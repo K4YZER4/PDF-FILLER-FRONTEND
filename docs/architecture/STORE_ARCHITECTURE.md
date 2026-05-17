@@ -14,6 +14,20 @@ El estado global de la aplicación se maneja con **Zustand** + **Immer** + **Per
 
 ---
 
+## División en 3 Archivos
+
+El store se dividió en 3 archivos para mejorar cohesión y facilitar tests:
+
+| Archivo | Contenido | Propósito |
+|---------|-----------|-----------|
+| `types/store.ts` | Interfaces `AuthState`, `DocumentsState`, `FormDataState`, `Contract`, `ContractState`, etc. | Tipos extraídos para importarlos sin cargar Zustand |
+| `store/mockData.ts` | `initialDocuments`, `initialFormData`, `MOCK_CONTRACTS` | Estado inicial y datos mock separados del store |
+| `store/useContractStore.ts` | Store puro (~185 líneas) con `create()`, `persist()`, `immer()` | Solo la definición del store (antes ~492 líneas) |
+
+> **Compatibilidad hacia atrás**: `useContractStore` re-exporta `ContractState` y `Contract` para que los imports existentes (`@/store/useContractStore`) sigan funcionando sin cambios.
+
+---
+
 ## Estructura del Store
 
 ```
@@ -230,6 +244,12 @@ resetAll: () => {
 ---
 
 ## Mock Data
+
+Los datos mock viven en `store/mockData.ts`, separados del store para:
+
+1. **Facilitar tests**: Importar valores iniciales sin Zustand
+2. **Simplificar el store**: El archivo del store solo define acciones y estado
+3. **Compartir tipos**: `initialDocuments` y `initialFormData` son del tipo `DocumentsState` y `FormDataState`
 
 ### MOCK_CONTRACTS
 

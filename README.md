@@ -20,34 +20,29 @@ Diseñada **mobile-first** para uso en celulares y tablets, con soporte desktop.
 
 ```
 src/
-├── app/                      # Entry point y estilos globales
-│   ├── App.tsx               # Routing principal
-│   └── index.css             # Tema CREDIFOM
-├── features/                 # Módulos por funcionalidad
-│   ├── auth/                 # Login
-│   ├── upload-documents/     # Subir INE, nóminas, estado de cuenta
-│   ├── review-data/          # Revisar datos personales, laborales, bancarios
-│   ├── loan-data/            # Cálculo de crédito (monto, plazo)
-│   ├── preview-contract/     # Vista previa y descarga del contrato
-│   └── history/              # Historial de contratos generados
-├── layouts/                  # Layouts reutilizables
-│   ├── AuthLayout.tsx        # Layout público (login)
-│   ├── AppLayout.tsx         # Layout principal con header
-│   └── ContractLayout.tsx    # Stepper de 4 pasos
-├── routes/                   # Protección de rutas
-│   ├── PrivateRoute.tsx
-│   └── PublicRoute.tsx
-├── shared/components/        # UI components reutilizables
-│   ├── Button.tsx
-│   ├── Input.tsx
-│   ├── Card.tsx
-│   ├── Badge.tsx
-│   └── Spinner.tsx
-├── store/                    # Estado global (Zustand + immer)
-│   └── useContractStore.ts
-├── types/                    # Tipos TypeScript
-│   └── index.ts
-└── main.tsx                  # Entry point
+├── api/                      # Servicios API (preparados para backend)
+├── app/                      # Entry point + estilos globales + routing
+├── components/               # Componentes reutilizables
+│   ├── ui/                   #   Design system (Button, Input, NameInput, etc.)
+│   └── feedback/             #   ErrorBoundary, EmptyState
+├── constants/                # Configuración de campos de revisión
+├── features/                 # Módulos por funcionalidad (autocontenidos)
+│   ├── auth/                 #   Login
+│   ├── upload-documents/     #   Subir INE, nóminas, estado de cuenta
+│   ├── review-data/          #   Revisar datos + utils de validación
+│   ├── loan-data/            #   Crédito + utils de validación compartidos
+│   ├── preview-contract/     #   Vista previa del contrato
+│   └── history/              #   Historial con filtros
+├── hooks/                    # Hook genérico useApi
+├── layouts/                  # Layouts + componentes extraídos
+│   ├── components/           #   ContractStepper, ContractFooter, ScanOverlay, etc.
+│   └── hooks/                #   useStepValidation, useShareContract
+├── lib/                      # Infraestructura (axios, JWT, errores)
+├── routes/                   # PrivateRoute, PublicRoute
+├── store/                    # Zustand + persist + mockData + selectores
+├── types/                    # Tipos de dominio + store + API
+├── utils/                    # cn() + fileStorage (IndexedDB)
+└── main.tsx
 ```
 
 ---

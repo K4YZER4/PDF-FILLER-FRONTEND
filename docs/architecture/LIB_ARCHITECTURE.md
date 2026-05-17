@@ -14,6 +14,8 @@ src/lib/
 └── index.ts    # Barrel export
 ```
 
+> **Nota:** El archivo `lib/utils.ts` (duplicado de `utils/cn.ts`) fue eliminado durante la refactorización. La función `cn()` vive únicamente en `src/utils/cn.ts`.
+
 ---
 
 ## api.ts — Cliente HTTP

@@ -93,7 +93,10 @@ features/review-data/
 ├── components/
 │   ├── EditableSection.tsx   # Sección de acordeón con campos editables
 │   └── index.ts
-├── RevisionDatos.tsx         # Acordeones dinámicos desde configuración
+├── utils/
+│   ├── validation.ts         # isSectionComplete, getFieldValueFromData, isFieldFilled
+│   └── fieldRenderer.tsx     # renderField: 14 tipos (text, curp, rfc, clabe, select, etc.)
+├── RevisionDatos.tsx         # Orquestador (~145 líneas)
 └── index.ts
 ```
 
@@ -128,6 +131,15 @@ export const sections: SectionDef[] = [
 - **Contraído**: Solo muestra el título y el indicador de completitud
 - Los campos toman su valor del store y actualizan via `setFormData`
 
+### Utilidades de Validación (`utils/`)
+
+| Archivo | Función | Propósito |
+|---------|---------|-----------|
+| `validation.ts` | `isSectionComplete(section, data)` | Verifica que todos los campos de una sección estén llenos |
+| `validation.ts` | `getFieldValueFromData(section, fieldId, data)` | Extrae el valor de un campo del store según su sección |
+| `validation.ts` | `isFieldFilled(value)` | Retorna `true` si el valor no está vacío |
+| `fieldRenderer.tsx` | `renderField(field, data, onSave, section)` | Renderiza el input correcto según el tipo de campo (text, curp, rfc, clabe, select, sexo, fecha, etc.) |
+
 ---
 
 ## Loan Data (Crédito)
@@ -145,7 +157,9 @@ features/loan-data/
 │   └── index.ts
 ├── hooks/
 │   └── useCreditoAsesor.ts     # Hook principal: estado + sync + validaciones
-├── CreditoAsesor.tsx           # Orquestador puro (~119 líneas)
+├── utils/
+│   └── validation.ts           # isAsesorComplete, isContactoComplete, isAntiguedadComplete, isReferenciasComplete
+├── CreditoAsesor.tsx           # Orquestador puro (~112 líneas)
 ├── constants.ts                # ASESORES_REGISTRADOS, MESES, ESTADOS_CIVILES, PLAZOS_QNA
 ├── types.ts                    # Re-export desde @/types
 └── index.ts
@@ -162,7 +176,7 @@ CreditoAsesor (orquestador)
 useCreditoAsesor (hook)
   ├── Estado local (useState para cada sección)
   ├── Sincronización con store (useEffect)
-  ├── Validaciones (isAsesorComplete, isContactoComplete, etc.)
+  ├── Validaciones (isAsesorComplete, isContactoComplete, etc.) ← comparte imports con useStepValidation via utils/validation.ts
   ├── Cálculo simulado de tabla (calcular)
   └── Retorna completion (boolean por sección)
 ```
@@ -223,17 +237,18 @@ features/preview-contract/
 ```
 VistaPrevia
   → Muestra resumen de todos los datos del contrato
-  → Botones en el footer de ContractLayout:
+  → Botones renderizados por ContractFooter (layouts/components/):
       - Descargar (mock: genera Blob dummy)
       - Editar (navega a /contracts/review)
-      - Compartir (Web Share API o clipboard)
+      - Compartir (useShareContract → Web Share API o clipboard)
       - Finalizar → addContract() → navigate("/")
 ```
 
 ### Compartir
+- Lógica extraída a `layouts/hooks/useShareContract.ts`
 - En desktop: Copia al portapapeles
 - En móvil: Usa Web Share API (`navigator.share`)
-- Botón flotante en móvil (paso 4)
+- Botón flotante en móvil: `layouts/components/FloatingShareButton.tsx`
 
 ---
 
@@ -243,11 +258,13 @@ VistaPrevia
 features/history/
 ├── components/
 │   ├── ContractCard.tsx       # Card de contrato con íconos y estado
-│   ├── SearchBar.tsx          # Barra de búsqueda con icono
+│   ├── SearchBar.tsx          # Barra de búsqueda por nombre
+│   ├── TimeFilter.tsx         # Filtro por período (semana/mes/año)
+│   ├── AdvisorFilter.tsx      # Filtro por asesor
 │   └── index.ts
 ├── hooks/
-│   └── useContractHistory.ts  # Hook para filtrar y buscar
-├── HistorialPage.tsx          # Lista de contratos con búsqueda
+│   └── useContractFilters.ts  # Hook para filtrar y buscar (antes useContractHistory)
+├── HistorialPage.tsx          # Lista de contratos con filtros
 └── index.ts
 ```
 
