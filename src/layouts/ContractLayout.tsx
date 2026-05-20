@@ -13,6 +13,7 @@
  *   - AlertDialog        → confirmación al salir */
 import { useState } from "react";
 import { Outlet, useNavigate, useLocation } from "react-router-dom";
+// Icons
 import {
   FileText,
   Search,
@@ -34,7 +35,12 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { ContractStepper, ScanOverlay, FinishToast, FloatingShareButton } from "@/layouts/components";
+import {
+  ContractStepper,
+  ScanOverlay,
+  FinishToast,
+  FloatingShareButton,
+} from "@/layouts/components";
 import { ContractFooter } from "@/layouts/components/ContractFooter";
 import { useStepValidation } from "@/layouts/hooks/useStepValidation";
 import { useShareContract } from "@/layouts/hooks/useShareContract";
@@ -62,15 +68,23 @@ function ContractLayout() {
   const ineFile = useContractStore((s) => s.documents.ineFile);
   const nomina1File = useContractStore((s) => s.documents.nomina1File);
   const nomina2File = useContractStore((s) => s.documents.nomina2File);
-  const estadoCuentaFile = useContractStore((s) => s.documents.estadoCuentaFile);
-  const allFilesLoaded = !!(ineFile && nomina1File && nomina2File && estadoCuentaFile);
+  const estadoCuentaFile = useContractStore(
+    (s) => s.documents.estadoCuentaFile,
+  );
+  const allFilesLoaded = !!(
+    ineFile &&
+    nomina1File &&
+    nomina2File &&
+    estadoCuentaFile
+  );
 
   // UI state
   const [showExitModal, setShowExitModal] = useState(false);
   const [showFinishToast, setShowFinishToast] = useState(false);
 
   // Navigation
-  const currentSegment = location.pathname.split("/").filter(Boolean).pop() ?? "";
+  const currentSegment =
+    location.pathname.split("/").filter(Boolean).pop() ?? "";
   const currentStep = STEPS.findIndex((s) => s.path === currentSegment);
   const stepNumber = Math.max(currentStep + 1, 1);
   const canContinue = useStepValidation(currentSegment);
@@ -225,9 +239,7 @@ function ContractLayout() {
       />
 
       {/* Overlay de escaneo */}
-      {scanStatus === "scanning" && (
-        <ScanOverlay scanResults={scanResults} />
-      )}
+      {scanStatus === "scanning" && <ScanOverlay scanResults={scanResults} />}
 
       {/* Floating share button — solo móvil */}
       {isPreviewStep && <FloatingShareButton onShare={handleShare} />}

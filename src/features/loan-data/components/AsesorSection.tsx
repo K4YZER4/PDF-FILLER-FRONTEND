@@ -3,37 +3,64 @@
  *
  * Sección 2 del accordion: datos del asesor.
  *
- * Campos:
- *   - Folio (5 dígitos)
- *   - Sucursal (solo letras)
- *   - Núm. Vendedor (3 dígitos)
- *   - Asesor: si el usuario es admin, puede seleccionar de una lista;
- *     si no, ve su nombre bloqueado.
- *   - Fecha Contrato, Fecha Arranque (date picker)
- *   - Lugar (solo letras)
- *   - Mes de Descuento (selector)
- *   - Año de Descuento (4 dígitos)
+ * Comportamiento por rol:
+ *   - Admin: selecciona un asesor del dropdown → todos los campos se autollenan
+ *   - Asesor: todos los campos se autollenan con sus datos mock al montar
+ *
+ * Campos auto-rellenados (readOnly):
+ *   - Folio, Sucursal, Núm. Vendedor, Asesor
+ *   - Fecha Contrato (today), Lugar, Mes/Año Descuento
+ *
+ * Campos editables manualmente:
+ *   - Fecha Arranque (selección manual por ahora)
  */
 import { Input, NameInput, NumericInput, DateInput } from "@/components/ui";
 import { SelectField } from "./SelectField";
-import { ASESORES_REGISTRADOS, MESES } from "../constants";
+import { ASESOR_NOMBRES, MESES } from "../constants";
 import type { AsesorData } from "../types";
 
 interface AsesorSectionProps {
   data: AsesorData;
   userRole: string | null;
-  userName: string;
   onChange: <K extends keyof AsesorData>(key: K, value: AsesorData[K]) => void;
 }
+
+const readOnlyClass = "bg-bg cursor-default";
 
 function AsesorSection({
   data,
   userRole,
-  userName,
   onChange,
 }: AsesorSectionProps) {
+  const isAutoFilled = userRole !== "admin" || data.asesor.length > 0;
+
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className="space-y-1.5 md:col-span-2">
+        <label className="text-xs font-medium text-text-secondary">
+          Asesor <span className="text-error">*</span>
+        </label>
+        {userRole === "admin" ? (
+          <SelectField
+            id="asesor"
+            value={data.asesor}
+            options={ASESOR_NOMBRES}
+            placeholder="Seleccionar asesor"
+            success={(data.asesor?.trim()?.length ?? 0) > 0}
+            onChange={(v) => onChange("asesor", v)}
+          />
+        ) : (
+          <Input
+            id="asesor"
+            value={data.asesor}
+            disabled
+            inputSize="sm"
+            success={data.asesor.length > 0}
+            className="text-text-primary"
+          />
+        )}
+      </div>
+
       <div className="space-y-1.5">
         <label className="text-xs font-medium text-text-secondary">
           Folio <span className="text-error">*</span>
@@ -44,12 +71,9 @@ function AsesorSection({
           value={data.folio}
           maxLength={5}
           inputSize="sm"
+          readOnly
+          className={readOnlyClass}
           success={(data.folio?.length ?? 0) === 5}
-          error={
-            (data.folio?.length ?? 0) > 0 && (data.folio?.length ?? 0) !== 5
-              ? "Deben ser 5 dígitos"
-              : undefined
-          }
           onChange={(v) => onChange("folio", v)}
         />
       </div>
@@ -63,6 +87,8 @@ function AsesorSection({
           placeholder="Nombre de la sucursal"
           value={data.sucursal}
           inputSize="sm"
+          readOnly
+          className={readOnlyClass}
           success={(data.sucursal?.trim()?.length ?? 0) > 0}
           onChange={(v) => onChange("sucursal", v)}
         />
@@ -78,40 +104,11 @@ function AsesorSection({
           value={data.numVendedor}
           maxLength={3}
           inputSize="sm"
+          readOnly
+          className={readOnlyClass}
           success={(data.numVendedor?.length ?? 0) === 3}
-          error={
-            (data.numVendedor?.length ?? 0) > 0 &&
-            (data.numVendedor?.length ?? 0) !== 3
-              ? "Deben ser 3 dígitos"
-              : undefined
-          }
           onChange={(v) => onChange("numVendedor", v)}
         />
-      </div>
-
-      <div className="space-y-1.5">
-        <label className="text-xs font-medium text-text-secondary">
-          Asesor <span className="text-error">*</span>
-        </label>
-        {userRole === "admin" ? (
-          <SelectField
-            id="asesor"
-            value={data.asesor}
-            options={ASESORES_REGISTRADOS}
-            placeholder="Seleccionar asesor"
-            success={(data.asesor?.trim()?.length ?? 0) > 0}
-            onChange={(v) => onChange("asesor", v)}
-          />
-        ) : (
-          <Input
-            id="asesor"
-            value={userName}
-            disabled
-            inputSize="sm"
-            success={userName.length > 0}
-            className="text-text-primary"
-          />
-        )}
       </div>
 
       <div className="space-y-1.5">
@@ -122,6 +119,8 @@ function AsesorSection({
           id="fechaContrato"
           value={data.fechaContrato}
           inputSize="sm"
+          readOnly
+          className={readOnlyClass}
           success={(data.fechaContrato?.length ?? 0) > 0}
           onChange={(v) => onChange("fechaContrato", v)}
         />
@@ -149,6 +148,8 @@ function AsesorSection({
           placeholder="Ciudad, Estado"
           value={data.lugar}
           inputSize="sm"
+          readOnly
+          className={readOnlyClass}
           success={(data.lugar?.trim()?.length ?? 0) > 0}
           onChange={(v) => onChange("lugar", v)}
         />
@@ -164,6 +165,7 @@ function AsesorSection({
           options={MESES}
           placeholder="Seleccionar mes"
           success={(data.mesDescuento?.length ?? 0) > 0}
+          disabled={isAutoFilled}
           onChange={(v) => onChange("mesDescuento", v)}
         />
       </div>
@@ -178,13 +180,9 @@ function AsesorSection({
           value={data.anioDescuento}
           maxLength={4}
           inputSize="sm"
+          readOnly
+          className={readOnlyClass}
           success={(data.anioDescuento?.length ?? 0) === 4}
-          error={
-            (data.anioDescuento?.length ?? 0) > 0 &&
-            (data.anioDescuento?.length ?? 0) !== 4
-              ? "Deben ser 4 dígitos"
-              : undefined
-          }
           onChange={(v) => onChange("anioDescuento", v)}
         />
       </div>

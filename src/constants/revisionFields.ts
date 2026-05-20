@@ -152,7 +152,7 @@ export const sections: SectionDef[] = [
       {
         id: "ingresoMensual",
         label: "Ingreso mensual",
-        placeholder: "Ej: 15000",
+        placeholder: "Ej: $15000",
       },
     ],
   },

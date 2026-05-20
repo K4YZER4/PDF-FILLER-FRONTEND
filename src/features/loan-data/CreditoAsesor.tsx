@@ -73,7 +73,6 @@ function CreditoAsesor() {
               <AsesorSection
                 data={hook.asesorData}
                 userRole={hook.userRole}
-                userName={hook.userName}
                 onChange={hook.updateAsesor}
               />
             )}

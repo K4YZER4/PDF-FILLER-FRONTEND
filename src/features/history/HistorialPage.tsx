@@ -18,6 +18,7 @@ import type { Contract } from "@/store/useContractStore";
 // Imagenes
 import emptyContract from "@/assets/empty-contracts.png";
 
+// Hooks
 import { useContractStore } from "@/store/useContractStore";
 import { useContractFilters } from "@/features/history/hooks";
 
@@ -39,10 +40,6 @@ function HistorialPage() {
     <div className="max-w-5xl mx-auto px-4 md:px-6 py-6 space-y-4">
       {/* Buscador */}
       <div className="relative">
-        <Search
-          size={16}
-          className="absolute left-3 top-1/2 -translate-y-1/2 text-text-secondary"
-        />
         <Input
           placeholder="Buscar por nombre..."
           value={search}

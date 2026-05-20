@@ -10,10 +10,11 @@
  */
 import { useState, ReactNode } from "react";
 import { useNavigate } from "react-router-dom";
+// Icons
 import { Plus, LogOut } from "lucide-react";
+// Componentes
 import { Button } from "@/components/ui";
 import { ErrorBoundary } from "@/components/feedback";
-import { useContractStore } from "@/store/useContractStore";
 
 // Componentes para el modal de confirmación
 import {
@@ -26,6 +27,9 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui";
+
+// Hooks
+import { useContractStore } from "@/store/useContractStore";
 
 // ─── Tipos ────────────────────────────────────────────────────────────────────
 

@@ -21,7 +21,7 @@ import loginIllustration from "@/assets/LogIn-.png";
 import logo from "@/assets/Logo.png";
 
 // ─── Validación ──────────────────────────────────────────────────────────────
-
+// Se usa la libreria zod para definir un esquema de validación del formulario de login.
 const loginSchema = z.object({
   email: z
     .string()
@@ -81,7 +81,7 @@ function LoginPage() {
       <div className="flex flex-col justify-center w-full lg:w-1/3 px-8 py-12 sm:px-14 lg:px-20 bg-bg">
         <div className="w-full max-w-sm mx-auto">
           {/* Logo */}
-          <div className="mb-10 flex justify-center">
+          <div className="mb-6 flex justify-center">
             <img
               src={logo}
               alt="CREDIFOM"
@@ -93,7 +93,7 @@ function LoginPage() {
           </div>
 
           {/* Título */}
-          <div className="mb-8 text-center">
+          <div className="mb-15 text-center">
             <h1 className="hidden lg:block text-3xl font-bold text-text-primary">
               Bienvenido
             </h1>
@@ -123,6 +123,7 @@ function LoginPage() {
               placeholder="asesor@credifom.mx"
               autoComplete="username"
               error={errors.email?.message}
+              maxLength={25}
               {...register("email", { onChange: () => setServerError("") })}
             />
 
@@ -138,18 +139,20 @@ function LoginPage() {
               placeholder="••••••••"
               autoComplete="current-password"
               error={errors.password?.message}
+              maxLength={25}
               {...register("password", { onChange: () => setServerError("") })}
             />
 
             {/* Recuperar contraseña */}
-            <div className="flex justify-end">
+            {/* Cuando se integre el recuperr contraseña se desdocumentara esta parte */}
+            {/* <div className="flex justify-end">
               <button
                 type="button"
                 className="text-sm font-medium text-primary hover:underline"
               >
                 ¿Olvidaste tu contraseña?
               </button>
-            </div>
+            </div> */}
 
             {/* Recordar sesión — solo desktop */}
             <div className="flex items-center justify-between">
@@ -192,7 +195,8 @@ function LoginPage() {
               Iniciar sesión
             </Button>
 
-            <p className="text-center text-sm text-text-secondary">
+            {/* Cuando se implemente solicitar contraseña se descomentara este bloque */}
+            {/* <p className="text-center text-sm text-text-secondary">
               ¿No tienes cuenta?{" "}
               <button
                 type="button"
@@ -200,25 +204,8 @@ function LoginPage() {
               >
                 Solicita una
               </button>
-            </p>
+            </p> */}
           </form>
-
-          {/* Credenciales de prueba */}
-          <div className="mt-10 rounded-lg border border-border bg-surface p-4 text-xs text-text-secondary">
-            <p className="mb-2 font-semibold text-text-primary">
-              Credenciales de prueba
-            </p>
-            <div className="space-y-1">
-              <p>
-                <span className="font-medium">Asesor:</span> asesor@credifom.mx
-                / 1234
-              </p>
-              <p>
-                <span className="font-medium">Admin:</span> admin@credifom.mx /
-                1234
-              </p>
-            </div>
-          </div>
         </div>
       </div>
 

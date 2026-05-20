@@ -16,12 +16,17 @@
 import { useState, useEffect, useMemo, useCallback } from "react"
 import { useContractStore } from "@/store/useContractStore"
 import type { ResultadoCalculo, AsesorData, ContactoData, AntiguedadData, Referencias } from "../types"
+import { ASESORES_REGISTRADOS } from "../constants"
 import {
   isAsesorComplete,
   isContactoComplete,
   isAntiguedadComplete,
   isReferenciasComplete,
 } from "../utils/validation"
+
+function getToday(): string {
+  return new Date().toISOString().split("T")[0]
+}
 
 /**
  * Hook principal del paso 3.
@@ -52,17 +57,36 @@ export function useCreditoAsesor() {
 
   const saved = store.formData
 
-  const [asesorData, setAsesorData] = useState<AsesorData>(() => ({
-    folio:         saved.asesorData.folio ?? "",
-    sucursal:      saved.asesorData.sucursal ?? "",
-    numVendedor:   saved.asesorData.numVendedor ?? "",
-    asesor:        saved.asesorData.asesor ?? (userRole !== "admin" ? userName : ""),
-    fechaContrato: saved.asesorData.fechaContrato ?? "",
-    fechaArranque: saved.asesorData.fechaArranque ?? "",
-    lugar:         saved.asesorData.lugar ?? "",
-    mesDescuento:  saved.asesorData.mesDescuento ?? "",
-    anioDescuento: saved.asesorData.anioDescuento ?? "",
-  }))
+  const [asesorData, setAsesorData] = useState<AsesorData>(() => {
+    const today = getToday()
+
+    if (userRole !== "admin") {
+      const perfil = ASESORES_REGISTRADOS[0]
+      return {
+        folio:         perfil.folio,
+        sucursal:      perfil.sucursal,
+        numVendedor:   perfil.numVendedor,
+        asesor:        perfil.nombre,
+        fechaContrato: today,
+        fechaArranque: "",
+        lugar:         perfil.lugar,
+        mesDescuento:  perfil.mesDescuento,
+        anioDescuento: perfil.anioDescuento,
+      }
+    }
+
+    return {
+      folio:         saved.asesorData.folio ?? "",
+      sucursal:      saved.asesorData.sucursal ?? "",
+      numVendedor:   saved.asesorData.numVendedor ?? "",
+      asesor:        saved.asesorData.asesor ?? "",
+      fechaContrato: saved.asesorData.fechaContrato ?? today,
+      fechaArranque: saved.asesorData.fechaArranque ?? "",
+      lugar:         saved.asesorData.lugar ?? "",
+      mesDescuento:  saved.asesorData.mesDescuento ?? "",
+      anioDescuento: saved.asesorData.anioDescuento ?? "",
+    }
+  })
 
   const [contactoData, setContactoData] = useState<ContactoData>(() => ({
     tel:         saved.contactoData.tel ?? "",
@@ -92,6 +116,22 @@ export function useCreditoAsesor() {
 
   useEffect(() => { store.setFormData("plazoQnas", plazo) }, [plazo])
   useEffect(() => { store.setFormData("asesorData", asesorData) }, [asesorData])
+
+  useEffect(() => {
+    if (userRole !== "admin") return
+    const perfil = ASESORES_REGISTRADOS.find(a => a.nombre === asesorData.asesor)
+    if (!perfil) return
+    setAsesorData(prev => ({
+      ...prev,
+      folio:         perfil.folio,
+      sucursal:      perfil.sucursal,
+      numVendedor:   perfil.numVendedor,
+      lugar:         perfil.lugar,
+      fechaContrato: getToday(),
+      mesDescuento:  perfil.mesDescuento,
+      anioDescuento: perfil.anioDescuento,
+    }))
+  }, [asesorData.asesor])
   useEffect(() => { store.setFormData("contactoData", contactoData) }, [contactoData])
   useEffect(() => { store.setFormData("antiguedadData", antiguedadData) }, [antiguedadData])
   useEffect(() => { store.setFormData("referencias", referencias) }, [referencias])
