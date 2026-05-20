@@ -186,7 +186,7 @@ function ContractLayout() {
               <div className="w-10 h-10 bg-linear-to-br from-primary to-primary-hover rounded-xl flex items-center justify-center shadow-md">
                 <FileText size={20} className="text-white" />
               </div>
-              <h1 className="text-base font-bold text-text-primary">
+              <h1 className="text-base font-semibold text-text-primary">
                 Nuevo Contrato
               </h1>
             </div>

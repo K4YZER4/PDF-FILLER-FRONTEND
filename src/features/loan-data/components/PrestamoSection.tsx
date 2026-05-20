@@ -45,10 +45,14 @@ function PrestamoSection({
     <div className="space-y-5">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div className="space-y-1.5">
-          <label className="text-xs font-medium text-text-secondary">
+          <label
+            htmlFor="monto"
+            className="text-xs font-medium text-text-secondary"
+          >
             Monto neto (capital)
           </label>
           <Input
+            id="monto"
             type="number"
             placeholder="Ej: $15000"
             value={monto}
@@ -62,7 +66,10 @@ function PrestamoSection({
         </div>
 
         <div className="space-y-1.5">
-          <label className="text-xs font-medium text-text-secondary">
+          <label
+            htmlFor="plazo"
+            className="text-xs font-medium text-text-secondary"
+          >
             Plazo (quincenas)
           </label>
           <div className="flex gap-2 flex-wrap">

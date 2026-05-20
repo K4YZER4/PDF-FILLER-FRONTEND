@@ -34,7 +34,7 @@ function ScanOverlay({ scanResults }: ScanOverlayProps) {
                 ) : result === "error" ? (
                   <AlertCircle size={14} className="text-error" />
                 ) : (
-                  <div className="w-3.5 h-3.5 rounded-full border-2 border-border" />
+                  <div className="size-3.5 rounded-full border-2 border-border" />
                 )}
                 <span className="text-text-secondary">{item.label}</span>
               </div>
