@@ -16,7 +16,7 @@ import {
 import type { Contract } from "@/store/useContractStore";
 
 // Imagenes
-import emptyContract from "@/assets/empty-contracts.png";
+import { SearchError } from "@/assets";
 
 // Hooks
 import { useContractStore } from "@/store/useContractStore";
@@ -66,7 +66,7 @@ function HistorialPage() {
         <EmptyState
           title="Aún no hay contratos registrados"
           description="Cuando crees un contrato aparecerá aquí para poder visualizarlo y compartirlo."
-          image={emptyContract}
+          image={SearchError}
           actionLabel="Crear contrato"
           onAction={() => navigate("/contracts/upload")}
         />

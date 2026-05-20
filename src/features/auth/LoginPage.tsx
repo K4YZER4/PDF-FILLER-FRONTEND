@@ -17,8 +17,8 @@ import { Toggle } from "@/features/auth/components/Toggle";
 import { useContractStore } from "@/store/useContractStore";
 import type { UserRole } from "@/store/useContractStore";
 
-import loginIllustration from "@/assets/LogIn-.png";
-import logo from "@/assets/Logo.png";
+// Imagenes
+import { LogInIllustration, LogoIlustration } from "@/assets";
 
 // ─── Validación ──────────────────────────────────────────────────────────────
 // Se usa la libreria zod para definir un esquema de validación del formulario de login.
@@ -83,7 +83,7 @@ function LoginPage() {
           {/* Logo */}
           <div className="mb-6 flex justify-center">
             <img
-              src={logo}
+              src={LogoIlustration}
               alt="CREDIFOM"
               className="h-10 w-auto"
               onError={(e) => {
@@ -212,10 +212,10 @@ function LoginPage() {
       {/* ── Columna derecha — ilustración ── */}
       <div className="hidden lg:flex w-2/3 items-center justify-center bg-surface">
         <img
-          src={loginIllustration}
+          src={LogInIllustration}
           alt="Ilustración de contrato"
           aria-hidden="true"
-          className="w-4/5 max-w-xl object-contain"
+          className="w-4/5 max-w-xxl object-contain"
         />
       </div>
     </div>
