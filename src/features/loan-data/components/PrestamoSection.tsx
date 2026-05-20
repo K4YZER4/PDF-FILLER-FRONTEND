@@ -55,6 +55,8 @@ function PrestamoSection({
             inputSize="sm"
             success={isComplete}
             error={montoError}
+            // Esto hace que el primer clic aumente de 0 a 3000, y luego en múltiplos de 1000
+            step={montoNum === 0 ? 3000 : 1000}
             onChange={(e) => onMontoChange(e.target.value)}
           />
         </div>

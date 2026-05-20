@@ -27,12 +27,12 @@ interface AsesorSectionProps {
 
 const readOnlyClass = "bg-bg cursor-default";
 
-function AsesorSection({
-  data,
-  userRole,
-  onChange,
-}: AsesorSectionProps) {
+function AsesorSection({ data, userRole, onChange }: AsesorSectionProps) {
   const isAutoFilled = userRole !== "admin" || data.asesor.length > 0;
+
+  // Esto asegura que el campo de fecha arranque no permita seleccionar una fecha futura, ya que no tendría sentido en este contexto
+  // Se calcula la fecha de hoy en formato YYYY-MM-DD para usarla como maxDate en el DateInput
+  const today = new Date().toISOString().split("T")[0];
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -133,6 +133,7 @@ function AsesorSection({
         <DateInput
           id="fechaArranque"
           value={data.fechaArranque}
+          maxDate={today}
           inputSize="sm"
           success={(data.fechaArranque?.length ?? 0) > 0}
           onChange={(v) => onChange("fechaArranque", v)}
