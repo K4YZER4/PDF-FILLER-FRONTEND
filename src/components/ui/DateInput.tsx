@@ -14,16 +14,21 @@ type DateInputProps = Omit<InputProps, "onChange" | "type"> & {
   onChange?: (isoValue: string) => void;
   /** Sobreescribe el max por defecto (hoy - 18 años). Formato: YYYY-MM-DD */
   maxDate?: string;
+  /** Fecha mínima seleccionable. Formato: YYYY-MM-DD */
+  minDate?: string;
 };
 
 const DateInput = forwardRef<HTMLInputElement, DateInputProps>(
-  ({ onChange, maxDate, ...props }, ref) => {
+  ({ onChange, maxDate, minDate, ...props }, ref) => {
+    const resolvedMin = minDate ?? "1935-01-01"
+    const resolvedMax = maxDate ?? (minDate ? undefined : MAX_DATE)
+
     return (
       <Input
         ref={ref}
         type="date"
-        min="1935-01-01"
-        max={maxDate ?? MAX_DATE}
+        min={resolvedMin}
+        max={resolvedMax}
         onChange={(e) => onChange?.(e.target.value)}
         {...props}
       />

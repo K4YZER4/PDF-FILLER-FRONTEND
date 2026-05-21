@@ -1,39 +1,17 @@
-/**
- * Archivo: features/loan-data/components/AsesorSection.tsx
- *
- * Sección 2 del accordion: datos del asesor.
- *
- * Comportamiento por rol:
- *   - Admin: selecciona un asesor del dropdown → todos los campos se autollenan
- *   - Asesor: todos los campos se autollenan con sus datos mock al montar
- *
- * Campos auto-rellenados (readOnly):
- *   - Folio, Sucursal, Núm. Vendedor, Asesor
- *   - Fecha Contrato (today), Lugar, Mes/Año Descuento
- *
- * Campos editables manualmente:
- *   - Fecha Arranque (selección manual por ahora)
- */
-import { Input, NameInput, NumericInput, DateInput } from "@/components/ui";
-import { SelectField } from "./SelectField";
-import { ASESOR_NOMBRES, MESES } from "../constants";
-import type { AsesorData } from "../types";
+import { Input, NameInput, NumericInput, DateInput } from "@/components/ui"
+import { SelectField } from "./SelectField"
+import { ASESOR_NOMBRES } from "../constants"
+import type { AsesorData } from "../types"
 
 interface AsesorSectionProps {
-  data: AsesorData;
-  userRole: string | null;
-  onChange: <K extends keyof AsesorData>(key: K, value: AsesorData[K]) => void;
+  data: AsesorData
+  userRole: string | null
+  onChange: <K extends keyof AsesorData>(key: K, value: AsesorData[K]) => void
 }
 
-const readOnlyClass = "bg-bg cursor-default";
+const readOnlyClass = "bg-bg cursor-default"
 
 function AsesorSection({ data, userRole, onChange }: AsesorSectionProps) {
-  const isAutoFilled = userRole !== "admin" || data.asesor.length > 0;
-
-  // Esto asegura que el campo de fecha arranque no permita seleccionar una fecha futura, ya que no tendría sentido en este contexto
-  // Se calcula la fecha de hoy en formato YYYY-MM-DD para usarla como maxDate en el DateInput
-  const today = new Date().toISOString().split("T")[0];
-
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
       <div className="space-y-1.5 md:col-span-2">
@@ -96,7 +74,7 @@ function AsesorSection({ data, userRole, onChange }: AsesorSectionProps) {
 
       <div className="space-y-1.5">
         <label className="text-xs font-medium text-text-secondary">
-          Núm. Vendedor <span className="text-error">*</span>
+          N\u00fam. Vendedor <span className="text-error">*</span>
         </label>
         <NumericInput
           id="numVendedor"
@@ -125,70 +103,8 @@ function AsesorSection({ data, userRole, onChange }: AsesorSectionProps) {
           onChange={(v) => onChange("fechaContrato", v)}
         />
       </div>
-
-      <div className="space-y-1.5">
-        <label className="text-xs font-medium text-text-secondary">
-          Fecha Arranque <span className="text-error">*</span>
-        </label>
-        <DateInput
-          id="fechaArranque"
-          value={data.fechaArranque}
-          maxDate={today}
-          inputSize="sm"
-          success={(data.fechaArranque?.length ?? 0) > 0}
-          onChange={(v) => onChange("fechaArranque", v)}
-        />
-      </div>
-
-      <div className="space-y-1.5">
-        <label className="text-xs font-medium text-text-secondary">
-          Lugar <span className="text-error">*</span>
-        </label>
-        <NameInput
-          id="lugar"
-          placeholder="Ciudad, Estado"
-          value={data.lugar}
-          inputSize="sm"
-          readOnly
-          className={readOnlyClass}
-          success={(data.lugar?.trim()?.length ?? 0) > 0}
-          onChange={(v) => onChange("lugar", v)}
-        />
-      </div>
-
-      <div className="space-y-1.5">
-        <label className="text-xs font-medium text-text-secondary">
-          Mes Descuento <span className="text-error">*</span>
-        </label>
-        <SelectField
-          id="mesDescuento"
-          value={data.mesDescuento}
-          options={MESES}
-          placeholder="Seleccionar mes"
-          success={(data.mesDescuento?.length ?? 0) > 0}
-          disabled={isAutoFilled}
-          onChange={(v) => onChange("mesDescuento", v)}
-        />
-      </div>
-
-      <div className="space-y-1.5">
-        <label className="text-xs font-medium text-text-secondary">
-          Año Descuento <span className="text-error">*</span>
-        </label>
-        <NumericInput
-          id="anioDescuento"
-          placeholder="0000"
-          value={data.anioDescuento}
-          maxLength={4}
-          inputSize="sm"
-          readOnly
-          className={readOnlyClass}
-          success={(data.anioDescuento?.length ?? 0) === 4}
-          onChange={(v) => onChange("anioDescuento", v)}
-        />
-      </div>
     </div>
-  );
+  )
 }
 
-export { AsesorSection };
+export { AsesorSection }

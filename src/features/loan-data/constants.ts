@@ -13,7 +13,6 @@ export interface AsesorRegistrado {
   folio: string
   sucursal: string
   numVendedor: string
-  lugar: string
   mesDescuento: string
   anioDescuento: string
 }
@@ -25,7 +24,6 @@ export const ASESORES_REGISTRADOS: AsesorRegistrado[] = [
     folio: "00001",
     sucursal: "SUCURSAL CENTRO",
     numVendedor: "001",
-    lugar: "CIUDAD DE MEXICO",
     mesDescuento: "ENERO",
     anioDescuento: "2026",
   },
@@ -34,7 +32,6 @@ export const ASESORES_REGISTRADOS: AsesorRegistrado[] = [
     folio: "00002",
     sucursal: "SUCURSAL NORTE",
     numVendedor: "002",
-    lugar: "MONTERREY, N.L.",
     mesDescuento: "ENERO",
     anioDescuento: "2026",
   },
@@ -43,7 +40,6 @@ export const ASESORES_REGISTRADOS: AsesorRegistrado[] = [
     folio: "00003",
     sucursal: "SUCURSAL SUR",
     numVendedor: "003",
-    lugar: "PUEBLA, PUE.",
     mesDescuento: "ENERO",
     anioDescuento: "2026",
   },
@@ -52,7 +48,6 @@ export const ASESORES_REGISTRADOS: AsesorRegistrado[] = [
     folio: "00004",
     sucursal: "SUCURSAL OCCIDENTE",
     numVendedor: "004",
-    lugar: "GUADALAJARA, JAL.",
     mesDescuento: "ENERO",
     anioDescuento: "2026",
   },

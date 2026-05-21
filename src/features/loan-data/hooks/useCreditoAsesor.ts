@@ -31,6 +31,7 @@ import { useState, useEffect, useMemo, useCallback } from "react"
 import { useContractStore } from "@/store/useContractStore"
 import type { TablaCreditoData, AsesorData } from "../types"
 import { ASESORES_REGISTRADOS } from "../constants"
+import { useDetectLocation } from "./useDetectLocation"
 import {
   isAsesorComplete,
   isContactoComplete,
@@ -40,6 +41,21 @@ import {
 
 function getToday(): string {
   return new Date().toISOString().split("T")[0]
+}
+
+function getNextQuincenaDate(): string {
+  const hoy = new Date()
+  const year = hoy.getFullYear()
+  const month = hoy.getMonth()
+
+  const d15 = new Date(year, month, 15)
+  if (hoy <= d15) return d15.toISOString().split("T")[0]
+
+  const d30 = new Date(year, month, 30)
+  if (hoy <= d30) return d30.toISOString().split("T")[0]
+
+  const next15 = new Date(year, month + 1, 15)
+  return next15.toISOString().split("T")[0]
 }
 
 export function useCreditoAsesor() {
@@ -68,8 +84,8 @@ export function useCreditoAsesor() {
         numVendedor:   perfil.numVendedor,
         asesor:        perfil.nombre,
         fechaContrato: today,
-        fechaArranque: "",
-        lugar:         perfil.lugar,
+        fechaArranque: getNextQuincenaDate(),
+        lugar:         "",
         mesDescuento:  perfil.mesDescuento,
         anioDescuento: perfil.anioDescuento,
       }
@@ -81,7 +97,7 @@ export function useCreditoAsesor() {
       numVendedor:   saved.asesorData.numVendedor ?? "",
       asesor:        saved.asesorData.asesor ?? "",
       fechaContrato: saved.asesorData.fechaContrato ?? today,
-      fechaArranque: saved.asesorData.fechaArranque ?? "",
+      fechaArranque: saved.asesorData.fechaArranque || getNextQuincenaDate(),
       lugar:         saved.asesorData.lugar ?? "",
       mesDescuento:  saved.asesorData.mesDescuento ?? "",
       anioDescuento: saved.asesorData.anioDescuento ?? "",
@@ -108,12 +124,19 @@ export function useCreditoAsesor() {
       folio:         perfil.folio,
       sucursal:      perfil.sucursal,
       numVendedor:   perfil.numVendedor,
-      lugar:         perfil.lugar,
       fechaContrato: getToday(),
       mesDescuento:  perfil.mesDescuento,
       anioDescuento: perfil.anioDescuento,
     }))
   }, [asesorData.asesor])
+
+  const { lugar: detectedLugar, loading: detectingLocation } = useDetectLocation()
+
+  useEffect(() => {
+    if (detectedLugar && !asesorData.lugar) {
+      setAsesorData(prev => ({ ...prev, lugar: detectedLugar }))
+    }
+  }, [detectedLugar])
 
   const updateAsesor = useCallback(
     <K extends keyof AsesorData>(key: K, value: AsesorData[K]) =>
@@ -143,7 +166,11 @@ export function useCreditoAsesor() {
   }, [])
 
   const prestamoComplete =
-    monto !== "" && Number(monto) > 0 && Number(monto) % 1000 === 0
+    monto !== "" && Number(monto) > 0 && Number(monto) % 1000 === 0 &&
+    asesorData.fechaArranque.length > 0 &&
+    asesorData.lugar.trim().length > 0 &&
+    asesorData.mesDescuento.length > 0 &&
+    asesorData.anioDescuento.length === 4
 
   const completion = useMemo(
     () => ({
@@ -164,5 +191,6 @@ export function useCreditoAsesor() {
     completion,
     updateAsesor,
     calcular, resetResultado,
+    detectingLocation,
   }
 }

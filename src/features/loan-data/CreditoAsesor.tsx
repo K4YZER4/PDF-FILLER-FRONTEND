@@ -1,28 +1,9 @@
-/**
- * Paso 3 del flujo: Datos del Préstamo.
- *
- * Orquestador que renderiza 5 secciones dentro de un accordion:
- *   1. Préstamo     → PrestamoSection (monto, plazo, cálculo)
- *   2. Asesor       → AsesorSection (datos del asesor con auto-fill)
- *   3. Contacto     → ContactoFields (config-driven, lee/escribe Zustand directo)
- *   4. Antigüedad   → AntiguedadSection (cálculo automático meses/años)
- *   5. Referencias  → ReferenciasSection (3 bloques idénticos con nombre/tel)
- *
- * Cada sección se renderiza condicionalmente según section.id dentro de un
- * AccordionSection que maneja expandir/colapsar.
- *
- * Datos que fluyen a través del hook useCreditoAsesor:
- *   - Préstamo y Asesor: estado local en el hook, sincronizado al store
- *   - Contacto/Antigüedad/Referencias: leen/escriben Zustand directamente
- *   - completion: el hook lee todas las secciones del store para calcular
- *     los indicadores de completitud en los encabezados del accordion
- */
-
 import { useState } from "react"
 import { TrendingUp, User, Phone, Calendar, Users } from "lucide-react"
 import { Card } from "@/components"
 import { useClientName } from "@/store/selectors"
 import { useCreditoAsesor } from "./hooks/useCreditoAsesor"
+import type { AsesorData } from "./types"
 import {
   AccordionSection,
   PrestamoSection,
@@ -48,11 +29,13 @@ function CreditoAsesor() {
   const toggle = (id: string) =>
     setExpandedSection((prev) => (prev === id ? null : id))
 
+  const isAutoFilled = hook.userRole !== "admin" || hook.asesorData.asesor.length > 0
+
   return (
     <div className="max-w-4xl mx-auto space-y-4 p-4 md:p-6">
       <div className="text-center mb-6">
-        <h2 className="text-2xl font-bold text-text-primary mb-2">Datos del Préstamo</h2>
-        <p className="text-sm text-text-secondary">Configura los términos del crédito</p>
+        <h2 className="text-2xl font-bold text-text-primary mb-2">Datos del Pr\u00e9stamo</h2>
+        <p className="text-sm text-text-secondary">Configura los t\u00e9rminos del cr\u00e9dito</p>
       </div>
 
       <div className="space-y-3">
@@ -76,6 +59,15 @@ function CreditoAsesor() {
                 onMontoChange={(v) => { hook.setMonto(v); hook.resetResultado() }}
                 onPlazoChange={hook.setPlazo}
                 onCalcular={hook.calcular}
+                fechaArranque={hook.asesorData.fechaArranque}
+                lugar={hook.asesorData.lugar}
+                mesDescuento={hook.asesorData.mesDescuento}
+                anioDescuento={hook.asesorData.anioDescuento}
+                isAutoFilled={isAutoFilled}
+                detectingLocation={hook.detectingLocation}
+                onAsesorFieldChange={(field, value) =>
+                  hook.updateAsesor(field as keyof AsesorData, value)
+                }
               />
             )}
             {section.id === "asesor" && (
