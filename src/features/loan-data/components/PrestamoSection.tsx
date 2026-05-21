@@ -11,14 +11,14 @@
  */
 import { TrendingUp } from "lucide-react";
 import { Button, Input } from "@/components/ui";
-import type { ResultadoCalculo } from "../types";
+import type { TablaCreditoData } from "../types";
 import { PLAZOS_QNA } from "../constants";
 
 interface PrestamoSectionProps {
   monto: string;
   plazo: number;
   isCalculando: boolean;
-  resultado: ResultadoCalculo | null;
+  resultado: TablaCreditoData | null;
   isComplete: boolean;
   onMontoChange: (value: string) => void;
   onPlazoChange: (value: number) => void;

@@ -1,58 +1,63 @@
 /**
- * Archivo: features/loan-data/components/AntiguedadSection.tsx
+ * Sección "Antigüedad" del accordion.
  *
- * Sección 4 del accordion: antigüedad laboral.
+ * Renderiza Fecha de Ingreso (date picker) más los campos Meses y Años
+ * que se calculan automáticamente al seleccionar la fecha.
  *
- * Campos:
- *   - Fecha de Ingreso (date picker)
- *   - Meses (numérico, hasta 3 dígitos)
- *   - Años (numérico, hasta 3 dígitos)
+ * Flujo de datos:
+ *   - Lectura: store.formData.antiguedadData (Zustand selector)
+ *   - Escritura: setFormData("antiguedadData", {...}) en un solo batch desde
+ *     handleFechaIngresoChange, evitando stale closures porque no depende
+ *     del estado renderizado anterior.
+ *
+ * Campos calculados (readOnly con bg-bg cursor-default):
+ *   - meses: total de meses transcurridos desde fechaIngreso hasta hoy
+ *   - anos:  floor(totalMeses / 12)
+ *
+ * Uso:
+ *   <AntiguedadSection />
  */
-import { useCallback } from "react";
-import { NumericInput, DateInput } from "@/components/ui";
-import type { AntiguedadData } from "../types";
 
-interface AntiguedadSectionProps {
-  data: AntiguedadData;
-  onChange: <K extends keyof AntiguedadData>(
-    key: K,
-    value: AntiguedadData[K],
-  ) => void;
-}
+import { useCallback } from "react"
+import { NumericInput, DateInput } from "@/components/ui"
+import { useContractStore } from "@/store/useContractStore"
 
 function calcularAntiguedad(fechaIngreso: string): {
-  meses: string;
-  anos: string;
+  meses: string
+  anos: string
 } {
-  if (!fechaIngreso) return { meses: "", anos: "" };
-  const ingreso = new Date(fechaIngreso);
-  const hoy = new Date();
+  if (!fechaIngreso) return { meses: "", anos: "" }
+  const ingreso = new Date(fechaIngreso)
+  const hoy = new Date()
   let totalMeses =
     (hoy.getFullYear() - ingreso.getFullYear()) * 12 +
     hoy.getMonth() -
-    ingreso.getMonth();
-  if (hoy.getDate() < ingreso.getDate()) totalMeses--;
-  if (totalMeses < 0) totalMeses = 0;
+    ingreso.getMonth()
+  if (hoy.getDate() < ingreso.getDate()) totalMeses--
+  if (totalMeses < 0) totalMeses = 0
   return {
     meses: String(totalMeses),
     anos: String(Math.floor(totalMeses / 12)),
-  };
+  }
 }
 
-function AntiguedadSection({ data, onChange }: AntiguedadSectionProps) {
+function AntiguedadSection() {
+  const setFormData = useContractStore((s) => s.setFormData)
+  const antiguedadData = useContractStore((s) => s.formData.antiguedadData)
+
   const handleFechaIngresoChange = useCallback(
     (v: string) => {
-      onChange("fechaIngreso", v);
-      if (v) {
-        const { meses, anos } = calcularAntiguedad(v);
-        onChange("meses", meses);
-        onChange("anos", anos);
+      if (!v) {
+        setFormData("antiguedadData", { fechaIngreso: "", meses: "", anos: "" })
+        return
       }
+      const { meses, anos } = calcularAntiguedad(v)
+      setFormData("antiguedadData", { fechaIngreso: v, meses, anos })
     },
-    [onChange],
-  );
+    [setFormData],
+  )
 
-  const today = new Date().toISOString().split("T")[0];
+  const today = new Date().toISOString().split("T")[0]
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -62,9 +67,9 @@ function AntiguedadSection({ data, onChange }: AntiguedadSectionProps) {
         </label>
         <DateInput
           id="fechaIngreso"
-          value={data.fechaIngreso}
+          value={antiguedadData.fechaIngreso}
           maxDate={today}
-          success={(data.fechaIngreso?.length ?? 0) > 0}
+          success={(antiguedadData.fechaIngreso?.length ?? 0) > 0}
           onChange={handleFechaIngresoChange}
         />
       </div>
@@ -76,12 +81,12 @@ function AntiguedadSection({ data, onChange }: AntiguedadSectionProps) {
         <NumericInput
           id="meses"
           placeholder="0"
-          value={data.meses}
+          value={antiguedadData.meses}
           maxLength={3}
           readOnly
           className="bg-bg cursor-default"
-          success={(data.meses?.length ?? 0) > 0}
-          onChange={(v) => onChange("meses", v)}
+          success={(antiguedadData.meses?.length ?? 0) > 0}
+          onChange={() => {}}
         />
       </div>
 
@@ -92,16 +97,16 @@ function AntiguedadSection({ data, onChange }: AntiguedadSectionProps) {
         <NumericInput
           id="anos"
           placeholder="0"
-          value={data.anos}
+          value={antiguedadData.anos}
           maxLength={3}
           readOnly
           className="bg-bg cursor-default"
-          success={(data.anos?.length ?? 0) > 0}
-          onChange={(v) => onChange("anos", v)}
+          success={(antiguedadData.anos?.length ?? 0) > 0}
+          onChange={() => {}}
         />
       </div>
     </div>
-  );
+  )
 }
 
-export { AntiguedadSection };
+export { AntiguedadSection }

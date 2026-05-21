@@ -11,5 +11,5 @@ export type {
   AntiguedadData,
   ReferenciaItem,
   Referencias,
-  ResultadoCalculo,
+  TablaCreditoData,
 } from "./types"

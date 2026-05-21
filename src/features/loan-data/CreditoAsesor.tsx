@@ -1,14 +1,23 @@
 /**
- * Archivo: features/loan-data/CreditoAsesor.tsx
+ * Paso 3 del flujo: Datos del Préstamo.
  *
- * Propósito: Paso 3 del flujo — datos del préstamo y complementarios.
+ * Orquestador que renderiza 5 secciones dentro de un accordion:
+ *   1. Préstamo     → PrestamoSection (monto, plazo, cálculo)
+ *   2. Asesor       → AsesorSection (datos del asesor con auto-fill)
+ *   3. Contacto     → ContactoFields (config-driven, lee/escribe Zustand directo)
+ *   4. Antigüedad   → AntiguedadSection (cálculo automático meses/años)
+ *   5. Referencias  → ReferenciasSection (3 bloques idénticos con nombre/tel)
  *
- * Este componente es un orquestador puro:
- *   - Obtiene estado y handlers del hook useCreditoAsesor
- *   - Renderiza las secciones del accordion pasándoles datos y handlers
- *   - Muestra un resumen final siempre visible (cliente, monto, plazo)
- *   - No tiene lógica de negocio propia
+ * Cada sección se renderiza condicionalmente según section.id dentro de un
+ * AccordionSection que maneja expandir/colapsar.
+ *
+ * Datos que fluyen a través del hook useCreditoAsesor:
+ *   - Préstamo y Asesor: estado local en el hook, sincronizado al store
+ *   - Contacto/Antigüedad/Referencias: leen/escriben Zustand directamente
+ *   - completion: el hook lee todas las secciones del store para calcular
+ *     los indicadores de completitud en los encabezados del accordion
  */
+
 import { useState } from "react"
 import { TrendingUp, User, Phone, Calendar, Users } from "lucide-react"
 import { Card } from "@/components"
@@ -18,16 +27,16 @@ import {
   AccordionSection,
   PrestamoSection,
   AsesorSection,
-  ContactoSection,
+  ContactoFields,
   AntiguedadSection,
   ReferenciasSection,
 } from "./components"
 
 const SECTIONS = [
-  { id: "prestamo",   title: "Préstamo",               icon: TrendingUp },
+  { id: "prestamo",   title: "Pr\u00e9stamo",               icon: TrendingUp },
   { id: "asesor",     title: "Datos del Asesor",        icon: User       },
   { id: "contacto",   title: "Contacto y Estado Civil", icon: Phone      },
-  { id: "antiguedad", title: "Antigüedad",              icon: Calendar   },
+  { id: "antiguedad", title: "Antig\u00fcedad",              icon: Calendar   },
   { id: "referencias",title: "Referencias",             icon: Users      },
 ] as const
 
@@ -76,24 +85,9 @@ function CreditoAsesor() {
                 onChange={hook.updateAsesor}
               />
             )}
-            {section.id === "contacto" && (
-              <ContactoSection
-                data={hook.contactoData}
-                onChange={hook.updateContacto}
-              />
-            )}
-            {section.id === "antiguedad" && (
-              <AntiguedadSection
-                data={hook.antiguedadData}
-                onChange={hook.updateAntiguedad}
-              />
-            )}
-            {section.id === "referencias" && (
-              <ReferenciasSection
-                referencias={hook.referencias}
-                onChange={hook.updateReferencia}
-              />
-            )}
+            {section.id === "contacto" && <ContactoFields />}
+            {section.id === "antiguedad" && <AntiguedadSection />}
+            {section.id === "referencias" && <ReferenciasSection />}
           </AccordionSection>
         ))}
       </div>

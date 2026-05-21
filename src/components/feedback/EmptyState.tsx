@@ -1,5 +1,13 @@
-// Componente de estado vacío para mostrar cuando no hay datos disponibles
-
+/** Pantalla de estado vacío para listas sin datos (historias, contratos, etc.).
+ *  Muestra título, descripción opcional, imagen/ícono y botón de acción.
+ *
+ *  Uso:
+ *    <EmptyState
+ *      title="Sin contratos"
+ *      description="Aún no has generado ningún contrato"
+ *      actionLabel="Nuevo contrato"
+ *      onAction={() => navigate("/contracts")}
+ *    /> */
 import type { ReactNode } from "react";
 
 interface EmptyStateProps {

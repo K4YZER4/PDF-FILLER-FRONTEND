@@ -1,21 +1,35 @@
 /**
- * Archivo: features/loan-data/hooks/useCreditoAsesor.ts
- *
- * Hook principal del paso 3.
+ * Hook principal del paso 3 (Datos del Préstamo).
  *
  * Responsabilidades:
- *   1. Inicializar todo el estado local desde el store (Zustand persist)
- *   2. Sincronizar los cambios del estado local de vuelta al store
- *   3. Proveer validaciones de completitud por sección (isAsesorComplete, etc.)
- *   4. Ejecutar el cálculo simulado de tabla de amortización
+ *   1. Gestionar estado local de monto, plazo, resultado del cálculo y asesorData
+ *      (contactoData, antiguedadData y referencias se leen/escriben directo en
+ *      Zustand desde sus componentes, sin estado local en el hook).
+ *   2. Sincronizar monto/plazo/asesorData al store para persistencia
+ *      al navegar entre pasos del flujo.
+ *   3. Auto-fill de campos del asesor cuando el admin selecciona un perfil
+ *      (efecto que reacciona a asesorData.asesor).
+ *   4. Proveer validaciones de completitud (completion) para los íconos de
+ *      check en el accordion — lee contactoData/antiguedadData/referencias
+ *      directo del store para calcularlas.
+ *   5. Ejecutar cálculo simulado de tabla de amortización.
  *
- * Cada sección del accordion recibe su porción de estado y handlers desde aquí.
- * El componente principal solo orquesta el render.
+ * Secciones que ya NO dependen del hook:
+ *   - Contacto → ContactoFields (lee/escribe Zustand directo)
+ *   - Antigüedad → AntiguedadSection (lee/escribe Zustand directo)
+ *   - Referencias → ReferenciasSection (lee/escribe Zustand directo)
+ *
+ * Retorna:
+ *   - Estado local:     monto, plazo, resultado, isCalculando, asesorData
+ *   - Handlers/Setters: setMonto, setPlazo, updateAsesor
+ *   - Acciones:         calcular, resetResultado
+ *   - Derivados:        completion (objeto { prestamo, asesor, contacto, antiguedad, referencias })
+ *                       userRole
  */
 
 import { useState, useEffect, useMemo, useCallback } from "react"
 import { useContractStore } from "@/store/useContractStore"
-import type { ResultadoCalculo, AsesorData, ContactoData, AntiguedadData, Referencias } from "../types"
+import type { TablaCreditoData, AsesorData } from "../types"
 import { ASESORES_REGISTRADOS } from "../constants"
 import {
   isAsesorComplete,
@@ -28,30 +42,16 @@ function getToday(): string {
   return new Date().toISOString().split("T")[0]
 }
 
-/**
- * Hook principal del paso 3.
- *
- * Retorna:
- *   - Estado: monto, plazo, resultado, asesorData, contactoData, antiguedadData, referencias
- *   - Setters: setMonto, setPlazo
- *   - Handlers: updateAsesor, updateContacto, updateAntiguedad, updateReferencia
- *   - Acciones: calcular, resetResultado
- *   - Derivados: completion (objeto { prestamo, asesor, contacto, antiguedad, referencias })
- *
- * Cada efecto sincroniza una pieza de estado con el store de Zustand para
- * que los datos persistan al navegar entre pasos del flujo.
- */
 export function useCreditoAsesor() {
   const store = useContractStore()
   const userRole = store.auth.role
-  const userName = store.auth.user ?? ""
 
   const [monto, setMonto] = useState(
     store.formData.capitalMonto > 0 ? String(store.formData.capitalMonto) : "",
   )
   const [plazo, setPlazo] = useState(store.formData.plazoQnas || 48)
   const [isCalculando, setIsCalculando] = useState(false)
-  const [resultado, setResultado] = useState<ResultadoCalculo | null>(
+  const [resultado, setResultado] = useState<TablaCreditoData | null>(
     store.formData.tabla,
   )
 
@@ -88,27 +88,9 @@ export function useCreditoAsesor() {
     }
   })
 
-  const [contactoData, setContactoData] = useState<ContactoData>(() => ({
-    tel:         saved.contactoData.tel ?? "",
-    celular:     saved.contactoData.celular ?? "",
-    telCasa:     saved.contactoData.telCasa ?? "",
-    correo:      saved.contactoData.correo ?? "",
-    estadoCivil: saved.contactoData.estadoCivil ?? "",
-  }))
-
-  const [antiguedadData, setAntiguedadData] = useState<AntiguedadData>(() => ({
-    fechaIngreso: saved.antiguedadData.fechaIngreso ?? "",
-    meses:        saved.antiguedadData.meses ?? "",
-    anos:         saved.antiguedadData.anos ?? "",
-  }))
-
-  const [referencias, setReferencias] = useState<Referencias>(() => {
-    const r = saved.referencias
-    return [0, 1, 2].map((i) => ({
-      nombre:   r[i]?.nombre   ?? "",
-      telefono: r[i]?.telefono ?? "",
-    })) as Referencias
-  })
+  const contactoData = store.formData.contactoData
+  const antiguedadData = store.formData.antiguedadData
+  const referencias = store.formData.referencias
 
   useEffect(() => {
     store.setFormData("capitalMonto", monto === "" ? 0 : Number(monto))
@@ -132,35 +114,10 @@ export function useCreditoAsesor() {
       anioDescuento: perfil.anioDescuento,
     }))
   }, [asesorData.asesor])
-  useEffect(() => { store.setFormData("contactoData", contactoData) }, [contactoData])
-  useEffect(() => { store.setFormData("antiguedadData", antiguedadData) }, [antiguedadData])
-  useEffect(() => { store.setFormData("referencias", referencias) }, [referencias])
 
   const updateAsesor = useCallback(
     <K extends keyof AsesorData>(key: K, value: AsesorData[K]) =>
       setAsesorData((prev) => ({ ...prev, [key]: value })),
-    [],
-  )
-
-  const updateContacto = useCallback(
-    <K extends keyof ContactoData>(key: K, value: ContactoData[K]) =>
-      setContactoData((prev) => ({ ...prev, [key]: value })),
-    [],
-  )
-
-  const updateAntiguedad = useCallback(
-    <K extends keyof AntiguedadData>(key: K, value: AntiguedadData[K]) =>
-      setAntiguedadData((prev) => ({ ...prev, [key]: value })),
-    [],
-  )
-
-  const updateReferencia = useCallback(
-    (index: number, field: keyof Referencias[number], value: string) =>
-      setReferencias((prev) => {
-        const next = [...prev] as Referencias
-        next[index] = { ...next[index], [field]: value }
-        return next
-      }),
     [],
   )
 
@@ -169,7 +126,7 @@ export function useCreditoAsesor() {
     setIsCalculando(true)
     await new Promise((r) => setTimeout(r, 1000))
     const m = Number(monto)
-    const res: ResultadoCalculo = {
+    const res: TablaCreditoData = {
       montoPagare:        m * 1.15,
       descuentoQuincenal: (m * 1.15) / plazo,
       tasaMensual:        0.025,
@@ -202,10 +159,10 @@ export function useCreditoAsesor() {
   return {
     monto, setMonto, plazo, setPlazo,
     isCalculando, resultado,
-    asesorData, contactoData, antiguedadData, referencias,
-    userRole, userName,
+    asesorData,
+    userRole,
     completion,
-    updateAsesor, updateContacto, updateAntiguedad, updateReferencia,
+    updateAsesor,
     calcular, resetResultado,
   }
 }

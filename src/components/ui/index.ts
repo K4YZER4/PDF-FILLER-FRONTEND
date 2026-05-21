@@ -1,3 +1,6 @@
+/** Barrel export de todos los componentes UI del design system.
+ *  Cada componente se exporta desde su archivo individual y se re-exporta
+ *  desde aquí para importar todo desde @/components/ui. */
 export { Input } from "./Input";
 export type { InputProps } from "./Input";
 

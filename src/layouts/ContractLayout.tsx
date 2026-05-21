@@ -62,7 +62,6 @@ function ContractLayout() {
   const resetContract = useContractStore((s) => s.resetContract);
   const scanDocuments = useContractStore((s) => s.scanDocuments);
   const scanResults = useContractStore((s) => s.documents.scanResults);
-  const setFormData = useContractStore((s) => s.setFormData);
   const addContract = useContractStore((s) => s.addContract);
 
   const ineFile = useContractStore((s) => s.documents.ineFile);
@@ -142,24 +141,6 @@ function ContractLayout() {
 
   const handleNext = () => {
     if (currentStep < 0 || currentStep >= STEPS.length - 1) return;
-
-    if (currentSegment === "loan") {
-      const monto = formData.capitalMonto;
-      if (monto <= 0 || monto % 1000 !== 0) {
-        alert("Introduzca un monto válido (múltiplo de 1000)");
-        return;
-      }
-      if (!formData.tabla) {
-        const plazo = formData.plazoQnas || 48;
-        setFormData("tabla", {
-          montoPagare: monto * 1.15,
-          descuentoQuincenal: (monto * 1.15) / plazo,
-          tasaMensual: 0.025,
-          cat: 0.32,
-        });
-      }
-    }
-
     navigate(STEPS[currentStep + 1].path, { relative: "path" });
   };
 

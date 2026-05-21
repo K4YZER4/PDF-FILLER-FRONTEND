@@ -1,7 +1,6 @@
 /** Etiqueta de estado con variantes de color.
  *  success → verde | warning → naranja | error → rojo | info → morado.
  *  Útil para badges de estado en contratos y documentos. */
-// TODO: Este componente no se usa de momento, despues se implementara
 type BadgeVariant = "success" | "warning" | "error" | "info";
 
 interface BadgeProps {

@@ -62,7 +62,9 @@ function validateReviewStep(formData: FormDataState): boolean {
   return allPersonales && allDomicilio && allLaborales && allBancarios;
 }
 
-/** Valida todos los campos del paso "loan" (asesor, contacto, antigüedad, referencias). */
+/** Valida todos los campos del paso "loan": monto válido + secciones completas.
+ *  La tabla de amortización es opcional (se calcula con "Calcular" si el usuario
+ *  quiere verla, pero no bloquea la generación del contrato). */
 function validateLoanStep(formData: FormDataState): boolean {
   const m = formData.capitalMonto;
   if (m <= 0 || m % 1000 !== 0) return false;

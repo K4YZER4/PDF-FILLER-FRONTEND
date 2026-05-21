@@ -1,35 +1,46 @@
 /**
- * Archivo: features/loan-data/components/ReferenciasSection.tsx
+ * Sección "Referencias" del accordion.
  *
- * Sección 5 del accordion: referencias personales.
+ * Renderiza 3 bloques idénticos (Referencia 1, 2, 3), cada uno con
+ * Nombre (NameInput) y Teléfono (NumericInput de 10 dígitos).
  *
- * Renderiza 3 bloques idénticos (Referencia 1, 2, 3) cada uno con:
- *   - Nombre (solo letras)
- *   - Teléfono (10 dígitos)
+ * Flujo de datos:
+ *   - Lectura: store.formData.referencias (Zustand selector)
+ *   - Escritura: setFormData("referencias", ...) con getState() para leer el
+ *     array actual antes de mutarlo, evitando stale closures en las llamadas
+ *     secuenciales de handleChange.
  *
- * Los índices 0, 1, 2 corresponden a la tupla `Referencias`
- * definida en types.ts.
+ * La tupla Referencias (exactamente 3 elementos) se mapea con map en lugar de
+ * mutar el array original, manteniendo inmutabilidad.
+ *
+ * Uso:
+ *   <ReferenciasSection />
  */
-import { NameInput, NumericInput } from "@/components/ui";
-import type { Referencias } from "../types";
 
-interface ReferenciasSectionProps {
-  referencias: Referencias;
-  onChange: (
-    index: number,
-    field: "nombre" | "telefono",
-    value: string,
-  ) => void;
-}
+import { useCallback } from "react"
+import { NameInput, NumericInput } from "@/components/ui"
+import { useContractStore } from "@/store/useContractStore"
+import type { Referencias } from "../types"
 
-function ReferenciasSection({
-  referencias,
-  onChange,
-}: ReferenciasSectionProps) {
+function ReferenciasSection() {
+  const setFormData = useContractStore((s) => s.setFormData)
+  const referencias = useContractStore((s) => s.formData.referencias)
+
+  const handleChange = useCallback(
+    (index: number, field: "nombre" | "telefono", value: string) => {
+      const current = useContractStore.getState().formData.referencias
+      const next: Referencias = current.map((r, i) =>
+        i === index ? { ...r, [field]: value } : r,
+      ) as Referencias
+      setFormData("referencias", next)
+    },
+    [setFormData],
+  )
+
   return (
     <div className="space-y-2">
       {([1, 2, 3] as const).map((num) => {
-        const idx = num - 1;
+        const idx = num - 1
         return (
           <div key={num} className="py-3 space-y-2">
             <p className="text-xs font-semibold text-text-secondary uppercase">
@@ -46,7 +57,7 @@ function ReferenciasSection({
                   value={referencias[idx]?.nombre ?? ""}
                   inputSize="sm"
                   success={(referencias[idx]?.nombre?.trim()?.length ?? 0) > 0}
-                  onChange={(v) => onChange(idx, "nombre", v)}
+                  onChange={(v) => handleChange(idx, "nombre", v)}
                 />
               </div>
               <div className="space-y-1.5">
@@ -66,15 +77,15 @@ function ReferenciasSection({
                       ? "Deben ser 10 dígitos"
                       : undefined
                   }
-                  onChange={(v) => onChange(idx, "telefono", v)}
+                  onChange={(v) => handleChange(idx, "telefono", v)}
                 />
               </div>
             </div>
           </div>
-        );
+        )
       })}
     </div>
-  );
+  )
 }
 
-export { ReferenciasSection };
+export { ReferenciasSection }
