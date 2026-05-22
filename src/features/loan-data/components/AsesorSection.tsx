@@ -1,15 +1,15 @@
-import { Input, NameInput, NumericInput, DateInput } from "@/components/ui"
-import { SelectField } from "./SelectField"
-import { ASESOR_NOMBRES } from "../constants"
-import type { AsesorData } from "../types"
+import { Input, NameInput, NumericInput, DateInput } from "@/components/ui";
+import { SelectField } from "./SelectField";
+import { ASESOR_NOMBRES } from "../constants";
+import type { AsesorData } from "../types";
 
 interface AsesorSectionProps {
-  data: AsesorData
-  userRole: string | null
-  onChange: <K extends keyof AsesorData>(key: K, value: AsesorData[K]) => void
+  data: AsesorData;
+  userRole: string | null;
+  onChange: <K extends keyof AsesorData>(key: K, value: AsesorData[K]) => void;
 }
 
-const readOnlyClass = "bg-bg cursor-default"
+const readOnlyClass = "bg-bg cursor-default";
 
 function AsesorSection({ data, userRole, onChange }: AsesorSectionProps) {
   return (
@@ -74,7 +74,7 @@ function AsesorSection({ data, userRole, onChange }: AsesorSectionProps) {
 
       <div className="space-y-1.5">
         <label className="text-xs font-medium text-text-secondary">
-          N\u00fam. Vendedor <span className="text-error">*</span>
+          Num. Vendedor <span className="text-error">*</span>
         </label>
         <NumericInput
           id="numVendedor"
@@ -104,7 +104,7 @@ function AsesorSection({ data, userRole, onChange }: AsesorSectionProps) {
         />
       </div>
     </div>
-  )
+  );
 }
 
-export { AsesorSection }
+export { AsesorSection };

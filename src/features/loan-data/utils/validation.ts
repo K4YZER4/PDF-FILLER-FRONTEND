@@ -21,11 +21,7 @@ export function isAsesorComplete(d: AsesorData): boolean {
     (d.sucursal?.trim()?.length ?? 0) > 0 &&
     (d.numVendedor?.length ?? 0) === 3 &&
     (d.asesor?.trim()?.length ?? 0) > 0 &&
-    (d.fechaContrato?.length ?? 0) > 0 &&
-    (d.fechaArranque?.length ?? 0) > 0 &&
-    (d.lugar?.trim()?.length ?? 0) > 0 &&
-    (d.mesDescuento?.length ?? 0) > 0 &&
-    (d.anioDescuento?.length ?? 0) === 4
+    (d.fechaContrato?.length ?? 0) > 0
   );
 }
 

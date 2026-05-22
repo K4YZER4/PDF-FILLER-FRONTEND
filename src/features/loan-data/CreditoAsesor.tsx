@@ -29,8 +29,6 @@ function CreditoAsesor() {
   const toggle = (id: string) =>
     setExpandedSection((prev) => (prev === id ? null : id))
 
-  const isAutoFilled = hook.userRole !== "admin" || hook.asesorData.asesor.length > 0
-
   return (
     <div className="max-w-4xl mx-auto space-y-4 p-4 md:p-6">
       <div className="text-center mb-6">
@@ -63,7 +61,6 @@ function CreditoAsesor() {
                 lugar={hook.asesorData.lugar}
                 mesDescuento={hook.asesorData.mesDescuento}
                 anioDescuento={hook.asesorData.anioDescuento}
-                isAutoFilled={isAutoFilled}
                 detectingLocation={hook.detectingLocation}
                 onAsesorFieldChange={(field, value) =>
                   hook.updateAsesor(field as keyof AsesorData, value)
