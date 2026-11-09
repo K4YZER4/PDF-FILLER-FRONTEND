@@ -15,6 +15,7 @@ import { RevisionDatos } from "@/features/review-data"
 import { CreditoAsesor } from "@/features/loan-data"
 import { VistaPrevia } from "@/features/preview-contract"
 import { FirmarPage } from "@/features/signature"
+import { LandingPage, DemoAccessPage } from "@/features/landing"
 import { Spinner } from "@/components"
 import { ErrorBoundary } from "@/components/feedback"
 
@@ -25,6 +26,8 @@ function App() {
         <ErrorBoundary context="Error inesperado">
           <Routes>
             {/* Ruta pública: login */}
+            <Route path="/landing" element={<LandingPage />} />
+            <Route path="/demo" element={<DemoAccessPage />} />
             <Route path="/login" element={<PublicRoute><AuthLayout><LoginPage /></AuthLayout></PublicRoute>} />
             {/* Ruta pública: firma digital (sin auth) */}
             <Route path="/firmar/:token" element={<FirmarPage />} />
