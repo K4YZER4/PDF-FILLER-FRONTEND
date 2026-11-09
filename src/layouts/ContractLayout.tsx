@@ -11,8 +11,8 @@
  *   - FinishToast        → notificación de contrato generado
  *   - FloatingShareButton → FAB de compartir en móvil
  *   - AlertDialog        → confirmación al salir */
-import { useState } from "react";
-import { Outlet, useNavigate, useLocation } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { Outlet, useNavigate, useLocation, useParams } from "react-router-dom";
 // Icons
 import {
   FileText,
@@ -23,8 +23,13 @@ import {
   TriangleAlert,
 } from "lucide-react";
 import { ErrorBoundary } from "@/components/feedback";
+import { Spinner } from "@/components";
+import { api } from "@/lib/api";
 import { useContractStore } from "@/store/useContractStore";
 import { useClientName } from "@/store/selectors";
+import { buildContratoPayload } from "@/utils/mapping";
+import { downloadContract } from "@/utils/downloadContract";
+import { updateContract } from "@/api/contracts.api";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -56,6 +61,8 @@ const STEPS: readonly Step[] = [
 function ContractLayout() {
   const navigate = useNavigate();
   const location = useLocation();
+  const { folio } = useParams();
+  const isEditMode = !!folio;
 
   // Store
   const formData = useContractStore((s) => s.formData);
@@ -63,6 +70,7 @@ function ContractLayout() {
   const scanDocuments = useContractStore((s) => s.scanDocuments);
   const scanResults = useContractStore((s) => s.documents.scanResults);
   const addContract = useContractStore((s) => s.addContract);
+  const loadContractForEdit = useContractStore((s) => s.loadContractForEdit);
 
   const ineFile = useContractStore((s) => s.documents.ineFile);
   const nomina1File = useContractStore((s) => s.documents.nomina1File);
@@ -71,15 +79,33 @@ function ContractLayout() {
     (s) => s.documents.estadoCuentaFile,
   );
   const allFilesLoaded = !!(
-    ineFile &&
-    nomina1File &&
-    nomina2File &&
-    estadoCuentaFile
+    ineFile ||
+    nomina1File ||
+    nomina2File ||
+    estadoCuentaFile ||
+    isEditMode
   );
 
   // UI state
   const [showExitModal, setShowExitModal] = useState(false);
   const [showFinishToast, setShowFinishToast] = useState(false);
+  const [loadingContract, setLoadingContract] = useState(isEditMode);
+  const [isFinishing, setIsFinishing] = useState(false);
+
+  // Load contract data for editing
+  useEffect(() => {
+    if (isEditMode && folio) {
+      setLoadingContract(true);
+      loadContractForEdit(folio)
+        .then(() => {
+          navigate("review", { relative: "path", replace: true });
+        })
+        .catch(() => {
+          navigate("/", { replace: true });
+        })
+        .finally(() => setLoadingContract(false));
+    }
+  }, [folio]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Navigation
   const currentSegment =
@@ -110,32 +136,81 @@ function ContractLayout() {
     }
   };
 
-  const handleDownload = () => {
-    const blob = new Blob(["Contrato PDF"], { type: "application/pdf" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = `contrato-${Date.now()}.pdf`;
-    a.click();
-    URL.revokeObjectURL(url);
+  const handleDownload = async () => {
+    const folio = useContractStore.getState().formData.contratoFolio;
+    if (!folio) return;
+    try {
+      await downloadContract(folio);
+    } catch (err: unknown) {
+      const msg =
+        err instanceof Error
+          ? err.message
+          : "Error desconocido al descargar";
+      alert(`No se pudo descargar el PDF:\n${msg}`);
+    }
   };
 
   const handleEdit = () => navigate(STEPS[1].path, { relative: "path" });
 
-  const handleFinish = () => {
+  const handleFinish = async () => {
+    if (isFinishing) return;
+    setIsFinishing(true);
+    try {
+      const payload = buildContratoPayload(formData);
+      const formPayload = new FormData();
+      formPayload.append("data", JSON.stringify(payload));
+
+      let response;
+      let contractFolio: string;
+
+      if (isEditMode && folio) {
+        response = await updateContract(folio, formPayload);
+        contractFolio = folio;
+      } else {
+        response = await api.post("/api/pdfs", formPayload, {
+          responseType: "blob",
+        });
+        contractFolio =
+          response.headers?.["x-contract-folio"] ??
+          response.headers?.["content-disposition"]?.match(/C-\d+/)?.[0] ??
+          `CTR-${Date.now()}`;
+      }
+
+      useContractStore.getState().setFormData("contratoFolio", contractFolio);
+
+      window.dispatchEvent(
+        new CustomEvent("contract:pdf-updated", {
+          detail: URL.createObjectURL(response.data as Blob),
+        }),
+      );
+
+      if (!isEditMode) {
+        addContract({
+          id: contractFolio,
+          clientName,
+          date: new Date().toISOString().split("T")[0],
+          monto: formData.capitalMonto || 0,
+          plazo: formData.plazoQnas,
+          asesor: formData.asesorData.asesor || "ASESOR",
+          status: "completado",
+          estado: "POR FIRMAR",
+        });
+
+      }
+    } catch (err: unknown) {
+      const msg =
+        err instanceof Error
+          ? err.message
+          : "Error desconocido al guardar el contrato";
+      alert(`Error al guardar el contrato:\n${msg}`);
+      setIsFinishing(false);
+      return;
+    }
+
+    setIsFinishing(false);
     setShowFinishToast(true);
-    addContract({
-      id: `CTR-${Date.now()}`,
-      clientName,
-      date: new Date().toISOString().split("T")[0],
-      monto: formData.tabla?.montoPagare ?? 0,
-      plazo: formData.plazoQnas,
-      asesor: formData.asesorData.asesor || "ASESOR",
-      status: "completado",
-    });
     setTimeout(() => {
       setShowFinishToast(false);
-      navigate("/");
     }, 2000);
   };
 
@@ -168,7 +243,7 @@ function ContractLayout() {
                 <FileText size={20} className="text-white" />
               </div>
               <h1 className="text-base font-semibold text-text-primary">
-                Nuevo Contrato
+                {isEditMode ? "Editar Contrato" : "Nuevo Contrato"}
               </h1>
             </div>
             <button
@@ -198,9 +273,15 @@ function ContractLayout() {
 
       {/* Contenido */}
       <main className="flex-1 py-3 md:py-4">
-        <ErrorBoundary context="Error al cargar la sección del contrato">
-          <Outlet />
-        </ErrorBoundary>
+        {loadingContract ? (
+          <div className="flex justify-center py-20">
+            <Spinner size="lg" />
+          </div>
+        ) : (
+          <ErrorBoundary context="Error al cargar la sección del contrato">
+            <Outlet />
+          </ErrorBoundary>
+        )}
       </main>
 
       {/* Footer */}
@@ -210,6 +291,7 @@ function ContractLayout() {
         canContinue={canContinue}
         scanStatus={scanStatus}
         allFilesLoaded={allFilesLoaded}
+        isFinishing={isFinishing}
         onScan={handleScan}
         onNext={handleNext}
         onPrev={handlePrev}

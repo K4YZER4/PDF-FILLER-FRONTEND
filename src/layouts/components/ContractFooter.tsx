@@ -22,6 +22,7 @@ interface ContractFooterProps {
   canContinue: boolean;
   scanStatus: string;
   allFilesLoaded: boolean;
+  isFinishing?: boolean;
   onScan: () => void;
   onNext: () => void;
   onPrev: () => void;
@@ -37,6 +38,7 @@ function ContractFooter({
   canContinue,
   scanStatus,
   allFilesLoaded,
+  isFinishing,
   onScan,
   onNext,
   onPrev,
@@ -115,9 +117,11 @@ function ContractFooter({
               <Button
                 variant="primary"
                 onClick={onFinish}
+                disabled={isFinishing}
+                loading={isFinishing}
                 className="w-35 bg-success hover:bg-success-hover"
               >
-                <CheckCircle size={16} /> Finalizar
+                <CheckCircle size={16} /> {isFinishing ? "Guardando..." : "Finalizar"}
               </Button>
             </>
           )}

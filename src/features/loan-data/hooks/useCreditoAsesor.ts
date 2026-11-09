@@ -29,9 +29,12 @@
 
 import { useState, useEffect, useMemo, useCallback } from "react"
 import { useContractStore } from "@/store/useContractStore"
+import { api } from "@/lib/api"
 import type { TablaCreditoData, AsesorData } from "../types"
-import { ASESORES_REGISTRADOS } from "../constants"
+import { getAsesores } from "../api/asesores.api"
+import type { AsesorApiItem } from "../api/asesores.api"
 import { useDetectLocation } from "./useDetectLocation"
+import { mapTablaFromApi } from "@/utils/mapping"
 import {
   isAsesorComplete,
   isContactoComplete,
@@ -67,9 +70,20 @@ export function useCreditoAsesor() {
   )
   const [plazo, setPlazo] = useState(store.formData.plazoQnas || 48)
   const [isCalculando, setIsCalculando] = useState(false)
+  const [calcError, setCalcError] = useState("")
   const [resultado, setResultado] = useState<TablaCreditoData | null>(
     store.formData.tabla,
   )
+
+  const [asesoresList, setAsesoresList] = useState<AsesorApiItem[]>([])
+  const [loadingAsesores, setLoadingAsesores] = useState(true)
+
+  useEffect(() => {
+    getAsesores()
+      .then(setAsesoresList)
+      .catch(() => {})
+      .finally(() => setLoadingAsesores(false))
+  }, [])
 
   const saved = store.formData
 
@@ -77,17 +91,17 @@ export function useCreditoAsesor() {
     const today = getToday()
 
     if (userRole !== "admin") {
-      const perfil = ASESORES_REGISTRADOS[0]
+      const profile = store.auth.profile;
       return {
-        folio:         perfil.folio,
-        sucursal:      perfil.sucursal,
-        numVendedor:   perfil.numVendedor,
-        asesor:        perfil.nombre,
+        folio:         profile?.folio ?? "",
+        sucursal:      profile?.sucursal ?? "",
+        numVendedor:   profile?.numVendedor ?? "",
+        asesor:        profile?.asesor ?? "",
         fechaContrato: today,
         fechaArranque: getNextQuincenaDate(),
         lugar:         "",
-        mesDescuento:  perfil.mesDescuento,
-        anioDescuento: perfil.anioDescuento,
+        mesDescuento:  "",
+        anioDescuento: "",
       }
     }
 
@@ -117,18 +131,16 @@ export function useCreditoAsesor() {
 
   useEffect(() => {
     if (userRole !== "admin") return
-    const perfil = ASESORES_REGISTRADOS.find(a => a.nombre === asesorData.asesor)
+    const perfil = asesoresList.find(a => a.nombre === asesorData.asesor)
     if (!perfil) return
     setAsesorData(prev => ({
       ...prev,
       folio:         perfil.folio,
-      sucursal:      perfil.sucursal,
-      numVendedor:   perfil.numVendedor,
+      sucursal:      perfil.sucursal ?? "",
+      numVendedor:   perfil.codigoEmpleado,
       fechaContrato: getToday(),
-      mesDescuento:  perfil.mesDescuento,
-      anioDescuento: perfil.anioDescuento,
     }))
-  }, [asesorData.asesor])
+  }, [asesorData.asesor, asesoresList])
 
   const { lugar: detectedLugar, loading: detectingLocation } = useDetectLocation()
 
@@ -147,21 +159,30 @@ export function useCreditoAsesor() {
   const calcular = useCallback(async () => {
     if (!monto || Number(monto) <= 0) return
     setIsCalculando(true)
-    await new Promise((r) => setTimeout(r, 1000))
-    const m = Number(monto)
-    const res: TablaCreditoData = {
-      montoPagare:        m * 1.15,
-      descuentoQuincenal: (m * 1.15) / plazo,
-      tasaMensual:        0.025,
-      cat:                0.32,
+    setCalcError("")
+    try {
+      const { data } = await api.post("/api/tablas/consultas", {
+        monto: Number(monto),
+        quincenas: plazo,
+      })
+      const res = mapTablaFromApi(data)
+      setResultado(res)
+      store.setFormData("tabla", res)
+    } catch (error) {
+      setResultado(null)
+      store.setFormData("tabla", null)
+      setCalcError(
+        error instanceof Error
+          ? error.message
+          : "No se pudo calcular la tabla. Verifica la conexión con el backend.",
+      )
     }
-    setResultado(res)
-    store.setFormData("tabla", res)
     setIsCalculando(false)
   }, [monto, plazo])
 
   const resetResultado = useCallback(() => {
     setResultado(null)
+    setCalcError("")
     store.setFormData("tabla", null)
   }, [])
 
@@ -185,8 +206,8 @@ export function useCreditoAsesor() {
 
   return {
     monto, setMonto, plazo, setPlazo,
-    isCalculando, resultado,
-    asesorData,
+    isCalculando, resultado, calcError,
+    asesorData, asesoresList, loadingAsesores,
     userRole,
     completion,
     updateAsesor,

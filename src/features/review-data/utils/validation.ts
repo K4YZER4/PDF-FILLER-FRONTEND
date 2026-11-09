@@ -21,6 +21,7 @@ const DOMICILIO_FIELDS: readonly string[] = [
   "codigoPostal",
   "colonia",
   "noExt",
+  "noInt",
   "municipio",
   "estado",
 ];

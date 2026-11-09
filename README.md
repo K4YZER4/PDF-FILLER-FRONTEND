@@ -82,6 +82,25 @@ Login → Historial → Nuevo Contrato
                Descargar · Editar · Finalizar
 ```
 
+### Firma en modo demostración
+
+El proyecto no depende de un proveedor de correo para demostrarse. Desde
+**Vista previa** se genera el enlace de firma y se puede copiar o abrir
+directamente. El backend devuelve el estado del correo y muestra que el modo
+demo está activo.
+
+Para activar correo real, configura el backend con `EMAIL_ENABLED=true` y las
+credenciales del proveedor correspondiente.
+
+### Acceso de demostración
+
+```text
+Asesor: juan@test.com / Demo1234!
+Admin:  admin@test.com / Demo1234!
+```
+
+Estas credenciales son solo para desarrollo.
+
 ---
 
 ## Paleta de Colores CREDIFOM

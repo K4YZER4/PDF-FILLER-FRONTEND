@@ -14,7 +14,7 @@
  *   const contracts = await api.get("/contracts").then(r => r.data)
  *
  * Configuración:
- *   VITE_API_BASE=http://localhost:3000 en .env
+ *   VITE_API_BASE=http://localhost:3001 en .env
  */
 
 import axios from "axios"
@@ -23,7 +23,7 @@ import { ApiError, ValidationError, AuthError, NetworkError } from "./errors"
 
 /** Instancia de axios preconfigurada */
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE || "http://localhost:3000",
+  baseURL: import.meta.env.VITE_API_BASE || "http://localhost:3001",
   timeout: 30000,
   headers: {
     "Content-Type": "application/json",

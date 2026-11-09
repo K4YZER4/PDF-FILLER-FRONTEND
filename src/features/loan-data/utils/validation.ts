@@ -19,7 +19,7 @@ export function isAsesorComplete(d: AsesorData): boolean {
   return (
     (d.folio?.length ?? 0) === 5 &&
     (d.sucursal?.trim()?.length ?? 0) > 0 &&
-    (d.numVendedor?.length ?? 0) === 3 &&
+    (d.numVendedor?.length ?? 0) === 6 &&
     (d.asesor?.trim()?.length ?? 0) > 0 &&
     (d.fechaContrato?.length ?? 0) > 0
   );
@@ -31,7 +31,10 @@ export function isContactoComplete(d: ContactoData): boolean {
     (d.celular?.length ?? 0) === 10 &&
     (d.telCasa?.length ?? 0) === 10 &&
     (d.correo?.includes?.("@") ?? false) &&
-    (d.estadoCivil?.length ?? 0) > 0
+    (d.estadoCivil?.length ?? 0) > 0 &&
+    (d.dependientesEconomicos?.length ?? 0) > 0 &&
+    (d.propiedad?.length ?? 0) > 0 &&
+    (d.entreCalles?.trim()?.length ?? 0) > 0
   );
 }
 

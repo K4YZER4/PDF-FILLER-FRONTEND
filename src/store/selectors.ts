@@ -48,6 +48,7 @@ export function useINEData() {
       codigoPostal: ine.domicilio?.codigoPostal ?? "",
       colonia: ine.domicilio?.colonia ?? "",
       noExt: ine.domicilio?.noExt ?? "",
+      noInt: ine.domicilio?.noInt ?? "",
       municipio: ine.domicilio?.municipio ?? "",
       estado: ine.domicilio?.estado ?? "",
     },

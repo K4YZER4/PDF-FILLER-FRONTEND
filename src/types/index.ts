@@ -18,6 +18,7 @@ export interface INEData {
     codigoPostal: string;
     colonia: string;
     noExt: string;
+    noInt: string;
     municipio: string;
     estado: string;
   };
@@ -31,6 +32,8 @@ export interface NominaData {
   departamento: string;
   puesto: string;
   ingresoMensual: number;
+  telefonoEmpresarial: string;
+  emailLaboral: string;
 }
 
 /** Datos bancarios extraídos del estado de cuenta */
@@ -38,6 +41,8 @@ export interface EstadoCuentaData {
   noCuenta: string;
   banco: string;
   clabe: string;
+  nombreTitular: string;
+  rfc: string;
 }
 
 /** Resultado del cálculo de la tabla crediticia (amortización).
@@ -72,6 +77,9 @@ export interface ContactoData {
   telCasa: string;
   correo: string;
   estadoCivil: string;
+  dependientesEconomicos: string;
+  propiedad: string;
+  entreCalles: string;
 }
 
 /** Antigüedad laboral: fecha de ingreso, meses y años. */
@@ -89,3 +97,42 @@ export interface ReferenciaItem {
 
 /** Tupla fija de exactamente 3 referencias personales. */
 export type Referencias = [ReferenciaItem, ReferenciaItem, ReferenciaItem];
+
+// ─── Firma digital ──────────────────────────────────────────────────────────
+
+export interface SignatureContractData {
+  folio: string;
+  nombre: string;
+  curp: string;
+  importeCredito: string;
+  importeTotal: string;
+  pagoQuincenal: string;
+}
+
+export interface SignatureResponse {
+  contrato: SignatureContractData;
+  pdfUrl: string;
+}
+
+export interface FirmarResponse {
+  success: boolean;
+  message: string;
+}
+
+export interface GenerarEnlaceResponse {
+  link: string;
+  token: string;
+  expira: string;
+  correoEnviado: boolean;
+  modoDemo: boolean;
+  mensajeCorreo: string;
+}
+
+export interface ReabrirFirmaResponse {
+  link: string;
+  token: string;
+  expira: string;
+  correoEnviado?: boolean;
+  modoDemo?: boolean;
+  mensajeCorreo?: string;
+}

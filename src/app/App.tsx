@@ -14,6 +14,7 @@ import { SubirDocs } from "@/features/upload-documents"
 import { RevisionDatos } from "@/features/review-data"
 import { CreditoAsesor } from "@/features/loan-data"
 import { VistaPrevia } from "@/features/preview-contract"
+import { FirmarPage } from "@/features/signature"
 import { Spinner } from "@/components"
 import { ErrorBoundary } from "@/components/feedback"
 
@@ -25,10 +26,20 @@ function App() {
           <Routes>
             {/* Ruta pública: login */}
             <Route path="/login" element={<PublicRoute><AuthLayout><LoginPage /></AuthLayout></PublicRoute>} />
+            {/* Ruta pública: firma digital (sin auth) */}
+            <Route path="/firmar/:token" element={<FirmarPage />} />
             {/* Ruta privada: historial principal */}
             <Route path="/" element={<PrivateRoute><AppLayout><HistorialPage /></AppLayout></PrivateRoute>} />
             {/* Ruta privada: flujo de contrato con 4 sub-rutas anidadas en ContractLayout */}
             <Route path="/contracts" element={<PrivateRoute><ContractLayout /></PrivateRoute>}>
+              <Route index element={<Navigate to="upload" replace />} />
+              <Route path="upload" element={<SubirDocs />} />
+              <Route path="review" element={<RevisionDatos />} />
+              <Route path="loan" element={<CreditoAsesor />} />
+              <Route path="preview" element={<VistaPrevia />} />
+            </Route>
+            {/* Ruta privada: editar contrato existente */}
+            <Route path="/contracts/edit/:folio" element={<PrivateRoute><ContractLayout /></PrivateRoute>}>
               <Route index element={<Navigate to="upload" replace />} />
               <Route path="upload" element={<SubirDocs />} />
               <Route path="review" element={<RevisionDatos />} />

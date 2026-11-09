@@ -16,6 +16,7 @@ interface PrestamoSectionProps {
   plazo: number;
   isCalculando: boolean;
   resultado: TablaCreditoData | null;
+  calcError?: string;
   isComplete: boolean;
   onMontoChange: (value: string) => void;
   onPlazoChange: (value: number) => void;
@@ -34,6 +35,7 @@ function PrestamoSection({
   plazo,
   isCalculando,
   resultado,
+  calcError,
   isComplete,
   onMontoChange,
   onPlazoChange,
@@ -125,6 +127,12 @@ function PrestamoSection({
         Calcular
       </Button>
 
+      {calcError && (
+        <p role="alert" className="text-sm text-error">
+          {calcError}
+        </p>
+      )}
+
       {resultado && (
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
           {[
@@ -138,11 +146,11 @@ function PrestamoSection({
             },
             {
               label: "Tasa mensual",
-              value: `${(resultado.tasaMensual * 100).toFixed(1)}%`,
+              value: `${resultado.tasaMensual.toFixed(1)}%`,
             },
             {
               label: "CAT anual",
-              value: `${(resultado.cat * 100).toFixed(1)}%`,
+              value: `${resultado.cat.toFixed(1)}%`,
             },
           ].map((item) => (
             <div

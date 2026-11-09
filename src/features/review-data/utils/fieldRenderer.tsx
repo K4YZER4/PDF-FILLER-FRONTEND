@@ -76,6 +76,7 @@ export function renderField(
       return <NumericInput {...shared} maxLength={5} onChange={onUpdate} />;
 
     case "noExt":
+    case "noInt":
       return <NumericInput {...shared} maxLength={6} onChange={onUpdate} />;
 
     case "noCuenta":
@@ -84,6 +85,12 @@ export function renderField(
 
     case "ingresoMensual":
       return <NumericInput {...shared} maxLength={10} onChange={onUpdate} />;
+
+    case "telefonoEmpresarial":
+      return <NumericInput {...shared} maxLength={10} onChange={onUpdate} />;
+
+    case "emailLaboral":
+      return <Input {...shared} type="email" onChange={(e) => onUpdate(e.target.value)} />;
 
     case "rfc":
       return <RFCInput {...shared} onChange={onUpdate} />;

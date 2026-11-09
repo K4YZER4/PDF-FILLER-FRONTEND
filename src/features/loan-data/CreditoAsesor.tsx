@@ -53,6 +53,7 @@ function CreditoAsesor() {
                 plazo={hook.plazo}
                 isCalculando={hook.isCalculando}
                 resultado={hook.resultado}
+                calcError={hook.calcError}
                 isComplete={hook.completion.prestamo}
                 onMontoChange={(v) => { hook.setMonto(v); hook.resetResultado() }}
                 onPlazoChange={hook.setPlazo}
@@ -71,6 +72,7 @@ function CreditoAsesor() {
               <AsesorSection
                 data={hook.asesorData}
                 userRole={hook.userRole}
+                asesoresList={hook.asesoresList}
                 onChange={hook.updateAsesor}
               />
             )}

@@ -67,7 +67,7 @@ export const sections: SectionDef[] = [
       {
         id: "fechaNacimiento",
         label: "Fecha de nacimiento",
-        placeholder: "DD/MM/AAAA",
+        placeholder: "AAAA-MM-DD",
       },
       {
         id: "claveElector",
@@ -103,6 +103,11 @@ export const sections: SectionDef[] = [
         id: "noExt",
         label: "No. ext",
         placeholder: "123",
+      },
+      {
+        id: "noInt",
+        label: "No. int",
+        placeholder: "Ej: 4A",
       },
       {
         id: "municipio",
@@ -153,6 +158,16 @@ export const sections: SectionDef[] = [
         id: "ingresoMensual",
         label: "Ingreso mensual",
         placeholder: "Ej: $15000",
+      },
+      {
+        id: "telefonoEmpresarial",
+        label: "Tel. empresarial",
+        placeholder: "Ej: 6671234567",
+      },
+      {
+        id: "emailLaboral",
+        label: "Email laboral",
+        placeholder: "Ej: nombre@dependencia.gob.mx",
       },
     ],
   },

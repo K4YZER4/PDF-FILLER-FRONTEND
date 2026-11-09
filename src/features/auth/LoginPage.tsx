@@ -15,7 +15,7 @@ import { Input, Button } from "@/components/ui/index";
 import { Toggle } from "@/features/auth/components/Toggle";
 
 import { useContractStore } from "@/store/useContractStore";
-import type { UserRole } from "@/store/useContractStore";
+import { login as loginApi } from "@/api/auth.api";
 
 // Imagenes
 import { LogInIllustration, LogoIlustration } from "@/assets";
@@ -35,13 +35,6 @@ const loginSchema = z.object({
 
 type LoginFormData = z.infer<typeof loginSchema>;
 
-// ─── Mock usuarios ───────────────────────────────────────────────────────────
-
-const MOCK_USERS: { email: string; password: string; role: UserRole }[] = [
-  { email: "asesor@credifom.mx", password: "1234", role: "asesor" },
-  { email: "admin@credifom.mx", password: "1234", role: "admin" },
-];
-
 // ─── Componente ──────────────────────────────────────────────────────────────
 
 function LoginPage() {
@@ -59,20 +52,20 @@ function LoginPage() {
     resolver: zodResolver(loginSchema),
   });
 
-  const onSubmit = (data: LoginFormData) => {
+  const onSubmit = async (data: LoginFormData) => {
     setServerError("");
 
-    const user = MOCK_USERS.find(
-      (u) => u.email === data.email && u.password === data.password,
-    );
-
-    if (!user) {
-      setServerError("Correo o contraseña incorrectos. Intenta de nuevo.");
-      return;
+    try {
+      const result = await loginApi(data);
+      login(result.user.email, result.user.role, result.user.profile);
+      navigate("/");
+    } catch (error: unknown) {
+      setServerError(
+        error instanceof Error
+          ? error.message
+          : "Correo o contraseña incorrectos. Intenta de nuevo.",
+      );
     }
-
-    login(user.email, user.role);
-    navigate("/");
   };
 
   return (
@@ -172,7 +165,7 @@ function LoginPage() {
 
             {/*
               Error de servidor — aparece cuando las credenciales
-              no coinciden con ningún usuario mock.
+              no coinciden con ningún usuario registrado.
               Es distinto al error de validación de cada campo.
             */}
             {serverError && (

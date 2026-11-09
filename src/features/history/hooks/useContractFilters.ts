@@ -11,13 +11,26 @@ import { useMemo, useState } from "react";
 import { useContractStore } from "@/store/useContractStore";
 import type { Contract } from "@/store/useContractStore";
 
-type TimeFilter = "todos" | "semana" | "hoy";
+type TimeFilter = "todos" | "semana" | "hoy" | "rango";
 
 /** Retorna true si la fecha del contrato cae dentro del filtro temporal seleccionado */
-function matchesTimeFilter(dateStr: string, filter: TimeFilter): boolean {
+function matchesTimeFilter(
+  dateStr: string,
+  filter: TimeFilter,
+  dateFrom?: string,
+  dateTo?: string,
+): boolean {
   if (filter === "todos") return true;
   const d = new Date(dateStr);
   const now = new Date();
+
+  if (filter === "rango") {
+    const from = dateFrom ? new Date(`${dateFrom}T00:00:00`) : null;
+    const to = dateTo ? new Date(`${dateTo}T23:59:59`) : null;
+    if (from && d < from) return false;
+    if (to && d > to) return false;
+    return true;
+  }
 
   if (filter === "hoy") {
     return (
@@ -45,6 +58,10 @@ interface UseContractFiltersReturn {
   setSearch: (v: string) => void;
   timeFilter: TimeFilter;
   setTimeFilter: (v: TimeFilter) => void;
+  dateFrom: string;
+  setDateFrom: (v: string) => void;
+  dateTo: string;
+  setDateTo: (v: string) => void;
   advisorFilter: string;
   setAdvisorFilter: (v: string) => void;
   uniqueAdvisors: string[];
@@ -55,6 +72,8 @@ function useContractFilters(): UseContractFiltersReturn {
   const contracts = useContractStore((s) => s.history.contracts);
   const [search, setSearch] = useState("");
   const [timeFilter, setTimeFilter] = useState<TimeFilter>("todos");
+  const [dateFrom, setDateFrom] = useState("");
+  const [dateTo, setDateTo] = useState("");
   const [advisorFilter, setAdvisorFilter] = useState("");
 
   // Extrae asesores únicos de todos los contratos para el select de filtro
@@ -67,14 +86,14 @@ function useContractFilters(): UseContractFiltersReturn {
   const filtered = useMemo(
     () =>
       contracts
-        .filter((c: Contract) => matchesTimeFilter(c.date, timeFilter))
+        .filter((c: Contract) => matchesTimeFilter(c.date, timeFilter, dateFrom, dateTo))
         .filter((c: Contract) => !advisorFilter || c.asesor === advisorFilter)
         .filter(
           (c: Contract) =>
             !search ||
             c.clientName.toLowerCase().includes(search.toLowerCase()),
         ),
-    [contracts, timeFilter, advisorFilter, search],
+    [contracts, timeFilter, dateFrom, dateTo, advisorFilter, search],
   );
 
   return {
@@ -82,6 +101,10 @@ function useContractFilters(): UseContractFiltersReturn {
     setSearch,
     timeFilter,
     setTimeFilter,
+    dateFrom,
+    setDateFrom,
+    dateTo,
+    setDateTo,
     advisorFilter,
     setAdvisorFilter,
     uniqueAdvisors,

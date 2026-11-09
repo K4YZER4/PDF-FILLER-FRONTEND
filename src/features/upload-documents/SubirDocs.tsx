@@ -2,23 +2,24 @@
  *
  *  Cada documento se muestra como una tarjeta con un botón para seleccionar
  *  archivo. Una vez seleccionado, se muestra el nombre del archivo con opción
- *  a removerlo.
+ *  a removerlo o reintentar si falló el escaneo.
  *
  *  El escaneo de los documentos se dispara desde el footer de ContractLayout
- *  (botón "Leer documentos"). Los resultados del escaneo (éxito/error por doc)
- *  se leen del store para resaltar visualmente en rojo los documentos que
- *  fallaron, permitiendo al usuario reemplazarlos.
+ *  (botón "Leer documentos") o individualmente desde cada tarjeta (botón
+ *  "Reintentar"). Los resultados del escaneo (éxito/error por doc) se leen
+ *  del store para resaltar visualmente en rojo los documentos que fallaron.
  *
  *  Flujo:
  *    1. Usuario sube los 4 archivos (INE, Nómina 1, Nómina 2, Estado de cuenta)
- *    2. Desde ContractLayout se presiona "Leer documentos"
+ *    2. Desde ContractLayout se presiona "Leer documentos" o se presiona
+ *       "Reintentar" en un documento individual
  *    3. Los resultados del escaneo se reflejan aquí con colores:
  *       - Verde: documento escaneado correctamente
- *       - Rojo: documento falló → el usuario puede reemplazarlo
+ *       - Rojo: documento falló → botón Reintentar
  *       - Normal: aún no se ha escaneado */
 
 import { useEffect, useRef, useState } from "react";
-import { Upload, FileText, X, CheckCircle, AlertCircle } from "lucide-react";
+import { Upload, FileText, X, CheckCircle, AlertCircle, RefreshCw } from "lucide-react";
 
 import { Card } from "@/components";
 import { useContractStore } from "@/store/useContractStore";
@@ -128,6 +129,16 @@ function SubirDocs() {
     );
   };
 
+  /** Reintenta el escaneo de un documento individual.
+   *  Usa scanSingleDocument del store para no afectar los otros docs. */
+  const [retryingDocs, setRetryingDocs] = useState<Record<string, boolean>>({});
+
+  const handleRetry = async (id: string) => {
+    setRetryingDocs((prev) => ({ ...prev, [id]: true }));
+    await store.scanSingleDocument(id);
+    setRetryingDocs((prev) => ({ ...prev, [id]: false }));
+  };
+
   // ─── Render ────────────────────────────────────────────────────────────────
 
   return (
@@ -186,14 +197,28 @@ function SubirDocs() {
 
                 {/* Zona de archivo seleccionado o botones de carga */}
                 {doc.file ? (
-                  /* Archivo ya seleccionado: muestra nombre + botón para quitar */
+                  /* Archivo ya seleccionado: muestra nombre + botón quitar + reintentar */
                   <div className="flex items-center gap-2 p-3 bg-bg rounded-lg border border-border">
                     <FileText size={16} className="text-primary" />
                     <span className="text-xs text-text-secondary flex-1 truncate">
                       {doc.file.name}
                     </span>
+                    {hasError && (
+                      <button
+                        type="button"
+                        onClick={() => handleRetry(doc.id)}
+                        disabled={retryingDocs[doc.id]}
+                        className="flex items-center gap-1 text-xs font-medium text-warning hover:text-warning-hover transition-colors"
+                      >
+                        <RefreshCw
+                          size={12}
+                          className={retryingDocs[doc.id] ? "animate-spin" : ""}
+                        />
+                        {retryingDocs[doc.id] ? "Reintentando..." : "Reintentar"}
+                      </button>
+                    )}
                     <button type="button" onClick={() => handleRemove(doc.id)}>
-                      <X size={14} className="text-text-secondary" />
+                      <X size={14} className="text-text-secondary hover:text-error transition-colors" />
                     </button>
                   </div>
                 ) : (

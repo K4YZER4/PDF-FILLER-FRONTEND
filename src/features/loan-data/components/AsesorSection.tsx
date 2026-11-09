@@ -1,17 +1,19 @@
 import { Input, NameInput, NumericInput, DateInput } from "@/components/ui";
 import { SelectField } from "./SelectField";
-import { ASESOR_NOMBRES } from "../constants";
 import type { AsesorData } from "../types";
+import type { AsesorApiItem } from "../api/asesores.api";
 
 interface AsesorSectionProps {
   data: AsesorData;
   userRole: string | null;
+  asesoresList: AsesorApiItem[];
   onChange: <K extends keyof AsesorData>(key: K, value: AsesorData[K]) => void;
 }
 
 const readOnlyClass = "bg-bg cursor-default";
 
-function AsesorSection({ data, userRole, onChange }: AsesorSectionProps) {
+function AsesorSection({ data, userRole, asesoresList, onChange }: AsesorSectionProps) {
+  const asesorNombres = asesoresList.map(a => a.nombre);
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
       <div className="space-y-1.5 md:col-span-2">
@@ -22,7 +24,7 @@ function AsesorSection({ data, userRole, onChange }: AsesorSectionProps) {
           <SelectField
             id="asesor"
             value={data.asesor}
-            options={ASESOR_NOMBRES}
+            options={asesorNombres}
             placeholder="Seleccionar asesor"
             success={(data.asesor?.trim()?.length ?? 0) > 0}
             onChange={(v) => onChange("asesor", v)}
@@ -76,16 +78,16 @@ function AsesorSection({ data, userRole, onChange }: AsesorSectionProps) {
         <label className="text-xs font-medium text-text-secondary">
           Num. Vendedor <span className="text-error">*</span>
         </label>
-        <NumericInput
+        <Input
           id="numVendedor"
-          placeholder="000"
+          placeholder="ASE001"
           value={data.numVendedor}
-          maxLength={3}
+          maxLength={6}
           inputSize="sm"
           readOnly
           className={readOnlyClass}
-          success={(data.numVendedor?.length ?? 0) === 3}
-          onChange={(v) => onChange("numVendedor", v)}
+          success={(data.numVendedor?.length ?? 0) === 6}
+          onChange={(e) => onChange("numVendedor", e.target.value)}
         />
       </div>
 
