@@ -26,7 +26,7 @@ const loginSchema = z.object({
   email: z
     .string()
     .min(1, "El usuario es requerido")
-    .email("Ingresa un correo válido"),
+    .min(1, "Ingresa tu usuario o correo"),
   password: z
     .string()
     .min(1, "La contraseña es requerida")
@@ -56,7 +56,7 @@ function LoginPage() {
     setServerError("");
 
     try {
-      const result = await loginApi(data);
+      const result = await loginApi(data, remember);
       login(result.user.email, result.user.role, result.user.profile);
       navigate("/");
     } catch (error: unknown) {
@@ -110,10 +110,10 @@ function LoginPage() {
             */}
             <Input
               id="email"
-              label="Usuario"
+               label="Usuario o correo"
               required
-              type="email"
-              placeholder="asesor@credifom.mx"
+               type="text"
+               placeholder="juanp o juan@test.com"
               autoComplete="username"
               error={errors.email?.message}
               maxLength={25}

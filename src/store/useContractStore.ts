@@ -20,7 +20,7 @@ import { create } from "zustand";
 import { immer } from "zustand/middleware/immer";
 import { persist } from "zustand/middleware";
 import { api } from "@/lib/api";
-import { saveFile, loadFile, clearAllFiles } from "@/utils/fileStorage";
+import { saveFile, loadFile, clearAllFiles, removeFile } from "@/utils/fileStorage";
 import { initialDocuments, initialFormData, MOCK_CONTRACTS } from "@/store/mockData";
 import type { ContractState } from "@/types/store";
 import { mapIneFromApi, mapNominaFromApi, mapEstadoCuentaFromApi, mapTablaFromApi } from "@/utils/mapping";
@@ -95,7 +95,7 @@ const useContractStore = create<ContractState>()(
         if (value instanceof File) {
           saveFile(key, value).catch(console.error);
         } else if (value === null) {
-          clearAllFiles().catch(console.error);
+          removeFile(key).catch(console.error);
         }
       },
 

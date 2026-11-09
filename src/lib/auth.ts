@@ -16,18 +16,21 @@
 const TOKEN_KEY = "credifom-token"
 
 /** Guarda el JWT en localStorage */
-export function setToken(token: string): void {
-  localStorage.setItem(TOKEN_KEY, token)
+export function setToken(token: string, remember = true): void {
+  removeToken()
+  const storage = remember ? localStorage : sessionStorage
+  storage.setItem(TOKEN_KEY, token)
 }
 
 /** Recupera el JWT de localStorage */
 export function getToken(): string | null {
-  return localStorage.getItem(TOKEN_KEY)
+  return localStorage.getItem(TOKEN_KEY) ?? sessionStorage.getItem(TOKEN_KEY)
 }
 
 /** Elimina el JWT de localStorage (logout) */
 export function removeToken(): void {
   localStorage.removeItem(TOKEN_KEY)
+  sessionStorage.removeItem(TOKEN_KEY)
 }
 
 /** Retorna true si existe un token guardado */

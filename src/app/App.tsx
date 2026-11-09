@@ -9,7 +9,7 @@ import { AuthLayout } from "@/layouts/AuthLayout"
 import { AppLayout } from "@/layouts/AppLayout"
 import { ContractLayout } from "@/layouts/ContractLayout"
 import { LoginPage } from "@/features/auth"
-import { HistorialPage } from "@/features/history"
+import { HistorialPage, ContratoViewerPage } from "@/features/history"
 import { SubirDocs } from "@/features/upload-documents"
 import { RevisionDatos } from "@/features/review-data"
 import { CreditoAsesor } from "@/features/loan-data"
@@ -30,6 +30,7 @@ function App() {
             <Route path="/firmar/:token" element={<FirmarPage />} />
             {/* Ruta privada: historial principal */}
             <Route path="/" element={<PrivateRoute><AppLayout><HistorialPage /></AppLayout></PrivateRoute>} />
+            <Route path="/contracts/view/:folio" element={<PrivateRoute><AppLayout title="Revisar contrato"><ContratoViewerPage /></AppLayout></PrivateRoute>} />
             {/* Ruta privada: flujo de contrato con 4 sub-rutas anidadas en ContractLayout */}
             <Route path="/contracts" element={<PrivateRoute><ContractLayout /></PrivateRoute>}>
               <Route index element={<Navigate to="upload" replace />} />

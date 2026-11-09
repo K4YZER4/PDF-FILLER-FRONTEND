@@ -159,7 +159,7 @@ function HistorialPage() {
             <ContractCard
               key={contract.id}
               contract={contract}
-              onView={() => navigate("/contracts/preview")}
+              onView={() => navigate(`/contracts/view/${contract.id}`)}
               onEdit={() => navigate(`/contracts/edit/${contract.id}`)}
               onReSign={() => handleReSign(contract)}
               canReview={canReview}
