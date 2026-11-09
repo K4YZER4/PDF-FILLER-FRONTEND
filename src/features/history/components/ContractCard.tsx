@@ -1,8 +1,6 @@
-/** Tarjeta individual de contrato en el historial.
- *  Muestra: nombre del cliente, fecha, asesor, monto, plazo y botones de acción.
- *  El sharing usa navigator.share con fallback a clipboard. */
-import { Eye, Share2 } from "lucide-react";
+import { Eye, FileDown, Pencil, Share2, RefreshCw, Check, X } from "lucide-react";
 import { Card } from "@/components";
+import { downloadContract } from "@/utils/downloadContract";
 
 interface ContractCardProps {
   contract: {
@@ -12,11 +10,32 @@ interface ContractCardProps {
     asesor: string;
     monto: number;
     plazo: number;
+    estado: string;
   };
   onView: () => void;
+  onEdit: () => void;
+  onReSign?: () => void;
+  canReview?: boolean;
+  canEdit?: boolean;
+  onApprove?: () => void;
+  onReject?: () => void;
 }
 
-function ContractCard({ contract, onView }: ContractCardProps) {
+function estadoTextColor(estado: string): string {
+  switch (estado) {
+    case "POR FIRMAR":
+      return "text-yellow-600";
+    case "POR APROBAR":
+      return "text-blue-600";
+    case "ACTIVO":
+    case "APROBADO":
+      return "text-green-600";
+    default:
+      return "text-red-600";
+  }
+}
+
+function ContractCard({ contract, onView, onEdit, onReSign, canReview, canEdit = true, onApprove, onReject }: ContractCardProps) {
   const handleShare = async () => {
     const url = `${window.location.origin}/contracts/preview`;
     if (navigator.share) {
@@ -38,15 +57,16 @@ function ContractCard({ contract, onView }: ContractCardProps) {
   return (
     <Card className="p-5 hover:shadow-md transition-shadow">
       <div className="space-y-3">
-        <div className="flex items-start justify-between">
-          <div>
-            <h3 className="text-sm font-semibold text-text-primary">
-              {contract.clientName}
-            </h3>
-            <p className="text-xs text-text-secondary">
-              {contract.date} · {contract.asesor}
-            </p>
-          </div>
+        <div>
+          <h3 className="text-sm font-semibold text-text-primary">
+            {contract.clientName}
+          </h3>
+          <p className={`text-xs font-semibold ${estadoTextColor(contract.estado)}`}>
+            {contract.estado}
+          </p>
+          <p className="text-xs text-text-secondary">
+            {contract.date} · {contract.asesor}
+          </p>
         </div>
         <div className="flex items-center justify-between text-sm">
           <div>
@@ -61,17 +81,72 @@ function ContractCard({ contract, onView }: ContractCardProps) {
           </div>
           <div className="flex gap-1">
             <button
+              onClick={async () => {
+                try {
+                  await downloadContract(contract.id);
+                } catch (err: unknown) {
+                  const msg =
+                    err instanceof Error
+                      ? err.message
+                      : "Error desconocido al descargar";
+                  alert(`No se pudo descargar el PDF:\n${msg}`);
+                }
+              }}
+              className="w-8 h-8 rounded-lg flex items-center justify-center text-text-secondary border border-border hover:bg-bg transition-colors"
+              title="Descargar PDF"
+            >
+              <FileDown size={14} />
+            </button>
+            {canEdit && (
+              <button
+                onClick={onEdit}
+                className="w-8 h-8 rounded-lg flex items-center justify-center text-text-secondary border border-border hover:bg-bg transition-colors"
+                title="Editar contrato"
+              >
+                <Pencil size={14} />
+              </button>
+            )}
+            <button
               onClick={onView}
               className="w-8 h-8 rounded-lg flex items-center justify-center text-text-secondary border border-border hover:bg-bg transition-colors"
+              title="Ver contrato"
             >
               <Eye size={14} />
             </button>
             <button
               onClick={handleShare}
               className="w-8 h-8 rounded-lg flex items-center justify-center text-text-secondary border border-border hover:bg-bg transition-colors"
+              title="Compartir"
             >
               <Share2 size={14} />
             </button>
+            {(contract.estado === "POR FIRMAR" || contract.estado === "POR APROBAR") && (
+              <button
+                onClick={onReSign}
+                className="w-8 h-8 rounded-lg flex items-center justify-center text-text-secondary border border-border hover:bg-bg transition-colors"
+                title="Volver a Firmar"
+              >
+                <RefreshCw size={14} />
+              </button>
+            )}
+            {canReview && contract.estado === "POR APROBAR" && (
+              <>
+                <button
+                  onClick={onApprove}
+                  className="w-8 h-8 rounded-lg flex items-center justify-center text-success border border-success/40 hover:bg-success/10 transition-colors"
+                  title="Aprobar contrato"
+                >
+                  <Check size={14} />
+                </button>
+                <button
+                  onClick={onReject}
+                  className="w-8 h-8 rounded-lg flex items-center justify-center text-error border border-error/40 hover:bg-error/10 transition-colors"
+                  title="Rechazar contrato"
+                >
+                  <X size={14} />
+                </button>
+              </>
+            )}
           </div>
         </div>
       </div>

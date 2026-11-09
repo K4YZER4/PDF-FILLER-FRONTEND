@@ -2,7 +2,7 @@
  * Archivo: src/types/api.ts
  *
  * Tipos compartidos para las respuestas de la API REST.
- * Cuando el backend esté listo, estos tipos se ajustan a la especificación real.
+ * Estos tipos reflejan la respuesta real del backend Nest.
  *
  * Convención de respuestas:
  *   - Éxito: { data: T, message?: string }
@@ -35,8 +35,16 @@ export interface LoginResponse {
   token: string
   user: {
     email: string
-    role: "asesor" | "admin"
+    role: "asesor" | "mesa" | "admin"
     name: string
+    codigoEmpleado: string
+    sucursal: string
+    profile: {
+      folio: string
+      sucursal: string
+      numVendedor: string
+      asesor: string
+    } | null
   }
 }
 
@@ -50,6 +58,7 @@ export interface ContractDTO {
   plazo: number
   asesor: string
   status: "borrador" | "completado" | "cancelado"
+  estado: string
 }
 
 export interface CreateContractRequest {

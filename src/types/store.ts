@@ -15,22 +15,37 @@ import type {
   ContactoData,
   AntiguedadData,
   Referencias,
+  SignatureResponse,
 } from "@/types";
 
 /** Roles disponibles — determina qué ve el usuario en historial y paso 3 */
-export type UserRole = "asesor" | "admin";
+export type UserRole = "asesor" | "mesa" | "admin";
+
+/** Perfil del asesor autenticado devuelto por el backend. */
+export interface AuthProfile {
+  folio: string;
+  sucursal: string;
+  numVendedor: string;
+  asesor: string;
+}
 
 /** Slice de autenticación */
 export interface AuthState {
   user: string | null;
   role: UserRole | null;
   isAuthenticated: boolean;
+  profile?: AuthProfile | null;
 }
 
 /** Slice del paso actual en el flujo de contrato */
 export interface StepState {
   current: 1 | 2 | 3 | 4;
 }
+
+/** Modo de edición — folio del contrato que se está editando */
+export type EditMode =
+  | { active: false }
+  | { active: true; folio: string };
 
 /** Slice de documentos subidos y estado del OCR */
 export interface DocumentsState {
@@ -51,7 +66,9 @@ export interface FormDataState {
   ine: Partial<INEData>;
   nomina: Partial<NominaData>;
   banco: Partial<EstadoCuentaData>;
+  firmResponse: SignatureResponse | null;
   extras: Record<string, unknown>;
+  contratoFolio: string;
   tabla: TablaCreditoData | null;
   capitalMonto: number;
   plazoQnas: number;
@@ -70,6 +87,7 @@ export interface Contract {
   plazo: number;
   asesor: string;
   status: "completado" | "borrador";
+  estado: string;
 }
 
 /** Slice del historial de contratos generados */
@@ -85,8 +103,9 @@ export interface ContractState {
   documents: DocumentsState;
   formData: FormDataState;
   history: HistoryState;
+  editMode: EditMode;
 
-  login: (user: string, role: UserRole) => void;
+  login: (user: string, role: UserRole, profile?: AuthProfile | null) => void;
   logout: () => void;
 
   setStep: (step: 1 | 2 | 3 | 4) => void;
@@ -101,6 +120,7 @@ export interface ContractState {
   setScanProgress: (progress: number) => void;
   resetDocuments: () => void;
   scanDocuments: () => Promise<"done" | "error">;
+  scanSingleDocument: (docId: string) => Promise<boolean>;
   restoreDocuments: () => Promise<void>;
 
   setFormData: (
@@ -109,7 +129,10 @@ export interface ContractState {
   ) => void;
   resetFormData: () => void;
 
+  loadContractForEdit: (folio: string) => Promise<void>;
+
   addContract: (contract: Contract) => void;
+  setContracts: (contracts: Contract[]) => void;
   clearHistory: () => void;
 
   resetContract: () => void;
