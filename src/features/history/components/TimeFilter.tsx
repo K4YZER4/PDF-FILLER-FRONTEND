@@ -25,6 +25,9 @@ const OPTIONS: { value: TimeFilterType; label: string }[] = [
 ];
 
 function TimeFilter({ value, onChange, dateFrom, dateTo, onDateFromChange, onDateToChange }: TimeFilterProps) {
+  const now = new Date();
+  const today = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}`;
+
   return (
     <div className="flex flex-wrap items-center gap-2">
       <div className="flex gap-1">
@@ -50,6 +53,8 @@ function TimeFilter({ value, onChange, dateFrom, dateTo, onDateFromChange, onDat
             className="w-40"
             inputSize="sm"
             placeholder="Desde"
+            minDate="1935-01-01"
+            maxDate={today}
           />
           <span className="text-text-secondary text-sm">—</span>
           <DateInput
@@ -58,6 +63,8 @@ function TimeFilter({ value, onChange, dateFrom, dateTo, onDateFromChange, onDat
             className="w-40"
             inputSize="sm"
             placeholder="Hasta"
+            minDate="1935-01-01"
+            maxDate={today}
           />
         </div>
       )}
