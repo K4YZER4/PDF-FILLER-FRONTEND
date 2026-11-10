@@ -58,7 +58,7 @@ function LoginPage() {
     try {
       const result = await loginApi(data, remember);
       login(result.user.email, result.user.role, result.user.profile);
-      navigate("/");
+      navigate("/app");
     } catch (error: unknown) {
       setServerError(
         error instanceof Error

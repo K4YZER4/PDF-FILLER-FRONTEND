@@ -101,7 +101,7 @@ function ContractLayout() {
           navigate("review", { relative: "path", replace: true });
         })
         .catch(() => {
-          navigate("/", { replace: true });
+          navigate("/app", { replace: true });
         })
         .finally(() => setLoadingContract(false));
     }
@@ -126,7 +126,7 @@ function ContractLayout() {
   const handleExitConfirm = () => {
     setShowExitModal(false);
     resetContract();
-    navigate("/");
+    navigate("/app");
   };
 
   const handleScan = async () => {
