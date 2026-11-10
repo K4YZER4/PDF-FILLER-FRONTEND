@@ -7,6 +7,16 @@ import { useNavigate } from "react-router-dom";
 import { Search } from "lucide-react";
 // Componentes
 import { Input } from "@/components/ui";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { Spinner } from "@/components";
 import { EmptyState } from "@/components/feedback";
 import {
@@ -32,6 +42,11 @@ function HistorialPage() {
   const [loading, setLoading] = useState(true);
 
   const [historialError, setHistorialError] = useState(false);
+  const [reviewAction, setReviewAction] = useState<"approve" | "reject" | null>(null);
+  const [selectedContract, setSelectedContract] = useState<Contract | null>(null);
+  const [rejectReason, setRejectReason] = useState("");
+  const [reviewError, setReviewError] = useState("");
+  const [reviewLoading, setReviewLoading] = useState(false);
   const canReview = userRole === "mesa" || userRole === "admin";
 
   const refreshHistory = async () => {
@@ -87,24 +102,47 @@ function HistorialPage() {
     }
   };
 
-  const handleApprove = async (contract: Contract) => {
-    if (!window.confirm(`¿Aprobar el contrato ${contract.id}?`)) return;
-    try {
-      await aprobarContrato(contract.id);
-      await refreshHistory();
-    } catch {
-      alert("No se pudo aprobar el contrato. Intenta de nuevo.");
-    }
+  const openReviewDialog = (action: "approve" | "reject", contract: Contract) => {
+    setSelectedContract(contract);
+    setReviewAction(action);
+    setRejectReason("");
+    setReviewError("");
   };
 
-  const handleReject = async (contract: Contract) => {
-    const motivo = window.prompt("Escribe el motivo del rechazo:");
-    if (!motivo?.trim()) return;
+  const closeReviewDialog = () => {
+    if (reviewLoading) return;
+    setReviewAction(null);
+    setSelectedContract(null);
+    setRejectReason("");
+    setReviewError("");
+  };
+
+  const handleReviewConfirm = async () => {
+    if (!selectedContract || !reviewAction || reviewLoading) return;
+    const motivo = rejectReason.trim();
+    if (reviewAction === "reject" && !motivo) {
+      setReviewError("El motivo del rechazo es obligatorio.");
+      return;
+    }
+
+    setReviewLoading(true);
+    setReviewError("");
     try {
-      await rechazarContrato(contract.id, motivo.trim());
+      if (reviewAction === "approve") {
+        await aprobarContrato(selectedContract.id);
+      } else {
+        await rechazarContrato(selectedContract.id, motivo);
+      }
+      closeReviewDialog();
       await refreshHistory();
     } catch {
-      alert("No se pudo rechazar el contrato. Intenta de nuevo.");
+      setReviewError(
+        reviewAction === "approve"
+          ? "No se pudo aprobar el contrato. Intenta de nuevo."
+          : "No se pudo rechazar el contrato. Intenta de nuevo.",
+      );
+    } finally {
+      setReviewLoading(false);
     }
   };
 
@@ -164,12 +202,74 @@ function HistorialPage() {
               onReSign={() => handleReSign(contract)}
               canReview={canReview}
               canEdit={userRole !== "mesa"}
-              onApprove={() => void handleApprove(contract)}
-              onReject={() => void handleReject(contract)}
+              onApprove={() => openReviewDialog("approve", contract)}
+              onReject={() => openReviewDialog("reject", contract)}
             />
           ))}
         </div>
       )}
+
+      <AlertDialog
+        open={Boolean(reviewAction && selectedContract)}
+        onOpenChange={(open) => {
+          if (!open) closeReviewDialog();
+        }}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>
+              {reviewAction === "approve" ? "¿Confirmar aprobación?" : "¿Rechazar contrato?"}
+            </AlertDialogTitle>
+            <AlertDialogDescription>
+              {reviewAction === "approve"
+                ? `El contrato ${selectedContract?.id ?? ""} cambiará a APROBADO.`
+                : `El contrato ${selectedContract?.id ?? ""} cambiará a RECHAZADO. Indica el motivo para continuar.`}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+
+          {reviewAction === "reject" && (
+            <div className="space-y-2">
+              <label htmlFor="reject-reason" className="text-sm font-medium text-text-primary">
+                Motivo del rechazo <span className="text-error">*</span>
+              </label>
+              <textarea
+                id="reject-reason"
+                value={rejectReason}
+                onChange={(event) => {
+                  setRejectReason(event.target.value);
+                  setReviewError("");
+                }}
+                placeholder="Escribe el motivo..."
+                rows={4}
+                maxLength={500}
+                className="w-full resize-none rounded-lg border border-border bg-bg px-3 py-2 text-sm text-text-primary outline-none focus:border-primary focus:ring-2 focus:ring-primary/20"
+                autoFocus
+              />
+              <div className="flex justify-between text-xs text-text-secondary">
+                <span>{reviewError || "El motivo será guardado en el historial."}</span>
+                <span>{rejectReason.length}/500</span>
+              </div>
+            </div>
+          )}
+
+          {reviewAction === "approve" && reviewError && (
+            <p className="text-sm text-error" role="alert">{reviewError}</p>
+          )}
+
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={reviewLoading}>Cancelar</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={(event) => {
+                event.preventDefault();
+                void handleReviewConfirm();
+              }}
+              className={reviewAction === "reject" ? "bg-error hover:bg-error/90" : undefined}
+            >
+              {reviewLoading ? "Guardando..." : reviewAction === "approve" ? "Aprobar" : "Rechazar"}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }
