@@ -10,7 +10,7 @@ function PublicRoute({ children }: { children: React.ReactNode }) {
   const isAuthenticated = useContractStore((s) => s.auth.isAuthenticated)
   const token = getToken()
   const hasValidToken = Boolean(token && !isTokenExpired(token))
-  return !(isAuthenticated && hasValidToken) ? <>{children}</> : <Navigate to="/" replace />
+  return !(isAuthenticated && hasValidToken) ? <>{children}</> : <Navigate to="/app" replace />
 }
 
 export { PublicRoute }

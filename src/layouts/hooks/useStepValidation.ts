@@ -68,6 +68,7 @@ function validateReviewStep(formData: FormDataState): boolean {
 function validateLoanStep(formData: FormDataState): boolean {
   const m = formData.capitalMonto;
   if (m <= 0 || m % 1000 !== 0) return false;
+  if (!formData.tabla || formData.tabla.montoPagare <= m) return false;
 
   return (
     isAsesorComplete(formData.asesorData) &&

@@ -20,6 +20,7 @@
 import axios from "axios"
 import { getToken, removeToken, isTokenExpired } from "./auth"
 import { ApiError, ValidationError, AuthError, NetworkError } from "./errors"
+import { getDemoApiKey } from "./demoKey"
 
 /** Instancia de axios preconfigurada */
 const api = axios.create({
@@ -45,6 +46,8 @@ api.interceptors.request.use(
         return Promise.reject(new AuthError("Sesión expirada. Inicia sesión nuevamente."))
       }
     }
+    const demoApiKey = getDemoApiKey()
+    if (demoApiKey) config.headers["X-Gemini-Api-Key"] = demoApiKey
     return config
   },
   (error) => Promise.reject(error),

@@ -9,6 +9,7 @@
  *    const { contrato, pdfUrl, loading, error, firmar } = useFirmaToken(token) */
 import { useState, useEffect, useCallback } from "react";
 import { api } from "@/lib/api";
+import { ApiError } from "@/lib/errors";
 import type { SignatureContractData, FirmarResponse } from "../types";
 
 type FirmaError = "expirado" | "usado" | "no_encontrado" | "conexion" | null;
@@ -38,14 +39,14 @@ export function useFirmaToken(token: string | undefined) {
         setPdfUrl(data.pdfUrl);
       } catch (err: unknown) {
         if (cancelled) return;
-        const axiosErr = err as { response?: { status?: number; data?: { error?: string } } };
-        if (axiosErr?.response?.status === 404) {
+        const status = err instanceof ApiError ? err.status : 0;
+        const message = err instanceof Error ? err.message : "";
+        if (status === 404) {
           setError("no_encontrado");
-        } else if (axiosErr?.response?.status === 400) {
-          const msg = axiosErr.response.data?.error ?? "";
-          if (msg.toLowerCase().includes("expirado")) {
+        } else if (status === 400) {
+          if (message.toLowerCase().includes("expirado")) {
             setError("expirado");
-          } else if (msg.toLowerCase().includes("usado")) {
+          } else if (message.toLowerCase().includes("usado")) {
             setError("usado");
           } else {
             setError("no_encontrado");

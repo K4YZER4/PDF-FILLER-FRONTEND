@@ -12,7 +12,7 @@
  *  Sigue la misma estructura que LoginPage.tsx. */
 import { useState, useRef } from "react";
 import { useParams } from "react-router-dom";
-import { AlertCircle, CheckCircle2, Loader2 } from "lucide-react";
+import { AlertCircle, CheckCircle2 } from "lucide-react";
 import { Card } from "@/components";
 import { Button } from "@/components/ui";
 import { Spinner } from "@/components";
@@ -221,14 +221,7 @@ function FirmarPage() {
           onClick={handleFirmar}
           disabled={status === "sending"}
         >
-          {status === "sending" ? (
-            <span className="flex items-center gap-2">
-              <Loader2 size={16} className="animate-spin" />
-              Enviando firma...
-            </span>
-          ) : (
-            "Firmar Contrato"
-          )}
+          {status === "sending" ? "Enviando firma..." : "Firmar Contrato"}
         </Button>
       </div>
     </div>

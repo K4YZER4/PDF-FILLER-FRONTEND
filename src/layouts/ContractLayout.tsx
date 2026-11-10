@@ -101,7 +101,7 @@ function ContractLayout() {
           navigate("review", { relative: "path", replace: true });
         })
         .catch(() => {
-          navigate("/", { replace: true });
+          navigate("/app", { replace: true });
         })
         .finally(() => setLoadingContract(false));
     }
@@ -126,7 +126,7 @@ function ContractLayout() {
   const handleExitConfirm = () => {
     setShowExitModal(false);
     resetContract();
-    navigate("/");
+    navigate("/app");
   };
 
   const handleScan = async () => {
@@ -153,7 +153,7 @@ function ContractLayout() {
   const handleEdit = () => navigate(STEPS[1].path, { relative: "path" });
 
   const handleFinish = async () => {
-    if (isFinishing) return;
+    if (isFinishing || (!isEditMode && Boolean(useContractStore.getState().formData.contratoFolio))) return;
     setIsFinishing(true);
     try {
       const payload = buildContratoPayload(formData);
@@ -292,6 +292,7 @@ function ContractLayout() {
         scanStatus={scanStatus}
         allFilesLoaded={allFilesLoaded}
         isFinishing={isFinishing}
+        alreadyFinished={!isEditMode && Boolean(formData.contratoFolio)}
         onScan={handleScan}
         onNext={handleNext}
         onPrev={handlePrev}

@@ -3,7 +3,7 @@
  *  - Las acciones (descargar, editar, finalizar) están en el footer del layout.
  *  - Botón flotante "Compartir" en el layout (compartir vía Web Share API).
  *  - Botón para generar link de firma después de finalizar el contrato. */
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Copy, CheckCircle2, ExternalLink, RefreshCw } from "lucide-react";
 import { Card } from "@/components";
 import { Button } from "@/components/ui";
@@ -20,11 +20,13 @@ function VistaPrevia() {
   const [pdfUrl, setPdfUrl] = useState<string | null>(null);
   const [cargandoPdf, setCargandoPdf] = useState(false);
   const [errorPdf, setErrorPdf] = useState("");
+  const requestId = useRef(0);
 
   const formData = useContractStore((s) => s.formData);
   const contratoFolio = useContractStore((s) => s.formData.contratoFolio);
 
   const cargarPdf = async () => {
+    const currentRequest = ++requestId.current;
     setCargandoPdf(true);
     setErrorPdf("");
 
@@ -37,6 +39,10 @@ function VistaPrevia() {
             responseType: "blob",
           });
       const nextUrl = URL.createObjectURL(response.data as Blob);
+      if (currentRequest !== requestId.current) {
+        URL.revokeObjectURL(nextUrl);
+        return;
+      }
       setPdfUrl((previousUrl) => {
         if (previousUrl) URL.revokeObjectURL(previousUrl);
         return nextUrl;
@@ -48,7 +54,7 @@ function VistaPrevia() {
           : "No se pudo generar la vista previa",
       );
     } finally {
-      setCargandoPdf(false);
+      if (currentRequest === requestId.current) setCargandoPdf(false);
     }
   };
 
@@ -65,6 +71,7 @@ function VistaPrevia() {
     window.addEventListener("contract:pdf-updated", handlePdfUpdated);
 
     return () => {
+      requestId.current++;
       window.removeEventListener("contract:pdf-updated", handlePdfUpdated);
       setPdfUrl((previousUrl) => {
         if (previousUrl) URL.revokeObjectURL(previousUrl);

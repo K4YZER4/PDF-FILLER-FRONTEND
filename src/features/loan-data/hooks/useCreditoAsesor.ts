@@ -27,7 +27,7 @@
  *                       userRole
  */
 
-import { useState, useEffect, useMemo, useCallback } from "react"
+import { useState, useEffect, useMemo, useCallback, useRef } from "react"
 import { useContractStore } from "@/store/useContractStore"
 import { api } from "@/lib/api"
 import type { TablaCreditoData, AsesorData } from "../types"
@@ -74,6 +74,7 @@ export function useCreditoAsesor() {
   const [resultado, setResultado] = useState<TablaCreditoData | null>(
     store.formData.tabla,
   )
+  const calculationId = useRef(0)
 
   const [asesoresList, setAsesoresList] = useState<AsesorApiItem[]>([])
   const [loadingAsesores, setLoadingAsesores] = useState(true)
@@ -158,6 +159,7 @@ export function useCreditoAsesor() {
 
   const calcular = useCallback(async () => {
     if (!monto || Number(monto) <= 0) return
+    const requestId = ++calculationId.current
     setIsCalculando(true)
     setCalcError("")
     try {
@@ -166,9 +168,11 @@ export function useCreditoAsesor() {
         quincenas: plazo,
       })
       const res = mapTablaFromApi(data)
+      if (requestId !== calculationId.current) return
       setResultado(res)
       store.setFormData("tabla", res)
     } catch (error) {
+      if (requestId !== calculationId.current) return
       setResultado(null)
       store.setFormData("tabla", null)
       setCalcError(
@@ -177,10 +181,12 @@ export function useCreditoAsesor() {
           : "No se pudo calcular la tabla. Verifica la conexión con el backend.",
       )
     }
-    setIsCalculando(false)
+    if (requestId === calculationId.current) setIsCalculando(false)
   }, [monto, plazo])
 
   const resetResultado = useCallback(() => {
+    calculationId.current++
+    setIsCalculando(false)
     setResultado(null)
     setCalcError("")
     store.setFormData("tabla", null)
