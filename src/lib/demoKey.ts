@@ -11,3 +11,7 @@ export function getDemoApiKey(): string | null {
 export function clearDemoApiKey(): void {
   sessionStorage.removeItem(DEMO_KEY);
 }
+
+export function isDemoMode(): boolean {
+  return import.meta.env.VITE_DEMO_MODE === "true";
+}

@@ -16,6 +16,7 @@ import { Toggle } from "@/features/auth/components/Toggle";
 
 import { useContractStore } from "@/store/useContractStore";
 import { login as loginApi } from "@/api/auth.api";
+import { isDemoMode } from "@/lib/demoKey";
 
 // Imagenes
 import { LogInIllustration, LogoIlustration } from "@/assets";
@@ -35,6 +36,12 @@ const loginSchema = z.object({
 
 type LoginFormData = z.infer<typeof loginSchema>;
 
+const demoUsers = [
+  { role: "Asesor", username: "juanp", password: "Demo1234!" },
+  { role: "Administrador", username: "admin", password: "Demo1234!" },
+  { role: "Mesa de Control", username: "mesa", password: "Demo1234!" },
+];
+
 // ─── Componente ──────────────────────────────────────────────────────────────
 
 function LoginPage() {
@@ -47,6 +54,7 @@ function LoginPage() {
   const {
     register,
     handleSubmit,
+    setValue,
     formState: { errors, isSubmitting },
   } = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
@@ -97,6 +105,34 @@ function LoginPage() {
               Iniciar sesión
             </h1>
           </div>
+
+          {isDemoMode() && (
+            <div className="mb-6 rounded-xl border border-primary/20 bg-primary/5 p-3">
+              <p className="mb-3 text-xs font-semibold uppercase tracking-wide text-primary">
+                Usuarios de prueba
+              </p>
+              <div className="space-y-2">
+                {demoUsers.map((user) => (
+                  <button
+                    key={user.role}
+                    type="button"
+                    onClick={() => {
+                      setValue("email", user.username);
+                      setValue("password", user.password);
+                      setServerError("");
+                    }}
+                    className="flex w-full items-center justify-between rounded-lg border border-border bg-bg px-3 py-2 text-left transition hover:border-primary hover:bg-primary/5"
+                  >
+                    <span>
+                      <span className="block text-sm font-semibold text-text-primary">{user.role}</span>
+                      <span className="block text-xs text-text-secondary">{user.username} · {user.password}</span>
+                    </span>
+                    <span className="text-xs font-semibold text-primary">Usar</span>
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
 
           {/* Formulario */}
           <form
