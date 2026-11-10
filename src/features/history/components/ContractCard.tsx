@@ -79,7 +79,7 @@ function ContractCard({ contract, onView, onEdit, onReSign, canReview, canEdit =
             <p className="text-xs text-text-secondary">Plazo</p>
             <p className="font-semibold">{contract.plazo} QNAs</p>
           </div>
-          <div className="flex flex-wrap gap-1">
+          <div className="flex flex-wrap items-center justify-end gap-1">
             <button
               onClick={async () => {
                 try {
@@ -130,26 +130,24 @@ function ContractCard({ contract, onView, onEdit, onReSign, canReview, canEdit =
               </button>
             )}
             {canReview && contract.estado === "POR APROBAR" && (
-              <div className="mt-2 flex w-full items-center justify-end gap-2 border-t border-border pt-3">
+              <>
                 <button
                   onClick={onApprove}
-                  className="inline-flex h-9 items-center gap-1.5 rounded-lg border border-success/40 bg-success/10 px-3 text-xs font-semibold text-success transition-colors hover:bg-success/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-success/40"
+                  className="inline-flex h-9 w-9 items-center justify-center rounded-xl border border-success/40 bg-success/10 text-success transition-colors hover:bg-success/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-success/40"
                   title="Aprobar contrato"
                   aria-label={`Aprobar contrato ${contract.id}`}
                 >
                   <Check size={15} strokeWidth={2.5} />
-                  <span>Aprobar</span>
                 </button>
                 <button
                   onClick={onReject}
-                  className="inline-flex h-9 items-center gap-1.5 rounded-lg border border-error/40 bg-error/10 px-3 text-xs font-semibold text-error transition-colors hover:bg-error/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-error/40"
+                  className="inline-flex h-9 w-9 items-center justify-center rounded-xl border border-error/40 bg-error/10 text-error transition-colors hover:bg-error/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-error/40"
                   title="Rechazar contrato"
                   aria-label={`Rechazar contrato ${contract.id}`}
                 >
                   <X size={15} strokeWidth={2.5} />
-                  <span>Rechazar</span>
                 </button>
-              </div>
+              </>
             )}
           </div>
         </div>
