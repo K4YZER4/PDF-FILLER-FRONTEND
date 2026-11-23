@@ -36,6 +36,7 @@ import type { AsesorApiItem } from "../api/asesores.api"
 import { useDetectLocation } from "./useDetectLocation"
 import { mapTablaFromApi } from "@/utils/mapping"
 import {
+  isPrestamoComplete,
   isAsesorComplete,
   isContactoComplete,
   isAntiguedadComplete,
@@ -201,7 +202,7 @@ export function useCreditoAsesor() {
 
   const completion = useMemo(
     () => ({
-      prestamo:   prestamoComplete,
+      prestamo:   isPrestamoComplete(Number(monto), asesorData),
       asesor:     isAsesorComplete(asesorData),
       contacto:   isContactoComplete(contactoData),
       antiguedad: isAntiguedadComplete(antiguedadData),

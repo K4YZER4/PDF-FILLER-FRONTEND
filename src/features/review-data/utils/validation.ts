@@ -60,6 +60,7 @@ export function isSectionComplete(id: SectionId, formData: FormDataState): boole
   if (!section) return false;
 
   return section.fields.every((f) => {
+    if (["segundoNombre", "noInt", "telefonoEmpresarial"].includes(f.id)) return true;
     const val = getFieldValueFromData(formData, section.section, f.id);
     if (f.id === "ingresoMensual") return Number(val) > 0;
     return String(val).trim().length > 0;

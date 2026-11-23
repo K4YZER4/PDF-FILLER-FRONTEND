@@ -25,10 +25,25 @@ import { loanSections } from "../constants"
 import { renderLoanField } from "../utils/fieldRenderer"
 import type { ContactoData } from "../types"
 
+const EMAIL_REGEX = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/
+
 function getFieldError(fieldId: string, value: string): string | undefined {
+  if (!value) return undefined
+
   switch (fieldId) {
-    case "tel": case "celular": case "telCasa":
-      return value.length > 0 && value.length !== 10 ? "Deben ser 10 dígitos" : undefined
+    case "celular":
+    case "telCasa":
+      return value.length !== 10 ? "Deben ser 10 dígitos" : undefined
+    case "correo":
+      if (value.length > 150) return "Máximo 150 caracteres"
+      return !EMAIL_REGEX.test(value.trim()) ? "Correo inválido (ej: usuario@correo.com)" : undefined
+    case "dependientesEconomicos": {
+      const num = Number(value)
+      if (isNaN(num) || num < 0 || num > 20) return "Debe ser entre 0 y 20"
+      return undefined
+    }
+    case "entreCalles":
+      return value.length > 100 ? "Máximo 100 caracteres" : undefined
     default:
       return undefined
   }
@@ -36,10 +51,23 @@ function getFieldError(fieldId: string, value: string): string | undefined {
 
 function isFieldFilled(fieldId: string, value: string): boolean {
   if (!value) return false
+  const trimmed = value.trim()
+  if (!trimmed) return false
+
   switch (fieldId) {
-    case "tel": case "celular": case "telCasa": return value.length === 10
-    case "correo": return value.includes("@")
-    default: return value.length > 0
+    case "celular":
+    case "telCasa":
+      return trimmed.length === 10
+    case "correo":
+      return trimmed.length <= 150 && EMAIL_REGEX.test(trimmed)
+    case "dependientesEconomicos": {
+      const num = Number(trimmed)
+      return !isNaN(num) && num >= 0 && num <= 20
+    }
+    case "entreCalles":
+      return trimmed.length > 0 && trimmed.length <= 100
+    default:
+      return trimmed.length > 0
   }
 }
 
@@ -63,12 +91,21 @@ function ContactoFields() {
         const val = contactoData[field.id as keyof ContactoData] ?? ""
         const filled = isFieldFilled(field.id, val)
         const error = getFieldError(field.id, val)
+        const isRequired = field.required !== false
+        const invalid = isRequired && !filled
         return (
           <div key={field.id} className="space-y-1.5">
             <label className="text-xs font-medium text-text-secondary">
-              {field.label} <span className="text-error">*</span>
+              {field.label} {isRequired && <span className="text-error">*</span>}
             </label>
-            {renderLoanField(field, val, filled, (v) => update(field.id as keyof ContactoData, v), error)}
+            {renderLoanField(
+              field,
+              val,
+              filled,
+              (v) => update(field.id as keyof ContactoData, v),
+              error,
+              invalid,
+            )}
           </div>
         )
       })}

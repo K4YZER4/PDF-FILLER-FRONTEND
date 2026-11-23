@@ -13,6 +13,7 @@
 import { useContractStore } from "@/store/useContractStore";
 import type { FormDataState } from "@/store/useContractStore";
 import {
+  isPrestamoComplete,
   isAsesorComplete,
   isContactoComplete,
   isAntiguedadComplete,
@@ -26,7 +27,6 @@ function validateReviewStep(formData: FormDataState): boolean {
 
   const allPersonales = [
     ine.primerNombre,
-    ine.segundoNombre,
     ine.primerApellido,
     ine.segundoApellido,
     ine.curp,
@@ -71,6 +71,7 @@ function validateLoanStep(formData: FormDataState): boolean {
   if (!formData.tabla || formData.tabla.montoPagare <= m) return false;
 
   return (
+    isPrestamoComplete(m, formData.asesorData) &&
     isAsesorComplete(formData.asesorData) &&
     isContactoComplete(formData.contactoData) &&
     isAntiguedadComplete(formData.antiguedadData) &&

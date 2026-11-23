@@ -25,6 +25,7 @@ import { initialDocuments, initialFormData, MOCK_CONTRACTS } from "@/store/mockD
 import type { ContractState } from "@/types/store";
 import { mapIneFromApi, mapNominaFromApi, mapEstadoCuentaFromApi, mapTablaFromApi } from "@/utils/mapping";
 import { getContract } from "@/api/contracts.api";
+import { scanUnificado } from "@/api/scan.api";
 import { removeToken } from "@/lib/auth";
 
 const useContractStore = create<ContractState>()(
@@ -131,7 +132,7 @@ const useContractStore = create<ContractState>()(
       scanDocuments: async () => {
         set((state) => {
           state.documents.scanStatus = "scanning";
-          state.documents.scanProgress = 0;
+          state.documents.scanProgress = 10;
           state.documents.scanResults = {
             ine: "pending",
             nomina1: "pending",
@@ -141,99 +142,95 @@ const useContractStore = create<ContractState>()(
         });
 
         const currentFiles = useContractStore.getState().documents;
-        let allOk = true;
-        let completed = 0;
-        const total = 3;
+        const ineFile = currentFiles.ineFile instanceof File ? currentFiles.ineFile : undefined;
+        const nomina1File = currentFiles.nomina1File instanceof File ? currentFiles.nomina1File : undefined;
+        const nomina2File = currentFiles.nomina2File instanceof File ? currentFiles.nomina2File : undefined;
+        const estadoCuentaFile = currentFiles.estadoCuentaFile instanceof File ? currentFiles.estadoCuentaFile : undefined;
 
-        const markProgress = () => {
-          completed++;
+        if (!ineFile && !nomina1File && !nomina2File && !estadoCuentaFile) {
           set((state) => {
-            state.documents.scanProgress = (completed / total) * 100;
+            state.documents.scanStatus = "error";
+            state.documents.scanProgress = 100;
+            state.documents.scanResults = {
+              ine: "error",
+              nomina1: "error",
+              nomina2: "error",
+              estadoCuenta: "error",
+            };
           });
-        };
+          return "error";
+        }
 
-        // ── 1. INE ──────────────────────────────────
-        const ineFile = currentFiles.ineFile;
-        if (ineFile instanceof File) {
-          try {
-            const fd = new FormData();
-            fd.append("ine", ineFile);
-            const { data } = await api.post("/api/ine", fd, {
-              headers: { "Content-Type": "multipart/form-data" },
-            });
-            useContractStore.getState().setFormData("ine", mapIneFromApi(data));
+        set((state) => {
+          state.documents.scanProgress = 35;
+        });
+
+        try {
+          const data = await scanUnificado({
+            ine: ineFile,
+            nomina1: nomina1File,
+            nomina2: nomina2File,
+            estadoCuenta: estadoCuentaFile,
+          });
+
+          set((state) => {
+            state.documents.scanProgress = 80;
+          });
+
+          let allOk = true;
+
+          // 1. INE
+          if (data.ine) {
+            useContractStore.getState().setFormData("ine", mapIneFromApi(data.ine));
             set((state) => { state.documents.scanResults.ine = "success"; });
-          } catch {
-            allOk = false;
+          } else {
+            if (ineFile) allOk = false;
             set((state) => { state.documents.scanResults.ine = "error"; });
           }
-        } else {
-          allOk = false;
-          set((state) => { state.documents.scanResults.ine = "error"; });
-        }
-        markProgress();
 
-        // ── 2. Nóminas (ambas en una sola llamada) ──
-        const nomina1File = currentFiles.nomina1File;
-        const nomina2File = currentFiles.nomina2File;
-        if (nomina1File instanceof File && nomina2File instanceof File) {
-          try {
-            const fd = new FormData();
-            fd.append("nomina1", nomina1File);
-            fd.append("nomina2", nomina2File);
-            const { data } = await api.post("/api/nominas", fd, {
-              headers: { "Content-Type": "multipart/form-data" },
-            });
+          // 2. Nóminas
+          if (data.nomina) {
             useContractStore.getState().setFormData("nomina", {
               ...useContractStore.getState().formData.nomina,
-              ...mapNominaFromApi(data.datos ?? data),
+              ...mapNominaFromApi(data.nomina),
             });
             set((state) => {
               state.documents.scanResults.nomina1 = "success";
               state.documents.scanResults.nomina2 = "success";
             });
-          } catch {
-            allOk = false;
+          } else {
+            if (nomina1File || nomina2File) allOk = false;
             set((state) => {
-              state.documents.scanResults.nomina1 = "error";
-              state.documents.scanResults.nomina2 = "error";
+              if (nomina1File) state.documents.scanResults.nomina1 = "error";
+              if (nomina2File) state.documents.scanResults.nomina2 = "error";
             });
           }
-        } else {
-          allOk = false;
-          set((state) => {
-            if (!(nomina1File instanceof File)) state.documents.scanResults.nomina1 = "error";
-            if (!(nomina2File instanceof File)) state.documents.scanResults.nomina2 = "error";
-          });
-        }
-        markProgress();
 
-        // ── 3. Estado de Cuenta ──────────────────────
-        const estadoCuentaFile = currentFiles.estadoCuentaFile;
-        if (estadoCuentaFile instanceof File) {
-          try {
-            const fd = new FormData();
-            fd.append("estadoCuenta", estadoCuentaFile);
-            const { data } = await api.post("/api/estados-cuenta", fd, {
-              headers: { "Content-Type": "multipart/form-data" },
-            });
-            useContractStore.getState().setFormData("banco", mapEstadoCuentaFromApi(data.datos ?? data));
+          // 3. Estado de Cuenta
+          if (data.estadoCuenta) {
+            useContractStore.getState().setFormData("banco", mapEstadoCuentaFromApi(data.estadoCuenta));
             set((state) => { state.documents.scanResults.estadoCuenta = "success"; });
-          } catch {
-            allOk = false;
+          } else {
+            if (estadoCuentaFile) allOk = false;
             set((state) => { state.documents.scanResults.estadoCuenta = "error"; });
           }
-        } else {
-          allOk = false;
-          set((state) => { state.documents.scanResults.estadoCuenta = "error"; });
-        }
-        markProgress();
 
-        set((state) => {
-          state.documents.scanStatus = allOk ? "done" : "error";
-          state.documents.scanProgress = 100;
-        });
-        return allOk ? "done" : "error";
+          set((state) => {
+            state.documents.scanStatus = allOk ? "done" : "error";
+            state.documents.scanProgress = 100;
+          });
+          return allOk ? "done" : "error";
+        } catch {
+          set((state) => {
+            state.documents.scanStatus = "error";
+            state.documents.scanProgress = 100;
+            if (ineFile) state.documents.scanResults.ine = "error";
+            if (nomina1File) state.documents.scanResults.nomina1 = "error";
+            if (nomina2File) state.documents.scanResults.nomina2 = "error";
+            if (estadoCuentaFile) state.documents.scanResults.estadoCuenta = "error";
+          });
+          return "error";
+        }
       },
 
       scanSingleDocument: async (docId: string): Promise<boolean> => {

@@ -20,11 +20,12 @@ interface SelectFieldProps {
   disabled?: boolean
   success?: boolean
   error?: string
+  invalid?: boolean
 }
 
 function SelectField({
   id, value, onChange, options,
-  placeholder, disabled, success, error,
+  placeholder, disabled, success, error, invalid,
 }: SelectFieldProps) {
   return (
     <div className="flex flex-col gap-1">
@@ -40,11 +41,11 @@ function SelectField({
             "transition-all duration-150 appearance-none pr-8",
             "focus:outline-none focus:ring-2",
             "disabled:opacity-60 disabled:cursor-not-allowed",
-            success && !error && "border-success focus:border-success focus:ring-success/15",
-            error           && "border-error  focus:border-error  focus:ring-error/15",
-            !success && !error && "border-border focus:border-primary focus:ring-primary/15",
+            (error || invalid) && "border-error  focus:border-error  focus:ring-error/15",
+            success && !error && !invalid && "border-success focus:border-success focus:ring-success/15",
+            !success && !error && !invalid && "border-border focus:border-primary focus:ring-primary/15",
           )}
-          aria-invalid={!!error}
+          aria-invalid={Boolean(error || invalid)}
         >
           {placeholder && <option value="" disabled>{placeholder}</option>}
           {options.map((opt) => (

@@ -24,6 +24,20 @@ export async function getContract(folio: string) {
   return res.data
 }
 
+/** Genera el enlace de firma para un contrato. */
+export async function generarEnlaceFirma(folioOrId: string) {
+  const res = await api.post<{
+    token: string;
+    link: string;
+    expira: string;
+    codigoVerificacion?: string;
+    correoEnviado: boolean;
+    modoDemo: boolean;
+    mensajeCorreo: string;
+  }>(`${CONTRACTS_URL}/${folioOrId}/enlaces-firma`);
+  return res.data;
+}
+
 /** Reabre un contrato para re-firma: resetea a POR FIRMAR y genera nuevo token. */
 export async function reabrirFirma(folio: string) {
   const res = await api.post<ReabrirFirmaResponse>(`/api/contratos/${folio}/reabrir-firma`)

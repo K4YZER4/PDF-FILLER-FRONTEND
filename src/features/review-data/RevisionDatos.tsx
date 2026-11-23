@@ -143,7 +143,9 @@ function RevisionDatos() {
                             className="text-xs font-medium text-text-secondary"
                           >
                             {field.label}
-                            <span className="text-error ml-0.5" aria-hidden="true">*</span>
+                            {field.id !== "segundoNombre" && (
+                              <span className="text-error ml-0.5" aria-hidden="true">*</span>
+                            )}
                           </label>
                           {renderField(field, val, isFilled, (value) =>
                             update(section.section, field.id, value),

@@ -133,14 +133,13 @@ function HistorialPage() {
       } else {
         await rechazarContrato(selectedContract.id, motivo);
       }
+      setReviewLoading(false);
       closeReviewDialog();
       await refreshHistory();
-    } catch {
-      setReviewError(
-        reviewAction === "approve"
-          ? "No se pudo aprobar el contrato. Intenta de nuevo."
-          : "No se pudo rechazar el contrato. Intenta de nuevo.",
-      );
+    } catch (error: unknown) {
+      setReviewError(error instanceof Error
+        ? error.message
+        : "No se pudo completar la revisión. Intenta de nuevo.");
     } finally {
       setReviewLoading(false);
     }
