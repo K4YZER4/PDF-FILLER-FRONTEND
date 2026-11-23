@@ -90,8 +90,8 @@ const { data, isLoading, error, execute } = useApi(
 
 | Rol | Email | Contraseña |
 |-----|-------|-----------|
-| Asesor | asesor@credifom.mx | 1234 |
-| Admin | admin@credifom.mx | 1234 |
+| Asesor | juan@test.com | 1234 |
+| Admin | admin@test.com | 1234 |
 
 ## Notas Importantes
 

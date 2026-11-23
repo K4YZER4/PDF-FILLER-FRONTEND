@@ -145,4 +145,4 @@ main (protegida)
 ---
 
 - **[Volver al README principal](../README.md)**
-- **[Guía de Contribución](../CONTRIBUTING.md)**
+- **[Guía de Contribución](../contributing.md)**

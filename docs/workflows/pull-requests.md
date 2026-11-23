@@ -6,7 +6,7 @@
 
 ### Checklist del Desarrollador:
 
-- [ ] Código sigue los [estándares](../guides/CODING_STANDARDS.md)
+- [ ] Código sigue los [estándares](../guides/coding-standards.md)
 - [ ] No hay `console.log` innecesarios
 - [ ] TypeScript compila sin errores (`npx tsc --noEmit`)
 - [ ] Build pasa exitosamente (`npm run build`)
@@ -85,4 +85,4 @@ Una tarea está completa cuando:
 
 ---
 
-[Volver a CONTRIBUTING](../CONTRIBUTING.md)
+[Volver a CONTRIBUTING](../contributing.md)

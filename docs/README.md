@@ -2,21 +2,21 @@
 
 ## Índice de Documentos
 
-1. [Arquitectura del Proyecto](./ARCHITECTURE.md) — Estructura, tecnologías y flujo
-2. [Guía de Configuración](./SETUP.md) — Instalación y variables de entorno
-3. [Arquitectura de Componentes](./architecture/COMPONENTS_ARCHITECTURE.md)
-4. [Convenciones de Código](./guides/CODING_STANDARDS.md)
-5. [Dependencias del Proyecto](./DEPENDENCIES.md)
-6. [Git Workflow](./workflows/GIT_WORKFLOW.md)
-7. [Pull Requests](./workflows/PULL_REQUESTS.md)
-8. [Team Workflow](./team/TEAM_WORKFLOW.md)
+1. [Arquitectura del Proyecto](./architecture.md) — Estructura, tecnologías y flujo
+2. [Guía de Configuración](./setup.md) — Instalación y variables de entorno
+3. [Arquitectura de Componentes](./architecture/components-architecture.md)
+4. [Convenciones de Código](./guides/coding-standards.md)
+5. [Dependencias del Proyecto](./dependencies.md)
+6. [Git Workflow](./workflows/git-workflow.md)
+7. [Pull Requests](./workflows/pull-requests.md)
+8. [Team Workflow](./team/team-workflow.md)
 9. [Solución de Problemas](./troubleshooting/index.md)
-10. [API Contracts](./api/API.md)
-11. [Conexión con Backend](./api/BACKEND_CONNECTION.md) — Axios, interceptors, auth, errores
-12. [Arquitectura de Librerías (src/lib/)](./architecture/LIB_ARCHITECTURE.md) — api.ts, auth.ts, errors.ts
-13. [Arquitectura del Store](./architecture/STORE_ARCHITECTURE.md) — Zustand + persist + selectores + split en 3 archivos
-14. [Manejo de Errores](./architecture/ERROR_HANDLING.md) — ErrorBoundary, errores tipados
-15. [Arquitectura de Features](./architecture/FEATURES_ARCHITECTURE.md) — Loan-data, hooks, secciones, utils de validación
+10. [API Contracts](./api/api.md)
+11. [Conexión con Backend](./api/backend-connection.md) — Axios, interceptors, auth, errores
+12. [Arquitectura de Librerías (src/lib/)](./architecture/lib-architecture.md) — api.ts, auth.ts, errors.ts
+13. [Arquitectura del Store](./architecture/store-architecture.md) — Zustand + persist + selectores + split en 3 archivos
+14. [Manejo de Errores](./architecture/error-handling.md) — ErrorBoundary, errores tipados
+15. [Arquitectura de Features](./architecture/features-architecture.md) — Loan-data, hooks, secciones, utils de validación
 
 ## Resumen de Documentación en Código
 
@@ -30,7 +30,7 @@ Todos los archivos de código han sido documentados con comentarios explicando:
 ### Archivos Principales
 - `src/main.tsx` - Punto de entrada de React
 - `src/app/App.tsx` - Componente raíz con routing y Suspense
-- `src/app/index.css` - Estilos globales y tema CREDIFOM (Tailwind @theme)
+- `src/app/index.css` - Estilos globales y tema corporativo (Tailwind @theme)
 
 ### API Services (`api/`)
 - `src/api/auth.api.ts` — Login vía API
@@ -96,4 +96,4 @@ Todos los archivos de código han sido documentados con comentarios explicando:
 
 ---
 
-[Volver a CONTRIBUTING](./CONTRIBUTING.md)
+[Volver a CONTRIBUTING](./contributing.md)

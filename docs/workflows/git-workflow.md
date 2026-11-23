@@ -100,11 +100,11 @@ Una vez aprobado el PR se hace merge a main y se elimina la rama.
 ### Sincronización de contratos API
 
 1. Crear issue: `[API] Descripción del endpoint`
-2. Documentar en [docs/api/API.md](../api/API.md)
+2. Documentar en [docs/api/api.md](../api/api.md)
 3. Frontend implementa con mock
 4. Backend implementa endpoint real
 5. Integrar y probar
 
 ---
 
-[Volver a CONTRIBUTING](../CONTRIBUTING.md)
+[Volver a CONTRIBUTING](../contributing.md)

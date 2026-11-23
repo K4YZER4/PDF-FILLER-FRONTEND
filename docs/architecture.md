@@ -2,7 +2,7 @@
 
 ## Descripción General
 
-Aplicación frontend para **CREDIFOM, S.A.P.I. de C.V.** que permite generar contratos de crédito mediante:
+Aplicación frontend para **PDF Filler (Plataforma de Contratos de Crédito)** que permite generar contratos de crédito mediante:
 
 1. **Subida de documentos** (INE, nóminas, estado de cuenta)
 2. **Revisión y edición** de datos personales, laborales y bancarios
@@ -46,7 +46,7 @@ src/
 │
 ├── app/                       # Configuración raíz
 │   ├── App.tsx                #   Routing principal + Suspense
-│   └── index.css              #   Tema CREDIFOM (Tailwind @theme)
+│   └── index.css              #   Tema corporativo (Tailwind @theme)
 │
 ├── components/                # Componentes reutilizables
 │   ├── ui/                    #   Design system

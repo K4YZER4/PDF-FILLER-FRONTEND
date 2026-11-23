@@ -22,8 +22,8 @@ Este documento define de forma general cómo contribuir al proyecto PDF Filler y
 
 La estructura completa del repositorio y las responsabilidades de cada carpeta se describen en:
 
-- **[Estructura del proyecto](./ARCHITECTURE.md)**
-- [Arquitectura de componentes](./architecture/COMPONENTS_ARCHITECTURE.md)
+- **[Estructura del proyecto](./architecture.md)**
+- [Arquitectura de componentes](./architecture/components-architecture.md)
 
 ---
 
@@ -31,7 +31,7 @@ La estructura completa del repositorio y las responsabilidades de cada carpeta s
 
 Las reglas de estilo, tamaño de archivos, calidad, variables de entorno y seguridad están en:
 
-- [Convenciones de código](./guides/CODING_STANDARDS.md)
+- [Convenciones de código](./guides/coding-standards.md)
 
 ---
 
@@ -39,7 +39,7 @@ Las reglas de estilo, tamaño de archivos, calidad, variables de entorno y segur
 
 Todas las reglas sobre instalación y documentación de dependencias están en:
 
-- [Dependencias del proyecto](./DEPENDENCIES.md)
+- [Dependencias del proyecto](./dependencies.md)
 
 ---
 
@@ -47,7 +47,7 @@ Todas las reglas sobre instalación y documentación de dependencias están en:
 
 El flujo basado en GitHub Flow, tipos de ramas y convención de commits se documenta en:
 
-- [GitHub Flow](./workflows/GIT_WORKFLOW.md)
+- [GitHub Flow](./workflows/git-workflow.md)
 
 ---
 
@@ -55,7 +55,7 @@ El flujo basado en GitHub Flow, tipos de ramas y convención de commits se docum
 
 Las reglas para crear PRs, checklist obligatorio y definición de terminado (DoD) están en:
 
-- [Guía de Pull Requests](./workflows/PULL_REQUESTS.md)
+- [Guía de Pull Requests](./workflows/pull-requests.md)
 
 ---
 
@@ -71,7 +71,7 @@ Antes de crear un issue, revisa la sección de troubleshooting:
 
 Las reglas de comunicación diaria, ceremonias y roles están en:
 
-- [Team Workflow](./team/TEAM_WORKFLOW.md)
+- [Team Workflow](./team/team-workflow.md)
 
 ---
 
