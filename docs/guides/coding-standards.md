@@ -148,4 +148,4 @@ import type { INEData } from "@/types"
 
 ---
 
-[Volver a CONTRIBUTING](../CONTRIBUTING.md)
+[Volver a CONTRIBUTING](../contributing.md)

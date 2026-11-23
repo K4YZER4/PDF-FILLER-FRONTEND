@@ -143,7 +143,7 @@ La URL base se configura via `VITE_API_BASE` en `.env`. Por defecto: `http://loc
 **Request Body:**
 ```json
 {
-  "email": "asesor@credifom.mx",
+  "email": "juan@test.com",
   "password": "1234"
 }
 ```
@@ -155,7 +155,7 @@ La URL base se configura via `VITE_API_BASE` en `.env`. Por defecto: `http://loc
   "data": {
     "token": "eyJhbGciOiJIUzI1NiIs...",
     "user": {
-      "email": "asesor@credifom.mx",
+      "email": "juan@test.com",
       "role": "asesor",
       "name": "MARIA LOPEZ"
     }
@@ -210,7 +210,7 @@ Query params: `?page=1&limit=10&search=JUAN`
 
 1. Cualquier cambio en estos contratos debe:
    - Documentarse en este archivo
-   - Actualizarse en AMBOS repositorios (`docs/api/API.md`)
+   - Actualizarse en AMBOS repositorios (`docs/api/api.md`)
 
 2. Flujo para cambios:
    - Crear issue: `[API] Descripción del cambio`

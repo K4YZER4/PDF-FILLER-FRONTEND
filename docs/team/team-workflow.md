@@ -45,7 +45,7 @@ Bloqueadores: [si hay]
 
 1. **Definición de Contrato de API**
    - Crear issue: `[API] Nombre del endpoint`
-   - Documentar en [docs/api/API.md](../api/API.md)
+   - Documentar en [docs/api/api.md](../api/api.md)
    - Ambos equipos aprueban
 
 2. **Desarrollo Paralelo**
@@ -62,7 +62,7 @@ Bloqueadores: [si hay]
 
 ## Git Workflow
 
-Ver [GIT_WORKFLOW.md](../workflows/GIT_WORKFLOW.md) para detalles completos.
+Ver [git-workflow.md](../workflows/git-workflow.md) para detalles completos.
 
 Resumen:
 - `main` (protegida)
@@ -76,10 +76,10 @@ Convención de commits: `feat:`, `fix:`, `refactor:`, `chore:`, `docs:`, `test:`
 
 ## Pull Request Workflow
 
-Ver [PULL_REQUESTS.md](../workflows/PULL_REQUESTS.md) para detalles completos.
+Ver [pull-requests.md](../workflows/pull-requests.md) para detalles completos.
 
 Checklist antes del PR:
-- [ ] Código sigue [estándares](../guides/CODING_STANDARDS.md)
+- [ ] Código sigue [estándares](../guides/coding-standards.md)
 - [ ] Sin `console.log`
 - [ ] TypeScript sin errores
 - [ ] Build pasa (`npm run build`)
@@ -126,9 +126,9 @@ Usar el siguiente formato en GitHub Issues:
 ## Recursos del Equipo
 
 - **Documentación:** [docs/](../README.md)
-- **API Contracts:** [docs/api/API.md](../api/API.md)
-- **Estándares:** [docs/guides/CODING_STANDARDS.md](../guides/CODING_STANDARDS.md)
+- **API Contracts:** [docs/api/api.md](../api/api.md)
+- **Estándares:** [docs/guides/coding-standards.md](../guides/coding-standards.md)
 
 ---
 
-[Volver a CONTRIBUTING](../CONTRIBUTING.md)
+[Volver a CONTRIBUTING](../contributing.md)

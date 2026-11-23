@@ -87,7 +87,7 @@ npm run dev   # revisar consola del navegador
 **Solución:**
 1. Verificar que se haya calculado la tabla primero
 2. Revisar que todos los campos requeridos estén llenos
-3. Revisar [docs/api/API.md](../api/API.md) para formato correcto
+3. Revisar [docs/api/api.md](../api/api.md) para formato correcto
 
 ---
 
@@ -121,7 +121,7 @@ Si no encuentras solución:
 1. Revisar `docs/` completo
 2. Buscar en issues de GitHub
 3. Preguntar en canal del equipo
-4. [Crear issue con formato de bug](../team/TEAM_WORKFLOW.md#reporte-de-bugs)
+4. [Crear issue con formato de bug](../team/team-workflow.md#reporte-de-bugs)
 
 ---
 
@@ -134,4 +134,4 @@ Si no encuentras solución:
 
 ---
 
-[Volver a CONTRIBUTING](../CONTRIBUTING.md)
+[Volver a CONTRIBUTING](../contributing.md)

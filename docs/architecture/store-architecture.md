@@ -266,8 +266,8 @@ Cuatro contratos de prueba para el historial durante el desarrollo. Se reemplaza
 
 | Rol | Email | Password |
 |-----|-------|----------|
-| Asesor | asesor@credifom.mx | 1234 |
-| Admin | admin@credifom.mx | 1234 |
+| Asesor | juan@test.com | 1234 |
+| Admin | admin@test.com | 1234 |
 
 ---
 
