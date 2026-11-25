@@ -33,11 +33,12 @@ export interface LoanFieldDef {
   id: string
   label: string
   placeholder: string
-  type: "name" | "numeric" | "date" | "email" | "select"
+  type: "name" | "numeric" | "date" | "email" | "select" | "text"
   maxLength?: number
   section: "contactoData"
   /** Opciones fijas para campos de tipo select (ej. estado civil). */
   selectOptions?: readonly string[]
+  required?: boolean
 }
 
 /** Definición de una sección del accordion del paso 3
@@ -58,14 +59,13 @@ export const loanSections: LoanSectionDef[] = [
     title: "Contacto y Estado Civil",
     icon: Phone,
     fields: [
-      { id: "tel",         label: "Tel",         placeholder: "6871234567",        type: "numeric", maxLength: 10, section: "contactoData" },
-      { id: "celular",     label: "Celular",     placeholder: "6871234567",        type: "numeric", maxLength: 10, section: "contactoData" },
-      { id: "telCasa",     label: "Tel. Casa",   placeholder: "6871234567",        type: "numeric", maxLength: 10, section: "contactoData" },
-      { id: "correo",      label: "Correo",      placeholder: "correo@ejemplo.com", type: "email",  section: "contactoData" },
-      { id: "estadoCivil", label: "Estado Civil", placeholder: "Seleccionar",       type: "select", section: "contactoData", selectOptions: ESTADOS_CIVILES },
-      { id: "dependientesEconomicos", label: "Dep. económicos", placeholder: "Ej: 2", type: "numeric", maxLength: 2, section: "contactoData" },
-      { id: "propiedad",   label: "Vivienda",    placeholder: "Seleccionar",       type: "select", section: "contactoData", selectOptions: PROPIEDAD_OPCIONES },
-      { id: "entreCalles", label: "Entre calles", placeholder: "Ej: Calle 1 y Calle 2", type: "name", maxLength: 60, section: "contactoData" },
+      { id: "celular",     label: "Celular",     placeholder: "10 dígitos",        type: "numeric", maxLength: 10, section: "contactoData", required: true },
+      { id: "telCasa",     label: "Tel. Casa",   placeholder: "10 dígitos (opcional)", type: "numeric", maxLength: 10, section: "contactoData", required: false },
+      { id: "correo",      label: "Correo",      placeholder: "correo@ejemplo.com", type: "email",  maxLength: 150, section: "contactoData", required: true },
+      { id: "estadoCivil", label: "Estado Civil", placeholder: "Seleccionar",       type: "select", section: "contactoData", selectOptions: ESTADOS_CIVILES, required: true },
+      { id: "dependientesEconomicos", label: "Dep. económicos", placeholder: "Ej: 2", type: "numeric", maxLength: 2, section: "contactoData", required: true },
+      { id: "propiedad",   label: "Vivienda",    placeholder: "Seleccionar",       type: "select", section: "contactoData", selectOptions: PROPIEDAD_OPCIONES, required: true },
+      { id: "entreCalles", label: "Entre calles", placeholder: "Ej: Calle 1 y Calle 2", type: "text", maxLength: 100, section: "contactoData", required: true },
     ],
   },
 ]

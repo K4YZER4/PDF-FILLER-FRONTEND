@@ -56,7 +56,7 @@ function CreditoAsesor() {
                 calcError={hook.calcError}
                 isComplete={hook.completion.prestamo}
                 onMontoChange={(v) => { hook.setMonto(v); hook.resetResultado() }}
-                onPlazoChange={hook.setPlazo}
+                 onPlazoChange={(value) => { hook.setPlazo(value); hook.resetResultado(); }}
                 onCalcular={hook.calcular}
                 fechaArranque={hook.asesorData.fechaArranque}
                 lugar={hook.asesorData.lugar}

@@ -79,7 +79,7 @@ function ContractCard({ contract, onView, onEdit, onReSign, canReview, canEdit =
             <p className="text-xs text-text-secondary">Plazo</p>
             <p className="font-semibold">{contract.plazo} QNAs</p>
           </div>
-          <div className="flex gap-1">
+          <div className="flex flex-wrap items-center justify-end gap-1">
             <button
               onClick={async () => {
                 try {
@@ -133,17 +133,19 @@ function ContractCard({ contract, onView, onEdit, onReSign, canReview, canEdit =
               <>
                 <button
                   onClick={onApprove}
-                  className="w-8 h-8 rounded-lg flex items-center justify-center text-success border border-success/40 hover:bg-success/10 transition-colors"
+                  className="inline-flex h-9 w-9 items-center justify-center rounded-xl border border-success/40 bg-success/10 text-success transition-colors hover:bg-success/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-success/40"
                   title="Aprobar contrato"
+                  aria-label={`Aprobar contrato ${contract.id}`}
                 >
-                  <Check size={14} />
+                  <Check size={15} strokeWidth={2.5} />
                 </button>
                 <button
                   onClick={onReject}
-                  className="w-8 h-8 rounded-lg flex items-center justify-center text-error border border-error/40 hover:bg-error/10 transition-colors"
+                  className="inline-flex h-9 w-9 items-center justify-center rounded-xl border border-error/40 bg-error/10 text-error transition-colors hover:bg-error/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-error/40"
                   title="Rechazar contrato"
+                  aria-label={`Rechazar contrato ${contract.id}`}
                 >
-                  <X size={14} />
+                  <X size={15} strokeWidth={2.5} />
                 </button>
               </>
             )}

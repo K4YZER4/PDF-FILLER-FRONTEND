@@ -24,12 +24,14 @@ export function renderField(
   isFilled: boolean,
   onUpdate: (value: string) => void,
 ): React.ReactElement {
+  const OPTIONAL_FIELDS = new Set(["segundoNombre", "noInt", "telefonoEmpresarial"]);
+  const isRequired = !OPTIONAL_FIELDS.has(field.id);
   const shared = {
     id: field.id,
     inputSize: "sm" as const,
-    required: true,
+    required: isRequired,
     success: isFilled,
-    error: !isFilled ? "Obligatorio" : undefined,
+    error: !isFilled && isRequired ? "Obligatorio" : undefined,
     placeholder: field.placeholder,
     value: val,
   };

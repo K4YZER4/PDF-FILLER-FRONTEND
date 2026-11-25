@@ -20,13 +20,15 @@ export function renderLoanField(
   isFilled: boolean,
   onUpdate: (value: string) => void,
   error?: string,
+  invalid?: boolean,
 ): React.ReactElement {
   const shared = {
     id: field.id,
     inputSize: "sm" as const,
-    required: true,
+    required: field.required ?? true,
     success: isFilled,
     error,
+    invalid,
     placeholder: field.placeholder,
     value,
   }
@@ -34,12 +36,14 @@ export function renderLoanField(
   switch (field.type) {
     case "name":
       return <NameInput {...shared} maxLength={field.maxLength ?? 40} onChange={onUpdate} />
+    case "text":
+      return <Input {...shared} maxLength={field.maxLength ?? 100} onChange={(e) => onUpdate(e.target.value)} />
     case "numeric":
       return <NumericInput {...shared} maxLength={field.maxLength} onChange={onUpdate} />
     case "date":
       return <DateInput {...shared} onChange={onUpdate} />
     case "email":
-      return <Input {...shared} type="email" onChange={(e) => onUpdate(e.target.value)} />
+      return <Input {...shared} type="email" maxLength={field.maxLength ?? 150} onChange={(e) => onUpdate(e.target.value)} />
     case "select":
       return (
         <SelectField
@@ -49,6 +53,7 @@ export function renderLoanField(
           placeholder={field.placeholder}
           success={isFilled}
           error={error}
+          invalid={invalid}
           onChange={onUpdate}
         />
       )

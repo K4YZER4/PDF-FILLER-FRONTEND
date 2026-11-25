@@ -88,9 +88,9 @@ npm run build     # Verificar tamaño de bundle
 
 ## Sincronización
 
-- `package.json` y `docs/DEPENDENCIES.md` deben mantenerse sincronizados
+- `package.json` y `docs/dependencies.md` deben mantenerse sincronizados
 - Todo cambio en dependencias debe reflejarse en este documento
 
 ---
 
-[Volver a CONTRIBUTING](./CONTRIBUTING.md)
+[Volver a CONTRIBUTING](./contributing.md)

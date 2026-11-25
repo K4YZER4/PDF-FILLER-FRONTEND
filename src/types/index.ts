@@ -72,7 +72,7 @@ export interface AsesorData {
 
 /** Teléfonos, correo y estado civil del cliente. */
 export interface ContactoData {
-  tel: string;
+  tel?: string;
   celular: string;
   telCasa: string;
   correo: string;

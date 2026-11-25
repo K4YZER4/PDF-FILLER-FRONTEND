@@ -17,68 +17,98 @@
  *   VITE_API_BASE=http://localhost:3001 en .env
  */
 
-import axios from "axios"
-import { getToken, removeToken, isTokenExpired } from "./auth"
-import { ApiError, ValidationError, AuthError, NetworkError } from "./errors"
+import axios from "axios";
+import { getToken, removeToken, isTokenExpired } from "./auth";
+import { ApiError, ValidationError, AuthError, NetworkError } from "./errors";
+import { getDemoApiKey } from "./demoKey";
 
 /** Instancia de axios preconfigurada */
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE || "http://localhost:3001",
+  baseURL: import.meta.env.VITE_API_BASE || "http://localhost:3000",
   timeout: 30000,
   headers: {
     "Content-Type": "application/json",
   },
-})
+});
 
-// ─── Interceptor de request: adjuntar token ─────────────────────────────────
+// ─── Interceptor de request: adjuntar token ──      ───────────────────────────────
 
 api.interceptors.request.use(
   (config) => {
-    const token = getToken()
+    const token = getToken();
     if (token) {
-      config.headers.Authorization = `Bearer ${token}`
+      config.headers.Authorization = `Bearer ${token}`;
 
       // Si el token está expirado, no enviamos el request
       if (isTokenExpired(token)) {
-        removeToken()
-        window.location.href = "/login"
-        return Promise.reject(new AuthError("Sesión expirada. Inicia sesión nuevamente."))
+        removeToken();
+        window.location.href = "/login";
+        return Promise.reject(
+          new AuthError("Sesión expirada. Inicia sesión nuevamente."),
+        );
       }
     }
-    return config
+    const demoApiKey = getDemoApiKey();
+    if (demoApiKey) config.headers["X-Gemini-Api-Key"] = demoApiKey;
+    return config;
   },
   (error) => Promise.reject(error),
-)
+);
 
 // ─── Interceptor de response: normalizar errores ────────────────────────────
 
 api.interceptors.response.use(
   (response) => response,
-  (error) => {
+  async (error) => {
     if (error.code === "ERR_NETWORK") {
-      return Promise.reject(new NetworkError())
+      return Promise.reject(new NetworkError());
     }
 
     if (error.response) {
-      const { status, data } = error.response
+      const { status } = error.response;
+      let data: unknown = error.response.data;
 
-      if (status === 401) {
-        removeToken()
-        // No redirigimos automáticamente — el AuthError se maneja donde se use
-        return Promise.reject(new AuthError(data?.message || "Sesión expirada"))
+      if (typeof Blob !== "undefined" && data instanceof Blob) {
+        try {
+          data = JSON.parse(await data.text()) as unknown;
+        } catch {
+          data = undefined;
+        }
       }
 
-      if (status === 422 && data?.errors) {
-        return Promise.reject(new ValidationError(data.errors, data?.message))
+      const payload = data as
+        | {
+            message?: string;
+            code?: string;
+            errors?: Record<string, string[]>;
+          }
+        | undefined;
+
+      if (status === 401) {
+        removeToken();
+        // No redirigimos automáticamente — el AuthError se maneja donde se use
+        return Promise.reject(
+          new AuthError(payload?.message || "Sesión expirada"),
+        );
+      }
+
+      if (status === 422 && payload?.errors) {
+        return Promise.reject(
+          new ValidationError(payload.errors, payload.message),
+        );
       }
 
       return Promise.reject(
-        new ApiError(status, data?.message || "Error del servidor", data?.code),
-      )
+        new ApiError(
+          status,
+          payload?.message || "Error del servidor",
+          payload?.code,
+        ),
+      );
     }
 
-    return Promise.reject(new NetworkError())
+    return Promise.reject(new NetworkError());
   },
-)
+);
 
-export { api }
+export { api };

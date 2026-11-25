@@ -29,7 +29,8 @@ import { useContractStore } from "@/store/useContractStore";
 import { useClientName } from "@/store/selectors";
 import { buildContratoPayload } from "@/utils/mapping";
 import { downloadContract } from "@/utils/downloadContract";
-import { updateContract } from "@/api/contracts.api";
+import { updateContract, generarEnlaceFirma } from "@/api/contracts.api";
+import { ContratoFinalizadoModal } from "@/features/preview-contract/components/ContratoFinalizadoModal";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -91,6 +92,11 @@ function ContractLayout() {
   const [showFinishToast, setShowFinishToast] = useState(false);
   const [loadingContract, setLoadingContract] = useState(isEditMode);
   const [isFinishing, setIsFinishing] = useState(false);
+  const [finalizadoInfo, setFinalizadoInfo] = useState<{
+    folio: string;
+    linkFirma: string;
+    codigoOtp?: string;
+  } | null>(null);
 
   // Load contract data for editing
   useEffect(() => {
@@ -101,7 +107,7 @@ function ContractLayout() {
           navigate("review", { relative: "path", replace: true });
         })
         .catch(() => {
-          navigate("/", { replace: true });
+          navigate("/app", { replace: true });
         })
         .finally(() => setLoadingContract(false));
     }
@@ -126,7 +132,7 @@ function ContractLayout() {
   const handleExitConfirm = () => {
     setShowExitModal(false);
     resetContract();
-    navigate("/");
+    navigate("/app");
   };
 
   const handleScan = async () => {
@@ -153,7 +159,7 @@ function ContractLayout() {
   const handleEdit = () => navigate(STEPS[1].path, { relative: "path" });
 
   const handleFinish = async () => {
-    if (isFinishing) return;
+    if (isFinishing || (!isEditMode && Boolean(useContractStore.getState().formData.contratoFolio))) return;
     setIsFinishing(true);
     try {
       const payload = buildContratoPayload(formData);
@@ -195,8 +201,23 @@ function ContractLayout() {
           status: "completado",
           estado: "POR FIRMAR",
         });
-
       }
+
+      let enlaceLink = "";
+      let codigoOtp = "";
+      try {
+        const enlaceRes = await generarEnlaceFirma(contractFolio);
+        enlaceLink = enlaceRes.link;
+        codigoOtp = enlaceRes.codigoVerificacion ?? "";
+      } catch (enlaceErr) {
+        console.warn("No se pudo generar enlace de firma automáticamente:", enlaceErr);
+      }
+
+      setFinalizadoInfo({
+        folio: contractFolio,
+        linkFirma: enlaceLink || `${window.location.origin}/firmar/${contractFolio}`,
+        codigoOtp,
+      });
     } catch (err: unknown) {
       const msg =
         err instanceof Error
@@ -221,7 +242,11 @@ function ContractLayout() {
 
   const handlePrev = () => {
     if (stepNumber === 1) {
-      setShowExitModal(true);
+      if (Boolean(formData.contratoFolio)) {
+        handleExitConfirm();
+      } else {
+        setShowExitModal(true);
+      }
       return;
     }
     if (currentStep > 0) {
@@ -248,7 +273,13 @@ function ContractLayout() {
             </div>
             <button
               type="button"
-              onClick={() => setShowExitModal(true)}
+              onClick={() => {
+                if (Boolean(formData.contratoFolio)) {
+                  handleExitConfirm();
+                } else {
+                  setShowExitModal(true);
+                }
+              }}
               aria-label="Salir del contrato"
               className="w-9 h-9 rounded-lg flex items-center justify-center text-text-secondary border border-border hover:bg-white hover:text-text-primary transition-colors"
             >
@@ -292,6 +323,7 @@ function ContractLayout() {
         scanStatus={scanStatus}
         allFilesLoaded={allFilesLoaded}
         isFinishing={isFinishing}
+        alreadyFinished={!isEditMode && Boolean(formData.contratoFolio)}
         onScan={handleScan}
         onNext={handleNext}
         onPrev={handlePrev}
@@ -309,6 +341,17 @@ function ContractLayout() {
 
       {/* Toast de finalización */}
       <FinishToast show={showFinishToast} />
+
+      {/* Modal de contrato finalizado */}
+      {finalizadoInfo && (
+        <ContratoFinalizadoModal
+          isOpen={Boolean(finalizadoInfo)}
+          folio={finalizadoInfo.folio}
+          linkFirma={finalizadoInfo.linkFirma}
+          codigoOtp={finalizadoInfo.codigoOtp}
+          onGoToDashboard={handleExitConfirm}
+        />
+      )}
 
       {/* Modal de confirmación al salir */}
       {showExitModal && (

@@ -15,6 +15,27 @@ import type {
   Referencias,
 } from "@/types";
 
+export function isPrestamoComplete(
+  monto: number,
+  d: AsesorData,
+): boolean {
+  const fechaArranqueDay = d?.fechaArranque
+    ? new Date(d.fechaArranque + "T12:00:00").getDate()
+    : 0;
+  const fechaArranqueValid =
+    (d?.fechaArranque?.length ?? 0) > 0 &&
+    (fechaArranqueDay === 15 || fechaArranqueDay === 30);
+
+  return (
+    monto >= 3000 &&
+    monto % 1000 === 0 &&
+    fechaArranqueValid &&
+    (d?.lugar?.trim()?.length ?? 0) > 0 &&
+    (d?.mesDescuento?.trim()?.length ?? 0) > 0 &&
+    (d?.anioDescuento?.trim()?.length ?? 0) === 4
+  );
+}
+
 export function isAsesorComplete(d: AsesorData): boolean {
   return (
     (d.folio?.length ?? 0) === 5 &&
@@ -25,16 +46,30 @@ export function isAsesorComplete(d: AsesorData): boolean {
   );
 }
 
+const EMAIL_REGEX = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/;
+
 export function isContactoComplete(d: ContactoData): boolean {
+  const depNum = Number(d?.dependientesEconomicos);
+  const depValid =
+    (d?.dependientesEconomicos?.trim()?.length ?? 0) > 0 &&
+    !isNaN(depNum) &&
+    depNum >= 0 &&
+    depNum <= 20;
+
+  const email = d?.correo?.trim() ?? "";
+  const emailValid = email.length > 0 && email.length <= 150 && EMAIL_REGEX.test(email);
+
+  const telCasaValid = !d?.telCasa || d.telCasa.trim().length === 0 || d.telCasa.trim().length === 10;
+
   return (
-    (d.tel?.length ?? 0) === 10 &&
-    (d.celular?.length ?? 0) === 10 &&
-    (d.telCasa?.length ?? 0) === 10 &&
-    (d.correo?.includes?.("@") ?? false) &&
-    (d.estadoCivil?.length ?? 0) > 0 &&
-    (d.dependientesEconomicos?.length ?? 0) > 0 &&
-    (d.propiedad?.length ?? 0) > 0 &&
-    (d.entreCalles?.trim()?.length ?? 0) > 0
+    (d?.celular?.trim()?.length ?? 0) === 10 &&
+    telCasaValid &&
+    emailValid &&
+    (d?.estadoCivil?.trim()?.length ?? 0) > 0 &&
+    depValid &&
+    (d?.propiedad?.trim()?.length ?? 0) > 0 &&
+    (d?.entreCalles?.trim()?.length ?? 0) > 0 &&
+    (d?.entreCalles?.length ?? 0) <= 100
   );
 }
 

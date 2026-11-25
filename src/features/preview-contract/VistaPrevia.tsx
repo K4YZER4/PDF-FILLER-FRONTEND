@@ -3,7 +3,8 @@
  *  - Las acciones (descargar, editar, finalizar) están en el footer del layout.
  *  - Botón flotante "Compartir" en el layout (compartir vía Web Share API).
  *  - Botón para generar link de firma después de finalizar el contrato. */
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Copy, CheckCircle2, ExternalLink, RefreshCw } from "lucide-react";
 import { Card } from "@/components";
 import { Button } from "@/components/ui";
@@ -11,6 +12,7 @@ import { api } from "@/lib/api";
 import { useContractStore } from "@/store/useContractStore";
 import { buildContratoPayload } from "@/utils/mapping";
 import type { GenerarEnlaceResponse } from "@/types";
+import { useStepValidation } from "@/layouts/hooks/useStepValidation";
 
 function VistaPrevia() {
   const [generando, setGenerando] = useState(false);
@@ -20,11 +22,22 @@ function VistaPrevia() {
   const [pdfUrl, setPdfUrl] = useState<string | null>(null);
   const [cargandoPdf, setCargandoPdf] = useState(false);
   const [errorPdf, setErrorPdf] = useState("");
+  const requestId = useRef(0);
 
   const formData = useContractStore((s) => s.formData);
   const contratoFolio = useContractStore((s) => s.formData.contratoFolio);
+  const navigate = useNavigate();
+  const reviewReady = useStepValidation("review");
+  const loanReady = useStepValidation("loan");
+  const canGenerateNewPreview = reviewReady && loanReady;
 
   const cargarPdf = async () => {
+    const currentRequest = ++requestId.current;
+    if (!contratoFolio && !canGenerateNewPreview) {
+      setErrorPdf("Completa y revisa los datos antes de generar la vista previa.");
+      setCargandoPdf(false);
+      return;
+    }
     setCargandoPdf(true);
     setErrorPdf("");
 
@@ -37,6 +50,10 @@ function VistaPrevia() {
             responseType: "blob",
           });
       const nextUrl = URL.createObjectURL(response.data as Blob);
+      if (currentRequest !== requestId.current) {
+        URL.revokeObjectURL(nextUrl);
+        return;
+      }
       setPdfUrl((previousUrl) => {
         if (previousUrl) URL.revokeObjectURL(previousUrl);
         return nextUrl;
@@ -48,7 +65,7 @@ function VistaPrevia() {
           : "No se pudo generar la vista previa",
       );
     } finally {
-      setCargandoPdf(false);
+      if (currentRequest === requestId.current) setCargandoPdf(false);
     }
   };
 
@@ -65,6 +82,7 @@ function VistaPrevia() {
     window.addEventListener("contract:pdf-updated", handlePdfUpdated);
 
     return () => {
+      requestId.current++;
       window.removeEventListener("contract:pdf-updated", handlePdfUpdated);
       setPdfUrl((previousUrl) => {
         if (previousUrl) URL.revokeObjectURL(previousUrl);
@@ -146,8 +164,17 @@ function VistaPrevia() {
           />
         )}
         {!cargandoPdf && !pdfUrl && (
-          <div className="flex justify-center items-center h-40 text-sm text-error">
-            {errorPdf || "No hay vista previa disponible"}
+          <div className="flex min-h-40 flex-col items-center justify-center gap-3 text-center text-sm text-error">
+            <span>{errorPdf || "No hay vista previa disponible"}</span>
+            {!contratoFolio && !canGenerateNewPreview && (
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => navigate("../review", { replace: true })}
+              >
+                Volver a revisar datos
+              </Button>
+            )}
           </div>
         )}
       </Card>

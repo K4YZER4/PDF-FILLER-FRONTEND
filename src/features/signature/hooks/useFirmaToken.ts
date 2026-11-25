@@ -9,6 +9,7 @@
  *    const { contrato, pdfUrl, loading, error, firmar } = useFirmaToken(token) */
 import { useState, useEffect, useCallback } from "react";
 import { api } from "@/lib/api";
+import { ApiError } from "@/lib/errors";
 import type { SignatureContractData, FirmarResponse } from "../types";
 
 type FirmaError = "expirado" | "usado" | "no_encontrado" | "conexion" | null;
@@ -16,6 +17,7 @@ type FirmaError = "expirado" | "usado" | "no_encontrado" | "conexion" | null;
 export function useFirmaToken(token: string | undefined) {
   const [contrato, setContrato] = useState<SignatureContractData | null>(null);
   const [pdfUrl, setPdfUrl] = useState<string>("");
+  const [codigoDemo, setCodigoDemo] = useState<string>("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<FirmaError>(null);
   const [enviando, setEnviando] = useState(false);
@@ -29,23 +31,27 @@ export function useFirmaToken(token: string | undefined) {
     }
 
     let cancelled = false;
+    let createdUrl = "";
 
     async function load() {
       try {
         const { data } = await api.get(`/api/enlaces-firma/${token}`);
         if (cancelled) return;
         setContrato(data.contrato);
+        if (data.codigoDemo) {
+          setCodigoDemo(data.codigoDemo);
+        }
         setPdfUrl(data.pdfUrl);
       } catch (err: unknown) {
         if (cancelled) return;
-        const axiosErr = err as { response?: { status?: number; data?: { error?: string } } };
-        if (axiosErr?.response?.status === 404) {
+        const status = err instanceof ApiError ? err.status : 0;
+        const message = err instanceof Error ? err.message : "";
+        if (status === 404) {
           setError("no_encontrado");
-        } else if (axiosErr?.response?.status === 400) {
-          const msg = axiosErr.response.data?.error ?? "";
-          if (msg.toLowerCase().includes("expirado")) {
+        } else if (status === 400) {
+          if (message.toLowerCase().includes("expirado")) {
             setError("expirado");
-          } else if (msg.toLowerCase().includes("usado")) {
+          } else if (message.toLowerCase().includes("usado")) {
             setError("usado");
           } else {
             setError("no_encontrado");
@@ -60,7 +66,12 @@ export function useFirmaToken(token: string | undefined) {
 
     load();
 
-    return () => { cancelled = true; };
+    return () => {
+      cancelled = true;
+      if (createdUrl) {
+        URL.revokeObjectURL(createdUrl);
+      }
+    };
   }, [token]);
 
   const reabrirFirma = useCallback(async (): Promise<{ link: string; token: string; expira: string } | null> => {
@@ -73,7 +84,7 @@ export function useFirmaToken(token: string | undefined) {
     }
   }, [token]);
 
-  const firmar = useCallback(async (firmaBase64: string): Promise<boolean> => {
+  const firmar = useCallback(async (firmaBase64: string, codigoVerificacion: string): Promise<boolean> => {
     if (!token) return false;
     setEnviando(true);
 
@@ -81,6 +92,7 @@ export function useFirmaToken(token: string | undefined) {
       const { data } = await api.post<FirmarResponse>(`/api/enlaces-firma/${token}/firmas`, {
         firmaBase64,
         aceptoTerminos: true,
+        codigoVerificacion,
       });
       if (data.success) {
         setFirmado(true);
@@ -94,5 +106,5 @@ export function useFirmaToken(token: string | undefined) {
     }
   }, [token]);
 
-  return { contrato, pdfUrl, loading, error, enviando, firmado, firmar, reabrirFirma };
+  return { contrato, pdfUrl, codigoDemo, loading, error, enviando, firmado, firmar, reabrirFirma };
 }

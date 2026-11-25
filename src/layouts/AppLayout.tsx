@@ -44,6 +44,7 @@ interface AppLayoutProps {
 function AppLayout({ children, title = "Historial" }: AppLayoutProps) {
   const navigate = useNavigate();
   const logout = useContractStore((s) => s.logout);
+  const userRole = useContractStore((s) => s.auth.role);
 
   /** Controla la visibilidad del modal de confirmación de cierre de sesión */
   const [showLogoutModal, setShowLogoutModal] = useState(false);
@@ -75,14 +76,14 @@ function AppLayout({ children, title = "Historial" }: AppLayoutProps) {
           <h1 className="text-lg font-bold text-text-primary">{title}</h1>
 
           <div className="flex items-center gap-2">
-            <Button
+             {userRole !== "mesa" && <Button
               variant="primary"
               size="sm"
               leftIcon={<Plus size={16} />}
               onClick={() => navigate("/contracts/upload")}
             >
               Nuevo contrato
-            </Button>
+             </Button>}
 
             <button
               type="button"

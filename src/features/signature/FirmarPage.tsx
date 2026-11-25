@@ -10,9 +10,9 @@
  *
  *  Sin autenticación — cualquier persona con el link puede firmar.
  *  Sigue la misma estructura que LoginPage.tsx. */
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useParams } from "react-router-dom";
-import { AlertCircle, CheckCircle2, Loader2 } from "lucide-react";
+import { AlertCircle, CheckCircle2, ShieldCheck } from "lucide-react";
 import { Card } from "@/components";
 import { Button } from "@/components/ui";
 import { Spinner } from "@/components";
@@ -28,11 +28,18 @@ type PageStatus = "loading" | "error" | "ready" | "sending" | "done";
 
 function FirmarPage() {
   const { token } = useParams<{ token: string }>();
-  const { contrato, pdfUrl, loading, error, enviando, firmado, firmar, reabrirFirma } = useFirmaToken(token);
+  const { contrato, pdfUrl, codigoDemo, loading, error, enviando, firmado, firmar, reabrirFirma } = useFirmaToken(token);
   const signatureRef = useRef<SignatureCanvasRef>(null);
+  const [codigoOtp, setCodigoOtp] = useState("");
   const [acepto, setAcepto] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
   const [reabriendo, setReabriendo] = useState(false);
+
+  useEffect(() => {
+    if (codigoDemo && !codigoOtp) {
+      setCodigoOtp(codigoDemo);
+    }
+  }, [codigoDemo]);
 
   const status: PageStatus = loading
     ? "loading"
@@ -57,6 +64,10 @@ function FirmarPage() {
   };
 
   const handleFirmar = async () => {
+    if (!codigoOtp || codigoOtp.trim().length !== 6) {
+      setErrorMsg("Debes ingresar el código de verificación de 6 dígitos");
+      return;
+    }
     if (!acepto) {
       setErrorMsg("Debes aceptar los términos y condiciones");
       return;
@@ -68,9 +79,9 @@ function FirmarPage() {
 
     setErrorMsg("");
     const firmaBase64 = signatureRef.current!.toDataURL()!;
-    const ok = await firmar(firmaBase64);
+    const ok = await firmar(firmaBase64, codigoOtp.trim());
     if (!ok) {
-      setErrorMsg("Error al enviar la firma. Intenta de nuevo.");
+      setErrorMsg("Código de verificación incorrecto o error al enviar la firma.");
     }
   };
 
@@ -169,6 +180,40 @@ function FirmarPage() {
         {/* PDF embebido */}
         {pdfUrl && <PdfViewer pdfUrl={pdfUrl} />}
 
+        {/* Código de verificación OTP */}
+        <Card className="p-5 space-y-3 border-2 border-border bg-card">
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <h3 className="text-base font-semibold text-text-primary flex items-center gap-2">
+              <ShieldCheck size={18} className="text-primary" />
+              Código de Verificación (OTP)
+            </h3>
+            {codigoDemo && (
+              <button
+                type="button"
+                onClick={() => setCodigoOtp(codigoDemo)}
+                className="text-xs bg-primary/10 text-primary px-2.5 py-1 rounded-full cursor-pointer hover:bg-primary/20 font-medium transition-colors"
+                title="Haz clic para autocompletar el código demo"
+              >
+                Demo: {codigoDemo} (Autocompletar)
+              </button>
+            )}
+          </div>
+          <p className="text-xs text-text-secondary">
+            Introduce el código de seguridad de 6 dígitos para validar tu identidad como titular antes de firmar.
+          </p>
+          <input
+            type="text"
+            maxLength={6}
+            placeholder="123456"
+            value={codigoOtp}
+            onChange={(e) => {
+              setCodigoOtp(e.target.value.replace(/\D/g, "").slice(0, 6));
+              setErrorMsg("");
+            }}
+            className="w-full max-w-xs text-center text-xl tracking-widest font-mono py-2 px-3 rounded-lg border-2 border-border focus:border-primary focus:outline-none bg-bg"
+          />
+        </Card>
+
         {/* Firma */}
         <Card className="p-5 space-y-4 border-2 border-border">
           <h3 className="text-base font-semibold text-text-primary">
@@ -221,14 +266,7 @@ function FirmarPage() {
           onClick={handleFirmar}
           disabled={status === "sending"}
         >
-          {status === "sending" ? (
-            <span className="flex items-center gap-2">
-              <Loader2 size={16} className="animate-spin" />
-              Enviando firma...
-            </span>
-          ) : (
-            "Firmar Contrato"
-          )}
+          {status === "sending" ? "Enviando firma..." : "Firmar Contrato"}
         </Button>
       </div>
     </div>

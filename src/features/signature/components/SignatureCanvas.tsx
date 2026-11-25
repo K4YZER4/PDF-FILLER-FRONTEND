@@ -27,9 +27,11 @@ const SignatureCanvas = forwardRef<SignatureCanvasRef>((_props, ref) => {
 
     const resize = () => {
       const rect = canvas.getBoundingClientRect();
+      const data = padRef.current?.toData() ?? [];
       canvas.width = rect.width * window.devicePixelRatio;
       canvas.height = rect.height * window.devicePixelRatio;
       padRef.current?.clear();
+      if (data.length > 0) padRef.current?.fromData(data);
     };
 
     padRef.current = new SignaturePad(canvas, {
