@@ -2,6 +2,7 @@
 
 Aplicación web **mobile-first** desarrollada con **React 19**, **TypeScript**, **Vite**, **Tailwind CSS v4** y **Zustand** para gestionar el ciclo completo de contratos de crédito vía nómina: desde el escaneo inteligente de documentos con IA hasta el cálculo de crédito, vista previa del PDF, firma electrónica remota del cliente y aprobación en Mesa de Control.
 
+[![CI Frontend](https://github.com/K4YZER4/PDF-FILLER-FRONTEND/actions/workflows/ci.yml/badge.svg)](https://github.com/K4YZER4/PDF-FILLER-FRONTEND/actions/workflows/ci.yml)
 ![React](https://img.shields.io/badge/React-19-61DAFB?logo=react&logoColor=black)
 ![TypeScript](https://img.shields.io/badge/TypeScript-6-3178C6?logo=typescript&logoColor=white)
 ![Vite](https://img.shields.io/badge/Vite-8-646CFF?logo=vite&logoColor=white)
