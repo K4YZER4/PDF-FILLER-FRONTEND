@@ -1,5 +1,6 @@
 import { ArrowRight, CheckCircle2, FileScan, LockKeyhole, Play, ShieldCheck, Sparkles } from "lucide-react";
 import { Link } from "react-router-dom";
+import { CustomVideoPlayer } from "./CustomVideoPlayer";
 
 const steps = [
   ["01", "Carga documentos", "INE, nóminas y estado de cuenta."],
@@ -52,7 +53,7 @@ function LandingPage() {
         </section>
 
         <section id="demo" className="border-y border-[#e5e7ef] bg-white py-20">
-          <div className="mx-auto max-w-6xl px-6"><div className="max-w-2xl"><p className="text-sm font-bold uppercase tracking-widest text-[#5b4bdb]">Experiencia guiada</p><h2 className="mt-3 text-3xl font-bold tracking-tight sm:text-4xl">Mira cómo funciona antes de entrar.</h2><p className="mt-4 text-[#667085]">La demo explica el recorrido completo: captura, validación, generación, firma y revisión por Mesa de Control.</p></div><div className="mt-8 overflow-hidden rounded-3xl border border-[#e3e6f0] bg-[#0f172a] shadow-xl">{supademoUrl ? <iframe src={supademoUrl} title="Demo interactiva de PDF FILLER" className="h-[520px] w-full" allowFullScreen /> : <video src="/demo-video.mp4" poster="/demo-thumbnail.jpg" controls playsInline preload="metadata" className="aspect-video w-full bg-[#0f172a]">Tu navegador no soporta la reproducción de video HTML5.</video>}</div></div>
+          <div className="mx-auto max-w-6xl px-6"><div className="max-w-2xl"><p className="text-sm font-bold uppercase tracking-widest text-[#5b4bdb]">Experiencia guiada</p><h2 className="mt-3 text-3xl font-bold tracking-tight sm:text-4xl">Mira cómo funciona antes de entrar.</h2><p className="mt-4 text-[#667085]">La demo explica el recorrido completo: captura, validación, generación, firma y revisión por Mesa de Control.</p></div><div className="mt-8 overflow-hidden rounded-3xl border border-[#e3e6f0] bg-[#0f172a] shadow-xl">{supademoUrl ? <iframe src={supademoUrl} title="Demo interactiva de PDF FILLER" className="h-[520px] w-full" allowFullScreen /> : <CustomVideoPlayer src="/demo-video.mp4" poster="/demo-thumbnail.jpg" />}</div></div>
         </section>
 
         <section className="mx-auto grid max-w-6xl gap-6 px-6 py-20 md:grid-cols-3">
