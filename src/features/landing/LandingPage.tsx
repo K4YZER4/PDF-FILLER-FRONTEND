@@ -316,7 +316,7 @@ function LandingPage() {
           <span>PDF FILLER · Automatización documental & firma remota</span>
           <div className="flex flex-wrap items-center gap-5">
             <a
-              href="https://github.com/K4YZER4/PDF-FILLER"
+              href="https://github.com/K4YZER4/portafolio-backend/tree/main"
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center gap-1 font-medium text-[#334155] hover:text-[#4f46e5]"

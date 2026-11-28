@@ -9,7 +9,7 @@ Aplicación web **mobile-first** desarrollada con **React 19**, **TypeScript**, 
 ![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-v4-06B6D4?logo=tailwindcss&logoColor=white)
 ![Zustand](https://img.shields.io/badge/Zustand-5-443E38)
 
-> **Repositorio Backend:** [K4YZER4/PDF-FILLER](https://github.com/K4YZER4/PDF-FILLER) (NestJS 11 + TypeScript + Prisma 7 + PostgreSQL + Gemini AI)
+> **Repositorio Backend:** [K4YZER4/portafolio-backend](https://github.com/K4YZER4/portafolio-backend/tree/main) (NestJS 11 + TypeScript + Prisma 7 + PostgreSQL + Gemini AI)
 
 ---
 
@@ -86,7 +86,7 @@ src/
 
 ### Requisitos
 - **Node.js 18+**
-- Backend [PDF-FILLER](https://github.com/K4YZER4/PDF-FILLER) en ejecución
+- Backend [portafolio-backend](https://github.com/K4YZER4/portafolio-backend/tree/main) en ejecución
 
 ### Instalación y Ejecución
 
